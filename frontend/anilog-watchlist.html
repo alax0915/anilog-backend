@@ -1,0 +1,1327 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="icon" type="image/png" href="./logo.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANILOG Watchlist</title>
+
+  <!-- Google Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <style>
+    :root {
+      --bg: #03040a;
+      --panel: #090b13;
+      --panel2: #0d0f18;
+      --panel3: #11131d;
+      --border: #25283a;
+      --purple: #9d2cff;
+      --purple2: #c34cff;
+      --text: #f5f3f8;
+      --muted: #8f8d9d;
+      --dim: #676675;
+      --danger: #ff2d63;
+      --orange: #ff9e2c;
+      --blue: #4190ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      overflow-x: hidden;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    img {
+      display: block;
+      object-fit: cover;
+    }
+
+    /* ---------------- PRELOADER OVERLAY ---------------- */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #05050b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(157, 44, 255, 0.2);
+      border-top-color: var(--purple2);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .app-viewport {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease;
+      min-height: 100vh;
+      padding: 20px 8px 90px;
+      display: flex;
+      justify-content: center;
+    }
+
+    body.loaded .app-viewport {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ---------------- MATERIAL ICONS ---------------- */
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    /* ---------------- MAIN RESPONSIVE SHELL ---------------- */
+    .app-shell {
+      position: relative;
+      width: min(1510px, 100%);
+      min-height: 900px;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      background:
+        radial-gradient(circle at 73% 20%, rgba(102, 20, 173, .16), transparent 28%),
+        linear-gradient(115deg, #090a12, #060810 58%, #080711);
+      border: 1px solid #272936;
+      border-radius: 9px;
+      box-shadow: 0 0 0 1px #25183b, 0 25px 70px rgba(0, 0, 0, .62);
+      backdrop-filter: blur(20px);
+    }
+
+    .app-shell::before {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      pointer-events: none;
+      z-index: 30;
+      border: 1px solid rgba(156, 47, 244, .48);
+      clip-path: polygon(0 0, 2% 0, 2.4% 1.5%, 98% 1.5%, 100% 0, 100% 98%, 98.4% 100%, 2% 100%, 0 98%);
+    }
+
+    /* ---------------- SIDEBAR ---------------- */
+    .sidebar {
+      position: relative;
+      z-index: 10;
+      padding: 26px 16px 16px;
+      border-right: 1px solid #252637;
+      background: linear-gradient(180deg, rgba(13, 14, 23, .97), rgba(5, 7, 13, .98));
+      border-top-left-radius: 9px;
+      border-bottom-left-radius: 9px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body.loaded .sidebar {
+      animation: sidebarSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes sidebarSlideIn {
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 10px 31px;
+    }
+
+    .sidebar-brand img {
+      width: 39px;
+      height: 39px;
+    }
+
+    .brand-name {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.7px;
+      background: linear-gradient(135deg, #ffffff, #c65cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+      border-right: 2px solid #c65cff;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: typingLoop 5s steps(6, end) infinite, blinkCursor 0.75s step-end infinite;
+    }
+
+    @keyframes typingLoop {
+
+      0%,
+      100% {
+        width: 0;
+      }
+
+      30%,
+      70% {
+        width: 6.2ch;
+      }
+    }
+
+    @keyframes blinkCursor {
+
+      from,
+      to {
+        border-color: transparent;
+      }
+
+      50% {
+        border-color: #c65cff;
+      }
+    }
+
+    .brand-sub {
+      margin-top: 3px;
+      color: var(--purple2);
+      font-size: 8px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .side-link {
+      height: 41px;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      font-size: 14px;
+      text-align: left;
+      color: #efedf3;
+      transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .side-link:hover {
+      background: rgba(157, 44, 255, 0.1);
+      border-color: rgba(157, 44, 255, 0.3);
+    }
+
+    .side-link.active {
+      border-color: #a12aff;
+      background: linear-gradient(90deg, rgba(118, 22, 183, .43), rgba(67, 17, 102, .22));
+      box-shadow: inset 0 0 20px rgba(155, 34, 246, .09);
+    }
+
+    .user-card {
+      margin-top: auto;
+      height: 125px;
+      padding: 18px 14px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      border: 1px solid #9b31e7;
+      border-radius: 7px;
+      background: linear-gradient(145deg, rgba(14, 16, 27, .98), rgba(7, 8, 15, .98));
+      clip-path: polygon(4% 0, 96% 0, 100% 7%, 100% 93%, 96% 100%, 4% 100%, 0 93%, 0 7%);
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      opacity: 0;
+    }
+
+    body.loaded .user-card {
+      animation: userCardFlip 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s forwards;
+    }
+
+    @keyframes userCardFlip {
+      from {
+        opacity: 0;
+        transform: rotateY(-180deg);
+      }
+
+      to {
+        opacity: 1;
+        transform: rotateY(0deg);
+      }
+    }
+
+    .user-avatar {
+      width: 49px;
+      height: 49px;
+      flex: 0 0 49px;
+      border: 1px solid #a42df2;
+      border-radius: 50%;
+      padding: 3px;
+    }
+
+    .user-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .user-name {
+      margin: 0 0 4px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .user-level {
+      color: #9996a5;
+      font-size: 9px;
+      margin-bottom: 9px;
+    }
+
+    .xp-track {
+      width: 100%;
+      height: 4px;
+      background: #252633;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .xp-fill {
+      width: 63%;
+      height: 100%;
+      background: #9c2cff;
+    }
+
+    .xp-text {
+      margin-top: 7px;
+      color: #9c99a7;
+      font-size: 9px;
+    }
+
+    /* ---------------- MAIN CONTENT ---------------- */
+    .main {
+      min-width: 0;
+      padding: 0 20px 45px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      height: 84px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      border-bottom: 1px solid rgba(31, 34, 47, .65);
+      position: relative;
+      z-index: 100;
+    }
+
+    .search {
+      position: relative;
+      width: min(340px, 100%);
+      height: 41px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      border: 1px solid #272a39;
+      border-radius: 22px;
+      background: rgba(16, 18, 28, .88);
+      transition: border-color 0.2s ease;
+    }
+
+    .search:focus-within {
+      border-color: var(--purple2);
+    }
+
+    .search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: #eee;
+      font-size: 12px;
+    }
+
+    .search-results-dropdown {
+      position: absolute;
+      top: 48px;
+      left: 0;
+      right: 0;
+      max-height: 380px;
+      overflow-y: auto;
+      background: #090b14;
+      border: 1px solid var(--purple);
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+    }
+
+    .search-results-dropdown.active {
+      display: flex;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .top-action-wrap {
+      position: relative;
+    }
+
+    .top-action {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #f2edf5;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .top-action:hover {
+      background: rgba(157, 44, 255, 0.15);
+    }
+
+    .profile-wrap {
+      position: relative;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .profile:hover {
+      background: rgba(157, 44, 255, 0.15);
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--purple2);
+    }
+
+    .dropdown-panel {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      width: 220px;
+      background: #0d0f1a;
+      border: 1px solid var(--purple);
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 150;
+      padding: 8px 0;
+    }
+
+    .top-action-wrap:hover .dropdown-panel,
+    .profile-wrap:hover .dropdown-panel {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-panel-header {
+      padding: 8px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--purple2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text);
+      transition: background 0.2s ease, color 0.2s ease;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+    }
+
+    .dropdown-item:hover {
+      background: rgba(157, 44, 255, 0.2);
+      color: #ffffff;
+    }
+
+    .dropdown-item .material-symbols-outlined {
+      font-size: 18px;
+      color: var(--muted);
+    }
+
+    .dropdown-item:hover .material-symbols-outlined {
+      color: var(--purple2);
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 0;
+    }
+
+    /* ---------------- HERO BANNER ---------------- */
+    .hero {
+      position: relative;
+      height: 160px;
+      margin-top: 15px;
+      overflow: hidden;
+      border-radius: 6px;
+      opacity: 0;
+    }
+
+    body.loaded .hero {
+      animation: heroZoomIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+    }
+
+    @keyframes heroZoomIn {
+      from {
+        opacity: 0;
+        transform: scale(0.96);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .hero-art {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(90deg, rgba(4, 6, 13, .91) 0%, rgba(4, 5, 11, .68) 40%, rgba(4, 5, 10, .02) 80%),
+        linear-gradient(0deg, rgba(4, 5, 10, .45), transparent 50%);
+    }
+
+    .hero-copy {
+      position: absolute;
+      z-index: 2;
+      left: 20px;
+      top: 30px;
+      right: 20px;
+    }
+
+    .hero-title {
+      margin: 0;
+      font-size: clamp(24px, 4vw, 32px);
+      line-height: 1.1;
+    }
+
+    .hero-description {
+      margin: 8px 0 0;
+      color: #b7a9c4;
+      font-size: clamp(11px, 2.5vw, 13px);
+    }
+
+    /* ---------------- STATS GRID ---------------- */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin: 15px 0;
+    }
+
+    .stat-box {
+      padding: 12px;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: bold;
+      animation: bounceBox 2s ease-in-out infinite;
+    }
+
+    .stat-box:nth-child(1) {
+      animation-delay: 0.0s;
+    }
+
+    .stat-box:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .stat-box:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    .stat-box:nth-child(4) {
+      animation-delay: 0.6s;
+    }
+
+    @keyframes bounceBox {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-5px);
+      }
+    }
+
+    /* ---------------- FILTER TOOLBAR ---------------- */
+    .toolbar {
+      position: relative;
+      z-index: 4;
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      justify-content: space-between;
+    }
+
+    .filters {
+      height: 38px;
+      display: flex;
+      border: 1px solid #2c263b;
+      border-radius: 6px;
+      overflow-x: auto;
+      background: #0b0c15;
+      max-width: 100%;
+    }
+
+    .filter {
+      padding: 0 16px;
+      border-right: 1px solid #222330;
+      background: transparent;
+      color: #b7b4c1;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .filter:last-child {
+      border-right: 0;
+    }
+
+    .filter.active {
+      color: #fff;
+      border: 1px solid #a52cff;
+      background: linear-gradient(180deg, #7117bd, #42106e);
+    }
+
+    .add-button {
+      height: 38px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid #a52cff;
+      border-radius: 6px;
+      background: linear-gradient(90deg, #711ac0, #5c18a2);
+      font-size: 11px;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    /* ---------------- RESPONSIVE WATCHLIST TABLE ---------------- */
+    .table-wrap {
+      position: relative;
+      z-index: 3;
+      margin-top: 12px;
+      border: 1px solid #29233d;
+      border-radius: 7px;
+      overflow-x: auto;
+      background: rgba(7, 9, 16, .92);
+    }
+
+    .watch-table {
+      width: 100%;
+      min-width: 650px;
+      border-collapse: collapse;
+      table-layout: auto;
+    }
+
+    .watch-table th {
+      height: 42px;
+      padding: 0 12px;
+      color: #bb44f4;
+      background: rgba(19, 12, 30, .58);
+      border-bottom: 1px solid #2a2639;
+      font-size: 10px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .watch-table th:first-child {
+      text-align: left;
+      padding-left: 16px;
+    }
+
+    .watch-table td {
+      height: 64px;
+      padding: 8px 12px;
+      border-bottom: 1px solid #1b1e2b;
+      border-right: 1px solid #191c29;
+      color: #eeeaf1;
+      font-size: 11px;
+      vertical-align: middle;
+      text-align: center;
+    }
+
+    .watch-table td:first-child {
+      text-align: left;
+    }
+
+    .watch-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .title-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .title-cell img {
+      width: 40px;
+      height: 50px;
+      flex: 0 0 40px;
+      border-radius: 4px;
+    }
+
+    .title-main {
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .title-sub {
+      margin-top: 3px;
+      color: #9b98a5;
+      font-size: 9px;
+    }
+
+    .priority {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 60px;
+      height: 26px;
+      padding: 0 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .priority.high {
+      color: #ff416a;
+      background: rgba(143, 17, 50, .25);
+    }
+
+    .priority.medium {
+      color: #ffab34;
+      background: rgba(139, 74, 11, .25);
+    }
+
+    .priority.low {
+      color: #4799ff;
+      background: rgba(22, 65, 137, .3);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 0 10px;
+      height: 26px;
+      border-radius: 6px;
+      background: #151329;
+      color: #ddd8e7;
+      font-size: 10px;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border: 1px solid #b840ff;
+      border-radius: 50%;
+    }
+
+    .notes {
+      text-align: left !important;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 180px;
+    }
+
+    /* ---------------- PAGINATION ---------------- */
+    .pagination {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .page-button {
+      width: 36px;
+      height: 36px;
+      border: 1px solid #181c29;
+      border-radius: 6px;
+      background: #080a12;
+      color: #f0edf4;
+      font-size: 11px;
+    }
+
+    .page-button.active {
+      border-color: #a52cff;
+      background: linear-gradient(180deg, #7b1dd0, #4c1180);
+    }
+
+    .page-dots {
+      color: #ddd8e4;
+      padding: 0 4px;
+    }
+
+    /* ---------------- MOBILE BOTTOM NAVIGATION ---------------- */
+    .mobile-bottom-nav {
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 65px;
+      display: none;
+      grid-template-columns: repeat(5, 1fr);
+      border-top: 1px solid #242636;
+      background: rgba(7, 8, 14, .98);
+      backdrop-filter: blur(14px);
+    }
+
+    .mobile-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      color: #d5d2dc;
+      font-size: 9px;
+      text-decoration: none;
+    }
+
+    .mobile-nav-item.active {
+      color: #bd43ff;
+    }
+
+    /* ---------------- MEDIA QUERIES ---------------- */
+    @media (max-width: 1024px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .mobile-bottom-nav {
+        display: grid;
+      }
+
+      .app-viewport {
+        padding: 10px 4px 75px;
+      }
+
+      .topbar {
+        height: 65px;
+      }
+
+      .hero {
+        height: 140px;
+      }
+    }
+
+    @media (max-width: 600px) {
+
+      .top-action.streak,
+      .top-action-wrap:has(.material-symbols-outlined:contains('settings')) {
+        display: none;
+      }
+
+      .search {
+        max-width: 200px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- PRELOADER OVERLAY -->
+  <div id="preloader">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="app-viewport">
+    <main class="app-shell">
+
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
+          <div>
+            <h1 class="brand-name">ANILOG</h1>
+            <div class="brand-sub">アニログ</div>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span
+              class="material-symbols-outlined">home</span>Home</button>
+          <button class="side-link active" onclick="window.location.href='./anilog-watchlist.html';"><span
+              class="material-symbols-outlined">list_alt</span>Watchlist</button>
+          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span
+              class="material-symbols-outlined">play_circle</span>Currently Watching</button>
+          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span
+              class="material-symbols-outlined">check_circle</span>Completed</button>
+          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span
+              class="material-symbols-outlined">calendar_month</span>Seasonal</button>
+          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span
+              class="material-symbols-outlined">rate_review</span>Reviews</button>
+          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span
+              class="material-symbols-outlined">account_circle</span>Profile</button>
+          <button class="side-link" onclick="window.location.href='./anilog-favorites.html';"><span
+              class="material-symbols-outlined">bookmark</span>Favorites</button>
+          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span
+              class="material-symbols-outlined">leaderboard</span>Top Lists</button>
+          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span
+              class="material-symbols-outlined">shopping_bag</span>Merch</button>
+          <button class="side-link"
+            onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span
+              class="material-symbols-outlined">history</span>Logs</button>
+          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span
+              class="material-symbols-outlined">target</span>Goals</button>
+          <button class="side-link"
+            onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span
+              class="material-symbols-outlined">history</span>Year view</button>
+        </nav>
+
+        <div class="user-card">
+          <img class="user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="Avatar">
+          <div class="user-info">
+            <h3 class="user-name">ShadowX</h3>
+            <div class="user-level">Level 27</div>
+            <div class="xp-track">
+              <div class="xp-fill"></div>
+            </div>
+            <div class="xp-text">XP 4,250 / 6,800</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN SECTION -->
+      <section class="main">
+
+        <header class="topbar">
+          <div class="search">
+            <input type="text" id="search-input" placeholder="Search anime...">
+            <span class="material-symbols-outlined">search</span>
+            <div class="search-results-dropdown" id="search-results"></div>
+          </div>
+
+          <div class="top-actions">
+            <div class="top-action-wrap">
+              <div class="top-action"><span class="material-symbols-outlined">notifications</span></div>
+            </div>
+
+            <div class="top-action-wrap">
+              <div class="top-action streak">
+                <span class="material-symbols-outlined" style="color: #ff2d63;">local_fire_department</span>
+                <span>12</span>
+              </div>
+            </div>
+
+            <!-- SETTINGS HOVER DROPDOWN -->
+            <div class="top-action-wrap">
+              <div class="top-action">
+                <span class="material-symbols-outlined">settings</span>
+              </div>
+              <div class="dropdown-panel">
+                <div class="dropdown-panel-header">System Settings</div>
+                <button class="dropdown-item">
+                  <span class="material-symbols-outlined">dark_mode</span> App Theme
+                </button>
+                <button class="dropdown-item">
+                  <span class="material-symbols-outlined">notifications_active</span> Notifications
+                </button>
+                <button class="dropdown-item">
+                  <span class="material-symbols-outlined">subtitles</span> Default Sub/Dub
+                </button>
+                <button class="dropdown-item">
+                  <span class="material-symbols-outlined">explicit</span> Content Filter
+                </button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item">
+                  <span class="material-symbols-outlined">tune</span> Preferences
+                </button>
+              </div>
+            </div>
+
+            <!-- PROFILE HOVER DROPDOWN -->
+            <div class="profile-wrap">
+              <div class="profile">
+                <img class="avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="User">
+                <span class="material-symbols-outlined">expand_more</span>
+              </div>
+              <div class="dropdown-panel">
+                <div class="dropdown-panel-header">User Profile</div>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';">
+                  <span class="material-symbols-outlined">account_circle</span> View Profile
+                </button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-edit-profile.html';">
+                  <span class="material-symbols-outlined">edit</span> Edit Profile
+                </button>
+                <button class="dropdown-item">
+                  <span class="material-symbols-outlined">workspace_premium</span> VIP Membership
+                </button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item" style="color: var(--danger);">
+                  <span class="material-symbols-outlined" style="color: var(--danger);">logout</span> Log Out
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </header>
+
+        <section class="hero">
+          <img class="hero-art" src="./pc-bg.png" alt="Hero Art" onerror="this.style.display='none'">
+          <div class="hero-copy">
+            <h1 class="hero-title">Watchlist</h1>
+            <p class="hero-description">
+              Plan your anime journey. Prioritize and organize what to watch next.
+            </p>
+          </div>
+        </section>
+
+        <div class="stats">
+          <div class="stat-box">Total: 42</div>
+          <div class="stat-box">Watching: 12</div>
+          <div class="stat-box">Completed: 128</div>
+          <div class="stat-box">Planned: 18</div>
+        </div>
+
+        <div class="toolbar">
+          <div class="filters">
+            <button class="filter active">All</button>
+            <button class="filter">High Priority</button>
+            <button class="filter">Medium Priority</button>
+            <button class="filter">Low Priority</button>
+            <button class="filter">Plan to Watch</button>
+          </div>
+
+          <button class="add-button">
+            <span class="material-symbols-outlined" style="font-size: 16px;">add</span>
+            Add Anime
+          </button>
+        </div>
+
+        <div class="table-wrap">
+          <table class="watch-table">
+            <thead>
+              <tr>
+                <th>TITLE</th>
+                <th>GENRE</th>
+                <th>EPISODES</th>
+                <th>PRIORITY</th>
+                <th>STATUS</th>
+                <th>NOTES</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="watchlist-body">
+              <!-- Dynamic content loads here -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+          <button class="page-button">‹</button>
+          <button class="page-button active">1</button>
+          <button class="page-button">2</button>
+          <button class="page-button">3</button>
+          <span class="page-dots">...</span>
+          <button class="page-button">8</button>
+          <button class="page-button">›</button>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- MOBILE BOTTOM NAVBAR -->
+  <nav class="mobile-bottom-nav">
+    <a href="./anilog-home.html" class="mobile-nav-item">
+      <span class="material-symbols-outlined">home</span>
+      <span>Home</span>
+    </a>
+    <a href="./anilog-watchlist.html" class="mobile-nav-item active">
+      <span class="material-symbols-outlined">list_alt</span>
+      <span>Watchlist</span>
+    </a>
+    <a href="./anilog-currentlywatching.html" class="mobile-nav-item">
+      <span class="material-symbols-outlined">play_arrow</span>
+      <span>Watching</span>
+    </a>
+    <a href="./anilog-completed.html" class="mobile-nav-item">
+      <span class="material-symbols-outlined">check_circle</span>
+      <span>Completed</span>
+    </a>
+    <a href="./anilog-user-profile-responsive.html" class="mobile-nav-item">
+      <span class="material-symbols-outlined">account_circle</span>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <script>
+    window.addEventListener('load', async () => {
+      if (document.fonts) {
+        await document.fonts.ready;
+      }
+      const preloader = document.getElementById('preloader');
+      preloader.style.opacity = '0';
+      preloader.style.visibility = 'hidden';
+      document.body.classList.add('loaded');
+      fetchWatchlistData();
+    });
+
+    async function fetchWatchlistData() {
+      try {
+        const response = await fetch('/api/watchlist');
+        const data = await response.json();
+        window.anilogWatchedAnime?.merge(data.map(item => ({
+          id: item.id,
+          title: item.title_english,
+          image: item.cover_image,
+          episodes: item.episodes,
+          rating: item.score,
+          status: item.status,
+          newEpisodes: 0,
+          subAvailable: true,
+          dubAvailable: true
+        })));
+        renderWatchlist(data);
+      } catch (err) {
+        console.error('Failed to load watchlist data from API:', err);
+      }
+    }
+
+    function renderWatchlist(items) {
+      const body = document.getElementById('watchlist-body');
+      body.innerHTML = items.map(item => `
+        <tr>
+          <td>
+            <div class="title-cell">
+              <img src="${item.cover_image || ''}" alt="${item.title_english}">
+              <div>
+                <div class="title-main">${item.title_english}</div>
+                <div class="title-sub">${item.title_japanese || ''}</div>
+              </div>
+            </div>
+          </td>
+          <td>${item.genre}</td>
+          <td>${item.episodes}</td>
+          <td><span class="priority ${item.priority.toLowerCase()}">${item.priority}</span></td>
+          <td>
+            <span class="status">
+              <span class="status-dot"></span>
+              ${item.status}
+            </span>
+          </td>
+          <td class="notes">${item.notes || ''}</td>
+          <td><span class="material-symbols-outlined" style="cursor:pointer; color:var(--muted);">more_vert</span></td>
+        </tr>
+      `).join('');
+    }
+
+    /* ---------------- SEARCH FUNCTIONALITY (KITSU API) ---------------- */
+    let searchTimeout = null;
+    let currentAbortController = null;
+
+    function openAnimeReviewFromSearch(anime) {
+      const attr = anime.attributes || {};
+      const reviewData = {
+        id: anime.id,
+        title: attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled',
+        image: attr.posterImage?.large || attr.posterImage?.medium || attr.posterImage?.original || '',
+        episodes: attr.episodeCount || '',
+        status: attr.status || '',
+        type: attr.showType || '',
+        rating: attr.averageRating || '',
+        synopsis: attr.synopsis || '',
+        startDate: attr.startDate || ''
+      };
+      window.location.href = `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(JSON.stringify(reviewData))}`;
+    }
+
+    function handleSearch(query, resultsContainer) {
+      const cleanQuery = query.trim();
+
+      if (cleanQuery.length < 3) {
+        resultsContainer.classList.remove('active');
+        resultsContainer.innerHTML = '';
+        if (currentAbortController) currentAbortController.abort();
+        return;
+      }
+
+      clearTimeout(searchTimeout);
+
+      searchTimeout = setTimeout(async () => {
+        if (currentAbortController) currentAbortController.abort();
+        currentAbortController = new AbortController();
+
+        resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">Searching...</div>`;
+        resultsContainer.classList.add('active');
+
+        try {
+          const targetUrl = `https://kitsu.io/api/edge/anime?filter[text]=${encodeURIComponent(cleanQuery)}&page[limit]=6`;
+          const response = await fetch(targetUrl, {
+            signal: currentAbortController.signal,
+            headers: {
+              'Accept': 'application/vnd.api+json',
+              'Content-Type': 'application/vnd.api+json'
+            }
+          });
+
+          if (!response.ok) throw new Error(`HTTP_${response.status}`);
+          const data = await response.json();
+          const results = data.data || [];
+          resultsContainer._animeResults = results;
+
+          resultsContainer.innerHTML = '';
+
+          if (results.length === 0) {
+            resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">No anime found</div>`;
+          } else {
+            results.forEach(anime => {
+              const attr = anime.attributes || {};
+              const title = attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled';
+              const img = attr.posterImage?.tiny || attr.posterImage?.small || '';
+              const rating = attr.averageRating ? `★ ${(parseFloat(attr.averageRating) / 10).toFixed(1)}` : 'N/A';
+              const type = attr.showType ? attr.showType.toUpperCase() : 'ANIME';
+
+              const itemHTML = `
+                <div class="search-result-item" data-result-index="${results.indexOf(anime)}" role="button" tabindex="0" style="display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid #1a1c29; cursor:pointer;">
+                  <img src="${img}" alt="${title}" style="width:32px; height:45px; border-radius:4px;">
+                  <div style="display:flex; flex-direction:column; gap:2px; overflow:hidden;">
+                    <div style="font-size:12px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600;">${title}</div>
+                    <div style="font-size:10px; color:var(--muted);">${type} • ${rating}</div>
+                  </div>
+                </div>
+              `;
+              resultsContainer.insertAdjacentHTML('beforeend', itemHTML);
+            });
+          }
+        } catch (err) {
+          if (err.name === 'AbortError') return;
+          console.error('Search fetch error:', err);
+          resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--danger); text-align: center;">Search failed. Try typing again.</div>`;
+        }
+      }, 400);
+    }
+
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+    if (searchInput) searchInput.addEventListener('input', (e) => handleSearch(e.target.value, searchResults));
+
+    document.addEventListener('click', (event) => {
+      const resultItem = event.target.closest('.search-result-item');
+      if (!resultItem) return;
+      const anime = resultItem.parentElement._animeResults?.[Number(resultItem.dataset.resultIndex)];
+      if (anime) openAnimeReviewFromSearch(anime);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.search')) {
+        searchResults.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,1530 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="icon" type="image/png" href="./logo.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Goals & Challenges - ANILOG</title>
+
+  <!-- Google Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <style>
+    :root {
+      --bg: #05060c;
+      --panel: #090b13;
+      --panel2: #0d0f18;
+      --panel3: #11131d;
+      --border: #25283a;
+      --purple: #9d2cff;
+      --purple2: #c34cff;
+      --text: #f5f3f8;
+      --muted: #8f8d9d;
+      --dim: #676675;
+      --danger: #ff2d63;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      background: #03040a;
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    img {
+      display: block;
+      object-fit: cover;
+    }
+
+    /* ---------------- PRELOADER OVERLAY ---------------- */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #05050b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(157, 44, 255, 0.2);
+      border-top-color: var(--purple2);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .desktop-page,
+    .mobile-page {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease;
+    }
+
+    body.loaded .desktop-page,
+    body.loaded .mobile-page {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ---------------- MATERIAL ICONS ---------------- */
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    /* ---------------- DESKTOP LAYOUT ---------------- */
+
+    .desktop-page {
+      min-height: 100vh;
+      padding: 40px 8px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .desktop-shell {
+      position: relative;
+      width: min(1510px, 100%);
+      min-height: 935px;
+      display: grid;
+      grid-template-columns: 232px 1fr;
+      background:
+        radial-gradient(circle at 73% 20%, rgba(102, 20, 173, .16), transparent 28%),
+        linear-gradient(115deg, #090a12, #060810 58%, #080711);
+      border: 1px solid #272936;
+      border-radius: 9px;
+      overflow: visible;
+      box-shadow: 0 0 0 1px #25183b, 0 25px 70px rgba(0, 0, 0, .62);
+      backdrop-filter: blur(20px);
+    }
+
+    .desktop-shell::before {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      pointer-events: none;
+      z-index: 30;
+      border: 1px solid rgba(156, 47, 244, .48);
+      clip-path: polygon(0 0, 2% 0, 2.4% 1.5%, 98% 1.5%, 100% 0, 100% 98%, 98.4% 100%, 2% 100%, 0 98%);
+    }
+
+    /* ---------------- SIDEBAR & ANIMATIONS ---------------- */
+
+    .sidebar {
+      position: relative;
+      z-index: 10;
+      min-height: 933px;
+      padding: 26px 16px 16px;
+      border-right: 1px solid #252637;
+      background: linear-gradient(180deg, rgba(13, 14, 23, .97), rgba(5, 7, 13, .98));
+      border-top-left-radius: 9px;
+      border-bottom-left-radius: 9px;
+      perspective: 1000px;
+    }
+
+    body.loaded .sidebar {
+      animation: sidebarSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes sidebarSlideIn {
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .side-link {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+
+    body.loaded .side-link {
+      animation: navItemSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    body.loaded .side-link:nth-child(1) { animation-delay: 0.15s; }
+    body.loaded .side-link:nth-child(2) { animation-delay: 0.20s; }
+    body.loaded .side-link:nth-child(3) { animation-delay: 0.25s; }
+    body.loaded .side-link:nth-child(4) { animation-delay: 0.30s; }
+    body.loaded .side-link:nth-child(5) { animation-delay: 0.35s; }
+    body.loaded .side-link:nth-child(6) { animation-delay: 0.40s; }
+    body.loaded .side-link:nth-child(7) { animation-delay: 0.45s; }
+    body.loaded .side-link:nth-child(8) { animation-delay: 0.50s; }
+    body.loaded .side-link:nth-child(9) { animation-delay: 0.55s; }
+    body.loaded .side-link:nth-child(10) { animation-delay: 0.60s; }
+    body.loaded .side-link:nth-child(11) { animation-delay: 0.65s; }
+    body.loaded .side-link:nth-child(12) { animation-delay: 0.70s; }
+
+    @keyframes navItemSlideIn {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 10px 31px;
+    }
+
+    .sidebar-brand img {
+      width: 39px;
+      height: 39px;
+    }
+
+    .brand-name {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.7px;
+      background: linear-gradient(135deg, #ffffff, #c65cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+      border-right: 2px solid #c65cff;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: typingLoop 5s steps(6, end) infinite, blinkCursor 0.75s step-end infinite;
+    }
+
+    @keyframes typingLoop {
+      0%, 100% { width: 0; }
+      30%, 70% { width: 6.2ch; }
+    }
+
+    @keyframes blinkCursor {
+      from, to { border-color: transparent; }
+      50% { border-color: #c65cff; }
+    }
+
+    .brand-sub {
+      margin-top: 3px;
+      color: var(--purple2);
+      font-size: 8px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .side-link {
+      height: 41px;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      font-size: 14px;
+      text-align: left;
+      color: #efedf3;
+      transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+      width: 100%;
+    }
+
+    .side-link:hover {
+      background: rgba(157, 44, 255, 0.1);
+      border-color: rgba(157, 44, 255, 0.3);
+    }
+
+    .side-link.active {
+      border-color: #a12aff;
+      background: linear-gradient(90deg, rgba(118, 22, 183, .43), rgba(67, 17, 102, .22));
+      box-shadow: inset 0 0 20px rgba(155, 34, 246, .09);
+    }
+
+    .user-card {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 46px;
+      height: 125px;
+      padding: 18px 14px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      border: 1px solid #9b31e7;
+      border-radius: 7px;
+      background: linear-gradient(145deg, rgba(14, 16, 27, .98), rgba(7, 8, 15, .98));
+      clip-path: polygon(4% 0, 96% 0, 100% 7%, 100% 93%, 96% 100%, 4% 100%, 0 93%, 0 7%);
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      opacity: 0;
+    }
+
+    body.loaded .user-card {
+      animation: userCardFlip 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s forwards;
+    }
+
+    @keyframes userCardFlip {
+      from {
+        opacity: 0;
+        transform: rotateY(-180deg);
+      }
+      to {
+        opacity: 1;
+        transform: rotateY(0deg);
+      }
+    }
+
+    .user-avatar {
+      width: 49px;
+      height: 49px;
+      flex: 0 0 49px;
+      border: 1px solid #a42df2;
+      border-radius: 50%;
+      padding: 3px;
+    }
+
+    .user-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .user-name {
+      margin: 0 0 4px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .user-level {
+      color: #9996a5;
+      font-size: 9px;
+      margin-bottom: 9px;
+    }
+
+    .xp-track {
+      width: 100%;
+      height: 4px;
+      background: #252633;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .xp-fill {
+      width: 63%;
+      height: 100%;
+      background: #9c2cff;
+    }
+
+    .xp-text {
+      margin-top: 7px;
+      color: #9c99a7;
+      font-size: 9px;
+    }
+
+    /* ---------------- MAIN SECTION ---------------- */
+
+    .main {
+      min-width: 0;
+      padding: 0 17px 45px;
+      background:
+        linear-gradient(180deg, rgba(8, 7, 19, .72), rgba(7, 7, 15, .9)),
+        url("./pc-bg.png") center/cover;
+    }
+
+    .topbar {
+      height: 84px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid rgba(31, 34, 47, .65);
+      position: relative;
+      z-index: 100;
+    }
+
+    .search {
+      position: relative;
+      width: 300px;
+      height: 41px;
+      margin-left: 0;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      border: 1px solid #272a39;
+      border-radius: 22px;
+      background: rgba(16, 18, 28, .88);
+      transition: border-color 0.2s ease;
+      opacity: 0;
+    }
+
+    body.loaded .search {
+      animation: googleSearchExpand 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
+    }
+
+    @keyframes googleSearchExpand {
+      0% {
+        opacity: 0;
+        clip-path: circle(0px at 50% 50%);
+      }
+      10% {
+        opacity: 1;
+        clip-path: circle(12px at 50% 50%);
+      }
+      100% {
+        opacity: 1;
+        clip-path: none;
+      }
+    }
+
+    .search:focus-within {
+      border-color: var(--purple2);
+    }
+
+    .search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: #eee;
+      font-size: 12px;
+    }
+
+    .search-results-dropdown {
+      position: absolute;
+      top: 48px;
+      left: 0;
+      right: 0;
+      max-height: 380px;
+      overflow-y: auto;
+      background: #090b14;
+      border: 1px solid var(--purple);
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+    }
+
+    .search-results-dropdown.active {
+      display: flex;
+    }
+
+    .search-result-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-bottom: 1px solid #1a1c29;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .search-result-item:last-child {
+      border-bottom: none;
+    }
+
+    .search-result-item:hover {
+      background: rgba(157, 44, 255, 0.15);
+    }
+
+    .search-result-item img {
+      width: 32px;
+      height: 45px;
+      border-radius: 4px;
+    }
+
+    .search-result-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      overflow: hidden;
+    }
+
+    .search-result-title {
+      font-size: 12px;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 600;
+    }
+
+    .search-result-meta {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .top-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 27px;
+      padding-right: 16px;
+      opacity: 0;
+    }
+
+    body.loaded .top-actions {
+      animation: topActionsFadeIn 0.6s ease 0.5s forwards;
+    }
+
+    @keyframes topActionsFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .top-action-wrap {
+      position: relative;
+    }
+
+    .top-action {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #f2edf5;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .top-action:hover {
+      background: rgba(157, 44, 255, 0.15);
+    }
+
+    .profile-wrap {
+      position: relative;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .profile:hover {
+      background: rgba(157, 44, 255, 0.15);
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--purple2);
+    }
+
+    .dropdown-panel {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      width: 220px;
+      background: #0d0f1a;
+      border: 1px solid var(--purple);
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 150;
+      padding: 8px 0;
+    }
+
+    .top-action-wrap:hover .dropdown-panel,
+    .profile-wrap:hover .dropdown-panel {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-panel-header {
+      padding: 8px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--purple2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text);
+      transition: background 0.2s ease, color 0.2s ease;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+    }
+
+    .dropdown-item:hover {
+      background: rgba(157, 44, 255, 0.2);
+      color: #ffffff;
+    }
+
+    .dropdown-item .material-symbols-outlined {
+      font-size: 18px;
+      color: var(--muted);
+    }
+
+    .dropdown-item:hover .material-symbols-outlined {
+      color: var(--purple2);
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 0;
+    }
+
+    /* ---------------- GOALS & CHALLENGES UNIQUE DASHBOARD STYLES ---------------- */
+    .titlebar {
+      height: 52px;
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .titlebar h1 { margin: 0; font-size: 28px; line-height: 1; font-weight: 700; letter-spacing: -.7px; }
+    .title-icons { display: flex; gap: 14px; margin-left: 12px; }
+    .title-icons .material-symbols-outlined { font-size: 24px; color: var(--purple2); }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 230px 1fr 260px;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .col { display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+    .panel {
+      border: 1px solid rgba(114, 54, 164, .68);
+      border-radius: 10px;
+      background: linear-gradient(145deg, rgba(22, 18, 33, .92), rgba(11, 14, 24, .92));
+      box-shadow: 0 0 18px rgba(87, 29, 139, .08), inset 0 0 20px rgba(105, 35, 160, .045);
+      overflow: hidden;
+    }
+    .panel-title {
+      height: 40px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between;
+      font-size: 15px; font-weight: 600; border-bottom: 1px solid rgba(116, 67, 158, .18);
+    }
+    .panel-title .right { font-size: 12px; color: #a770ce; font-weight: 400; }
+    .panel-title .icon { width: 17px; height: 17px; margin-right: 7px; display: inline-block; vertical-align: middle; }
+    .panel-title-left { display: flex; align-items: center; }
+
+    .yearly { height: 236px; }
+    .goal-list { padding: 8px; }
+    .goal {
+      min-height: 48px; margin-bottom: 7px; border: 1px solid rgba(120, 57, 169, .55); border-radius: 8px;
+      background: linear-gradient(120deg, rgba(45, 23, 62, .72), rgba(17, 17, 28, .84));
+      padding: 9px 10px 7px;
+    }
+    .goal:last-child { margin-bottom: 0; }
+    .goal-line { display: flex; align-items: center; gap: 9px; font-size: 13px; }
+    .goal-line .material-symbols-outlined { font-size: 18px; color: var(--purple2); }
+    .progress-bar-custom { height: 6px; border-radius: 8px; background: #2a2b35; margin: 6px 0 0 33px; overflow: hidden; }
+    .progress-bar-custom span { height: 100%; display: block; background: linear-gradient(90deg,#9c35f5,#7d27ce); border-radius: 8px; }
+    .checks { font-size: 11px; color: #bdb7c5; margin: 5px 0 0 33px; line-height: 16px; }
+    .checks b { color: #b63ff4; font-size: 15px; margin-right: 5px; }
+
+    .rewards { height: 226px; }
+    .reward-body { padding: 8px; }
+    .reward {
+      height: 57px; border: 1px solid rgba(120, 57, 169, .5); border-radius: 8px; margin-bottom: 7px;
+      background: rgba(33, 23, 47, .7); display: flex; align-items: center; padding: 7px 9px; gap: 10px;
+    }
+    .reward img { width: 48px; height: 43px; border-radius: 6px; border: 1px solid #6e3c8c; object-fit: cover; }
+    .reward strong { font-size: 13px; font-weight: 400; display: block; }
+    .reward span { font-size: 10px; color: #b4adbb; display: block; margin-top: 3px; }
+    .reward:last-child { margin-bottom: 0; }
+    .reward.simple { display: block; padding: 8px 10px; height: auto; }
+    .reward.simple strong { font-size: 13px; }
+    .reward.simple .progress-bar-custom { margin-left: 0; margin-top: 7px; }
+
+    .monthly-top { height: 146px; }
+    .challenge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px; }
+    .challenge {
+      height: 100px; border: 1px solid rgba(117, 56, 165, .56); border-radius: 9px;
+      background: linear-gradient(120deg, rgba(43, 22, 62, .76), rgba(15, 16, 28, .88));
+      padding: 10px; position: relative; overflow: hidden;
+    }
+    .challenge .material-symbols-outlined { font-size: 24px; float: left; margin-right: 8px; color: var(--purple2); }
+    .challenge strong { font-size: 13px; font-weight: 400; display: block; line-height: 16px; }
+    .challenge .done { font-size: 11px; color: #9c47d7; margin-top: 2px; }
+    .challenge small { display: block; font-size: 9px; color: #aaa; margin-top: 4px; line-height: 13px; }
+
+    .tracker { height: 190px; }
+    .tracker-body { padding: 8px 10px; position: relative; height: 149px; }
+    .chart-title { font-size: 13px; margin-bottom: 5px; color: #d5cfe0; }
+    .chart {
+      position: absolute; left: 10px; right: 92px; top: 37px; bottom: 12px;
+      border-left: 1px solid #45414e; border-bottom: 1px solid #45414e;
+      background:
+        repeating-linear-gradient(to top,transparent 0 27px,rgba(160,153,173,.12) 28px),
+        linear-gradient(180deg,rgba(146,45,220,.28),rgba(75,24,111,.08));
+      clip-path: polygon(0 100%,0 72%,10% 62%,18% 68%,27% 45%,39% 35%,50% 31%,60% 21%,70% 14%,80% 4%,90% 0,100% 0,100% 100%);
+    }
+    .chart-labels { position: absolute; left: 36px; right: 100px; bottom: 1px; display: flex; justify-content: space-between; font-size: 7px; color: #aaa; }
+    .chart-y { position: absolute; left: 0; top: 37px; bottom: 12px; display: flex; flex-direction: column; justify-content: space-between; font-size: 7px; color: #aaa; }
+    .tracker-art { position: absolute; right: 8px; top: 28px; width: 83px; height: 120px; background: url("./pc-bg.png") center/contain no-repeat; opacity: .6; }
+
+    .small-charts { height: 128px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 9px; background: transparent; border: 0; box-shadow: none; overflow: visible; }
+    .mini { height: 128px; }
+    .bar-chart { height: 84px; padding: 4px 8px 7px; display: flex; align-items: flex-end; gap: 8px; border-bottom: 1px solid #413d49; margin: 0 8px; }
+    .bar { width: 14px; background: #9140d1; min-height: 5px; border-radius: 2px 2px 0 0; }
+    .bar-labels { display: flex; justify-content: space-around; font-size: 7px; color: #aaa; margin: 3px 10px; }
+    .h-bars { padding: 5px 9px; font-size: 9px; color: #bbb; }
+    .hrow { display: flex; align-items: center; margin: 5px 0; gap: 5px; }
+    .hrow span:first-child { width: 90px; font-size: 9px; }
+    .hrow i { display: block; height: 7px; background: #9140d1; border-radius: 2px; }
+
+    .store { height: 121px; }
+    .store-body { height: 80px; display: flex; align-items: center; padding: 8px 8px; gap: 8px; }
+    .earned { width: 115px; }
+    .earned .label { font-size: 12px; color: #b4adbb; }
+    .earned .amount { font-size: 18px; color: #a53ff0; margin-top: 2px; font-weight: 700; }
+    .earned .points { font-size: 11px; color: #bdb6c5; margin-top: 6px; }
+    .store-item { width: 78px; text-align: center; }
+    .store-item img { width: 42px; height: 42px; border: 1px solid #69358c; border-radius: 6px; margin: 0 auto 5px; object-fit: cover; }
+    .store-item span { display: block; font-size: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .store-item small { font-size: 10px; color: #a03de7; }
+
+    .rightcol .profile-top { height: 98px; }
+    .profile-top-body { display: flex; align-items: center; padding: 10px 16px; gap: 12px; }
+    .profile-top .avatar { width: 47px; height: 47px; }
+    .profile-top .profile-name { font-size: 14px; font-weight: 700; }
+    .profile-top .profile-level { font-size: 11px; color: #aaa; margin-top: 2px; }
+    .month-challenges { height: 337px; }
+    .challenge-stack { padding: 8px; }
+    .side-challenge {
+      border: 1px solid rgba(118, 58, 166, .6); border-radius: 8px; background: rgba(36, 24, 47, .72);
+      padding: 10px 10px; margin-bottom: 8px; min-height: 57px; position: relative;
+    }
+    .side-challenge strong { font-size: 13px; font-weight: 400; display: block; line-height: 17px; }
+    .side-challenge .bar { height: 6px; width: 100%; margin-top: 7px; background: #292b35; border-radius: 5px; }
+    .side-challenge .bar i { display: block; height: 100%; width: 77%; background: #9a37e7; border-radius: 5px; }
+    .side-challenge ul { margin: 5px 0 0; padding-left: 15px; color: #bdb6c4; font-size: 11px; line-height: 17px; }
+    .side-challenge li::marker { color: #a33bea; }
+    .side-challenge .chevron { position: absolute; right: 9px; top: 8px; color: #bbb; }
+
+    .notes { height: 282px; }
+    .notes-body { padding: 8px 12px; }
+    .notebook {
+      height: 233px; border: 1px solid rgba(106, 74, 125, .8); border-radius: 8px;
+      background: linear-gradient(180deg, rgba(47, 38, 57, .8), rgba(31, 27, 41, .88));
+      position: relative; padding: 30px 15px 10px; overflow: hidden;
+    }
+    .notebook:before {
+      content: ""; position: absolute; left: 0; right: 0; top: 0; height: 27px;
+      background: repeating-linear-gradient(90deg,transparent 0 18px,#6d5c78 19px 22px,transparent 23px 36px);
+      opacity: .8;
+    }
+    .note { font-size: 12px; font-style: italic; color: #eee; line-height: 17px; border-bottom: 1px solid rgba(185, 169, 196, .25); padding: 6px 0; }
+    .note:before { content: "â€¢"; color: #a03ce8; font-size: 20px; margin-right: 8px; }
+    .pen { position: absolute; right: 10px; bottom: 8px; width: 48px; height: 48px; background: url("./pc-bg.png") center/contain no-repeat; opacity: .5; }
+
+    /* ---------------- MOBILE LAYOUT ---------------- */
+
+    .mobile-page {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .desktop-page {
+        display: none;
+      }
+      .mobile-page {
+        display: block;
+        min-height: 100vh;
+        background: #05060c;
+      }
+      .mobile-shell {
+        position: relative;
+        min-height: 100vh;
+        padding: 0 0 74px;
+        overflow: hidden;
+        background: radial-gradient(circle at 65% 13%, rgba(96, 24, 154, .16), transparent 28%), #05060c;
+      }
+      .mobile-topbar {
+        height: 69px;
+        padding: 17px 16px 7px;
+        display: flex;
+        align-items: center;
+        gap: 17px;
+        background: rgba(6, 7, 13, .96);
+        position: relative;
+        z-index: 100;
+      }
+      .mobile-brand {
+        margin: auto;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .mobile-brand img {
+        width: 31px;
+        height: 31px;
+      }
+      .mobile-brand .brand-name {
+        font-size: 17px;
+      }
+      .mobile-brand .brand-sub {
+        font-size: 6px;
+      }
+      .mobile-search-bar {
+        display: none;
+        padding: 10px 16px;
+        background: #090b14;
+        border-bottom: 1px solid var(--border);
+        position: relative;
+      }
+      .mobile-search-bar.active {
+        display: block;
+      }
+      .mobile-search-input-wrap {
+        display: flex;
+        align-items: center;
+        background: rgba(16, 18, 28, .88);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 6px 12px;
+      }
+      .mobile-search-input-wrap input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--text);
+        font-size: 13px;
+      }
+      .mobile-content {
+        padding: 14px 13px 0;
+      }
+      .mobile-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+      .mobile-title .material-symbols-outlined {
+        font-size: 24px;
+        color: var(--purple2);
+        vertical-align: middle;
+        margin-left: 8px;
+      }
+      .m-panel {
+        border: 1px solid rgba(114, 54, 164, .68);
+        border-radius: 10px;
+        background: linear-gradient(145deg, rgba(22, 18, 33, .92), rgba(11, 14, 24, .92));
+        overflow: hidden;
+        margin-bottom: 10px;
+      }
+      .m-panel-title {
+        height: 38px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between;
+        font-size: 14px; font-weight: 600; border-bottom: 1px solid rgba(116, 67, 158, .18);
+      }
+      .m-panel-title .right { font-size: 11px; color: #a770ce; font-weight: 400; }
+      .m-goal-list { padding: 8px; }
+      .m-goal {
+        min-height: 40px; margin-bottom: 6px; border: 1px solid rgba(120, 57, 169, .55); border-radius: 8px;
+        background: linear-gradient(120deg, rgba(45, 23, 62, .72), rgba(17, 17, 28, .84));
+        padding: 8px 10px 6px;
+      }
+      .m-goal:last-child { margin-bottom: 0; }
+      .m-goal-line { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+      .m-goal-line .material-symbols-outlined { font-size: 16px; color: var(--purple2); }
+      .m-progress { height: 5px; border-radius: 8px; background: #2a2b35; margin: 5px 0 0 30px; overflow: hidden; }
+      .m-progress span { height: 100%; display: block; background: linear-gradient(90deg,#9c35f5,#7d27ce); border-radius: 8px; }
+
+      .m-challenge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 8px; }
+      .m-challenge {
+        height: 85px; border: 1px solid rgba(117, 56, 165, .56); border-radius: 9px;
+        background: linear-gradient(120deg, rgba(43, 22, 62, .76), rgba(15, 16, 28, .88));
+        padding: 8px; position: relative; overflow: hidden;
+      }
+      .m-challenge .material-symbols-outlined { font-size: 20px; float: left; margin-right: 6px; color: var(--purple2); }
+      .m-challenge strong { font-size: 11px; font-weight: 400; display: block; line-height: 14px; }
+      .m-challenge .done { font-size: 10px; color: #9c47d7; margin-top: 2px; }
+      .m-challenge small { display: block; font-size: 8px; color: #aaa; margin-top: 3px; line-height: 11px; }
+
+      .mobile-bottom-nav {
+        position: fixed;
+        z-index: 50;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 72px;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        border-top: 1px solid #242636;
+        background: rgba(7, 8, 14, .98);
+        backdrop-filter: blur(14px);
+      }
+      .mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        color: #d5d2dc;
+        font-size: 8px;
+        cursor: pointer;
+        transition: color 0.2s ease;
+        padding: 4px 0;
+      }
+      .mobile-nav-item.active {
+        color: #bd43ff;
+      }
+      .mobile-nav-item:hover {
+        color: #bd43ff;
+      }
+      .mobile-nav-item .material-symbols-outlined {
+        font-size: 22px;
+      }
+    }
+
+    @media (min-width: 901px) and (max-width: 1150px) {
+      .desktop-shell {
+        grid-template-columns: 165px minmax(0, 1fr);
+      }
+      .sidebar {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+      .side-link {
+        font-size: 11px;
+        padding-left: 8px;
+      }
+      .sidebar-brand {
+        margin-left: 7px;
+      }
+      .main {
+        padding: 22px 18px;
+      }
+      .search {
+        width: 180px;
+      }
+      .dashboard {
+        grid-template-columns: 180px minmax(0, 1fr) 210px;
+        gap: 8px;
+      }
+      .earned .amount {
+        font-size: 15px;
+      }
+      .store-item {
+        width: 60px;
+      }
+      .store-item img {
+        width: 34px;
+        height: 34px;
+      }
+      .challenge {
+        height: 85px;
+      }
+      .challenge strong {
+        font-size: 11px;
+      }
+      .side-challenge strong {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- PRELOADER OVERLAY -->
+  <div id="preloader">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- =========================================================
+     DESKTOP PAGE
+     ========================================================= -->
+  <div class="desktop-page">
+    <main class="desktop-shell">
+
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
+          <div>
+            <h1 class="brand-name">ANILOG</h1>
+            <div class="brand-sub">ã‚¢ãƒ‹ãƒ­ã‚°</div>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span class="material-symbols-outlined">home</span>Home</button>
+          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';"><span class="material-symbols-outlined">list_alt</span>Watchlist</button>
+          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span class="material-symbols-outlined">play_circle</span>Currently Watching</button>
+          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span class="material-symbols-outlined">check_circle</span>Completed</button>
+          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span class="material-symbols-outlined">calendar_month</span>Seasonal</button>
+          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span class="material-symbols-outlined"  >rate_review</span>Reviews</button>
+          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span>Profile</button>
+          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';" ><span class="material-symbols-outlined" >leaderboard</span>Top Lists</button>
+          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span class="material-symbols-outlined"  >shopping_bag</span>Merch</button>
+          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span class="material-symbols-outlined"  >history</span>Logs</button>
+          <button class="side-link active" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span class="material-symbols-outlined"  >target</span>Goals</button>
+          <button class="side-link " onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
+        </nav>
+
+
+        <div class="user-card">
+          <img class="user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="Avatar">
+          <div class="user-info">
+            <h3 class="user-name">ShadowX</h3>
+            <div class="user-level">Level 27</div>
+            <div class="xp-track">
+              <div class="xp-fill"></div>
+            </div>
+            <div class="xp-text">XP 4,250 / 8,600</div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="main">
+
+        <header class="topbar">
+          <div class="search">
+            <input type="text" id="desktop-search-input" placeholder="Search anime...">
+            <span class="material-symbols-outlined" style="position: absolute; right: 12px; color: #777184; font-size: 16px;">search</span>
+            <div class="search-results-dropdown" id="desktop-search-results"></div>
+          </div>
+
+          <div class="top-actions">
+            <div class="top-action-wrap">
+              <div class="top-action"><span class="material-symbols-outlined">notifications</span></div>
+            </div>
+
+            <div class="top-action-wrap">
+              <div class="top-action streak">
+                <span class="material-symbols-outlined" style="color: #ca5aff;">local_fire_department</span>
+                <span>12</span>
+              </div>
+            </div>
+
+            <div class="top-action-wrap">
+              <div class="top-action"><span class="material-symbols-outlined">workspace_premium</span></div>
+            </div>
+
+            <div class="profile-wrap">
+              <div class="profile">
+                <img class="avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="User">
+                <span class="material-symbols-outlined">expand_more</span>
+              </div>
+              <div class="dropdown-panel">
+                <div class="dropdown-panel-header">User Profile</div>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span> View Profile</button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-edit-profile.html';"><span class="material-symbols-outlined">edit</span> Edit Profile</button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item" style="color: var(--danger);"><span class="material-symbols-outlined" style="color: var(--danger);">logout</span> Log Out</button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="titlebar">
+          <h1>Goals &amp; Challenges</h1>
+          <div class="title-icons">
+            <span class="material-symbols-outlined">flag</span>
+            <span class="material-symbols-outlined">military_tech</span>
+          </div>
+        </div>
+
+        <section class="dashboard">
+          <!-- LEFT COLUMN -->
+          <div class="col">
+            <section class="panel yearly">
+              <div class="panel-title"><span>Yearly Goals</span><span class="right">2024 âŒ„</span></div>
+              <div class="goal-list">
+                <div class="goal">
+                  <div class="goal-line"><span class="material-symbols-outlined">play_circle</span><span>Watch 100 new series</span></div>
+                  <div class="progress-bar-custom"><span style="width:82%"></span></div>
+                </div>
+                <div class="goal">
+                  <div class="goal-line"><span class="material-symbols-outlined">star</span><span>Complete 10 highly-rated classics</span></div>
+                  <div class="progress-bar-custom"><span style="width:76%"></span></div>
+                  <div class="checks"><b>âœ“</b>Completed new series<br><b>âœ“</b>Completed 10+ eps</div>
+                </div>
+                <div class="goal">
+                  <div class="goal-line"><span class="material-symbols-outlined">event</span><span>Attend an Anime Convention</span></div>
+                  <div class="progress-bar-custom"><span style="width:64%"></span></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel rewards">
+              <div class="panel-title"><span class="panel-title-left"><span class="material-symbols-outlined icon" style="font-size:18px;">trophy</span>Rewards/Milestones</span></div>
+              <div class="reward-body">
+                <div class="reward">
+                  <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Veteran" alt="">
+                  <div><strong>Achievement Unlocked:<br>The Veteran</strong><span>(50 anime completed)</span></div>
+                </div>
+                <div class="reward simple">
+                  <strong>Milestone:<br>1000 Episodes Watched</strong>
+                  <div class="progress-bar-custom"><span style="width:73%"></span></div>
+                  <span>Progress to next badge</span>
+                </div>
+                <div class="reward simple">
+                  <strong>Unlock New Profile Avatar:</strong>
+                  <div style="display:flex;align-items:center;gap:9px;margin-top:4px">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Avatar1" alt="" style="width:28px;height:28px;border-radius:4px;">
+                    <span style="font-size:10px;color:var(--muted);">10</span>
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Avatar2" alt="" style="width:28px;height:28px;border-radius:4px;">
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- MIDDLE COLUMN -->
+          <div class="col">
+            <section class="panel monthly-top">
+              <div class="panel-title"><span>Monthly Challenges</span><span class="right">October âŒ„</span></div>
+              <div class="challenge-grid">
+                <div class="challenge">
+                  <span class="material-symbols-outlined">task_alt</span>
+                  <strong>Watch Anime<br>Completed</strong>
+                  <div class="done">Completed</div>
+                  <small>10 items completed<br>for new anime</small>
+                </div>
+                <div class="challenge">
+                  <span class="material-symbols-outlined">face</span>
+                  <strong>Unlock new Profile<br>Avatar</strong>
+                  <div class="done">Completed</div>
+                </div>
+                <div class="challenge">
+                  <span class="material-symbols-outlined">rate_review</span>
+                  <strong>Write 3<br>Anime Reviews</strong>
+                  <small>2 of 3 completed</small>
+                </div>
+                <div class="challenge">
+                  <span class="material-symbols-outlined">auto_stories</span>
+                  <strong>Read 5<br>Manga Volumes</strong>
+                  <small>3 of 5 completed</small>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel tracker">
+              <div class="panel-title"><span class="panel-title-left"><span class="material-symbols-outlined icon" style="font-size:18px;">show_chart</span>Progress Tracker</span></div>
+              <div class="tracker-body">
+                <div class="chart-title">Total Anime Completed vs Goal</div>
+                <div class="chart-y"><span>300</span><span>250</span><span>200</span><span>150</span><span>100</span><span>50</span><span>0</span></div>
+                <div class="chart"></div>
+                <div class="chart-labels"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span></div>
+                <div class="tracker-art"></div>
+              </div>
+            </section>
+
+            <div class="small-charts">
+              <section class="panel mini">
+                <div class="panel-title"><span>Monthly Goal Progress</span></div>
+                <div class="bar-chart">
+                  <i class="bar" style="height:8%"></i><i class="bar" style="height:20%"></i><i class="bar" style="height:38%"></i><i class="bar" style="height:52%"></i><i class="bar" style="height:72%"></i><i class="bar" style="height:88%"></i><i class="bar" style="height:83%"></i><i class="bar" style="height:94%"></i>
+                </div>
+                <div class="bar-labels"><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span></div>
+              </section>
+              <section class="panel mini">
+                <div class="panel-title"><span>Genre Goal Achievement</span></div>
+                <div class="h-bars">
+                  <div style="margin-bottom:4px;font-size:9px;color:var(--muted);">watch 10 action anime</div>
+                  <div class="hrow"><span>Action</span><i style="width:110px"></i></div>
+                  <div class="hrow"><span>Drama</span><i style="width:82px"></i></div>
+                  <div class="hrow"><span>Fantasy</span><i style="width:48px"></i></div>
+                  <div class="hrow"><span>Romance</span><i style="width:30px"></i></div>
+                  <div style="text-align:center;font-size:8px;color:#888;margin-top:2px;">0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10</div>
+                </div>
+              </section>
+            </div>
+
+            <section class="panel store">
+              <div class="panel-title"><span class="panel-title-left"><span class="material-symbols-outlined icon" style="font-size:18px;">storefront</span>Goal Point Store</span></div>
+              <div class="store-body">
+                <div class="earned"><div class="label">Points Earned</div><div class="amount">$ 1,375,000</div><div class="points">Goal Points<br><b style="color:var(--purple2);">1000</b></div></div>
+                <div class="store-item"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Store1" alt=""><span>Digital Item</span><small>$ 300</small></div>
+                <div class="store-item"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Store2" alt=""><span>Digital Points</span><small>$ 100</small></div>
+                <div class="store-item"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Store3" alt=""><span>Digital Items</span><small>$1000</small></div>
+              </div>
+            </section>
+          </div>
+
+          <!-- RIGHT COLUMN -->
+          <div class="col rightcol">
+            <section class="panel profile-top">
+              <div class="profile-top-body">
+                <img class="avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="">
+                <div><div class="profile-name">ShadowX</div><div class="profile-level">Level 37</div><div class="profile-level">XP 4,250 / 8,600</div></div>
+              </div>
+            </section>
+
+            <section class="panel month-challenges">
+              <div class="panel-title">
+                <span>Monthly Challenges</span><span class="right">â—· 00:20:21</span>
+              </div>
+              <div class="challenge-stack">
+                <div class="side-challenge">
+                  <strong>Complete a full seasonal lineup</strong>
+                  <div class="bar"><i style="width:77%"></i></div>
+                </div>
+                <div class="side-challenge" style="min-height:94px">
+                  <strong>Write a detailed review for 3 anime</strong><span class="chevron">âŒƒ</span>
+                  <ul><li>Write a detailed review for 3 anime</li><li>Write a detailed review 1 anime</li><li style="list-style-type:square;color:#aaa">Rewatch a show from a different decade</li></ul>
+                </div>
+                <div class="side-challenge">
+                  <strong>Rewatch a show from a different decade</strong>
+                  <div class="bar"><i style="width:58%"></i></div>
+                </div>
+                <div class="side-challenge">
+                  <strong>Rewatch a show from a different decade</strong><span class="chevron">âŒ„</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel notes">
+              <div class="panel-title"><span class="panel-title-left"><span class="material-symbols-outlined icon" style="font-size:18px;">edit_note</span>Goal Notes &amp; Musings</span></div>
+              <div class="notes-body">
+                <div class="notebook">
+                  <div class="note">Must pick a favorite classic for November</div>
+                  <div class="note">Check review guidelines</div>
+                  <div class="note">Check your recommendations</div>
+                  <div class="note">Review notes</div>
+                  <div class="pen"></div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- =========================================================
+     MOBILE PAGE
+     ========================================================= -->
+  <div class="mobile-page">
+    <main class="mobile-shell">
+
+      <header class="mobile-topbar">
+        <span class="material-symbols-outlined">menu</span>
+        <div class="mobile-brand">
+          <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
+          <div>
+            <div class="brand-name">ANILOG</div>
+            <div class="brand-sub">ã‚¢ãƒ‹ãƒ­ã‚°</div>
+          </div>
+        </div>
+        <span class="material-symbols-outlined" id="mobile-search-toggle" style="cursor: pointer;">search</span>
+      </header>
+
+      <div class="mobile-search-bar" id="mobile-search-bar">
+        <div class="mobile-search-input-wrap">
+          <input type="text" id="mobile-search-input" placeholder="Search anime...">
+        </div>
+        <div class="search-results-dropdown" id="mobile-search-results"></div>
+      </div>
+
+      <div class="mobile-content">
+        <div class="mobile-title">
+          Goals &amp; Challenges
+          <span class="material-symbols-outlined">flag</span>
+        </div>
+
+        <!-- Yearly Goals -->
+        <div class="m-panel">
+          <div class="m-panel-title"><span>Yearly Goals</span><span class="right">2024 âŒ„</span></div>
+          <div class="m-goal-list">
+            <div class="m-goal">
+              <div class="m-goal-line"><span class="material-symbols-outlined">play_circle</span><span>Watch 100 new series</span></div>
+              <div class="m-progress"><span style="width:82%"></span></div>
+            </div>
+            <div class="m-goal">
+              <div class="m-goal-line"><span class="material-symbols-outlined">star</span><span>Complete 10 highly-rated classics</span></div>
+              <div class="m-progress"><span style="width:76%"></span></div>
+              <div class="checks" style="margin-left:28px;font-size:10px;"><b>âœ“</b>Completed new series<br><b>âœ“</b>Completed 10+ eps</div>
+            </div>
+            <div class="m-goal">
+              <div class="m-goal-line"><span class="material-symbols-outlined">event</span><span>Attend an Anime Convention</span></div>
+              <div class="m-progress"><span style="width:64%"></span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monthly Challenges -->
+        <div class="m-panel">
+          <div class="m-panel-title"><span>Monthly Challenges</span><span class="right">October âŒ„</span></div>
+          <div class="m-challenge-grid">
+            <div class="m-challenge">
+              <span class="material-symbols-outlined">task_alt</span>
+              <strong>Watch Anime<br>Completed</strong>
+              <div class="done">Completed</div>
+              <small>10 items completed</small>
+            </div>
+            <div class="m-challenge">
+              <span class="material-symbols-outlined">face</span>
+              <strong>Unlock new<br>Profile Avatar</strong>
+              <div class="done">Completed</div>
+            </div>
+            <div class="m-challenge">
+              <span class="material-symbols-outlined">rate_review</span>
+              <strong>Write 3<br>Anime Reviews</strong>
+              <small>2 of 3 completed</small>
+            </div>
+            <div class="m-challenge">
+              <span class="material-symbols-outlined">auto_stories</span>
+              <strong>Read 5<br>Manga Volumes</strong>
+              <small>3 of 5 completed</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rewards/Milestones -->
+        <div class="m-panel">
+          <div class="m-panel-title"><span>Rewards/Milestones</span></div>
+          <div class="m-goal-list">
+            <div class="m-goal" style="display:flex;align-items:center;gap:10px;min-height:44px;">
+              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Veteran" alt="" style="width:36px;height:36px;border-radius:6px;border:1px solid #6e3c8c;">
+              <div><strong style="font-size:12px;">The Veteran</strong><br><span style="font-size:10px;color:var(--muted);">50 anime completed</span></div>
+            </div>
+            <div class="m-goal" style="min-height:40px;">
+              <div style="font-size:12px;font-weight:600;">1000 Episodes Watched</div>
+              <div class="m-progress"><span style="width:73%"></span></div>
+              <span style="font-size:9px;color:var(--muted);">Progress to next badge</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Goal Notes -->
+        <div class="m-panel">
+          <div class="m-panel-title"><span>Goal Notes</span></div>
+          <div style="padding:10px 12px;font-size:11px;color:var(--muted);line-height:1.8;">
+            <div>â€¢ Must pick a favorite classic for November</div>
+            <div>â€¢ Check review guidelines</div>
+            <div>â€¢ Check your recommendations</div>
+            <div>â€¢ Review notes</div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="mobile-bottom-nav">
+        <div class="mobile-nav-item" onclick="window.location.href='./anilog-home.html';">
+          <span class="material-symbols-outlined">home</span>
+          <span>Home</span>
+        </div>
+        <div class="mobile-nav-item" onclick="window.location.href='./anilog-watchlist.html';">
+          <span class="material-symbols-outlined">list_alt</span>
+          <span>Watchlist</span>
+        </div>
+        <div class="mobile-nav-item" onclick="window.location.href='./anilog-currentlywatching.html';">
+          <span class="material-symbols-outlined">play_arrow</span>
+          <span>Watching</span>
+        </div>
+        <div class="mobile-nav-item" onclick="window.location.href='./anilog-completed.html';">
+          <span class="material-symbols-outlined">check_circle</span>
+          <span>Completed</span>
+        </div>
+        <div class="mobile-nav-item active">
+          <span class="material-symbols-outlined">target</span>
+          <span>Goals</span>
+        </div>
+      </nav>
+
+    </main>
+  </div>
+
+  <script>
+    window.addEventListener('load', async () => {
+      if (document.fonts) {
+        await document.fonts.ready;
+      }
+      const preloader = document.getElementById('preloader');
+      preloader.style.opacity = '0';
+      preloader.style.visibility = 'hidden';
+      document.body.classList.add('loaded');
+    });
+
+    let searchTimeout = null;
+    let currentAbortController = null;
+
+    function openAnimeReviewFromSearch(anime) {
+      const attr = anime.attributes || {};
+      const reviewData = {
+        id: anime.id,
+        title: attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled',
+        image: attr.posterImage?.large || attr.posterImage?.medium || attr.posterImage?.original || '',
+        episodes: attr.episodeCount || '',
+        status: attr.status || '',
+        type: attr.showType || '',
+        rating: attr.averageRating || '',
+        synopsis: attr.synopsis || '',
+        startDate: attr.startDate || ''
+      };
+      window.location.href = `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(JSON.stringify(reviewData))}`;
+    }
+
+    function handleSearch(query, resultsContainer) {
+      const cleanQuery = query.trim();
+
+      if (cleanQuery.length < 3) {
+        resultsContainer.classList.remove('active');
+        resultsContainer.innerHTML = '';
+        if (currentAbortController) currentAbortController.abort();
+        return;
+      }
+
+      clearTimeout(searchTimeout);
+
+      searchTimeout = setTimeout(async () => {
+        if (currentAbortController) {
+          currentAbortController.abort();
+        }
+        currentAbortController = new AbortController();
+
+        resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">Searching...</div>`;
+        resultsContainer.classList.add('active');
+
+        try {
+          const targetUrl = `https://kitsu.io/api/edge/anime?filter[text]=${encodeURIComponent(cleanQuery)}&page[limit]=6`;
+          const response = await fetch(targetUrl, {
+            signal: currentAbortController.signal,
+            headers: {
+              'Accept': 'application/vnd.api+json',
+              'Content-Type': 'application/vnd.api+json'
+            }
+          });
+
+          if (!response.ok) throw new Error(`HTTP_${response.status}`);
+          const data = await response.json();
+          const results = data.data || [];
+          resultsContainer._animeResults = results;
+
+          resultsContainer.innerHTML = '';
+
+          if (results.length === 0) {
+            resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">No anime found</div>`;
+          } else {
+            results.forEach(anime => {
+              const attr = anime.attributes || {};
+              const title = attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled';
+              const img = attr.posterImage?.tiny || attr.posterImage?.small || '';
+              const rating = attr.averageRating ? `â˜… ${(parseFloat(attr.averageRating) / 10).toFixed(1)}` : 'N/A';
+              const type = attr.showType ? attr.showType.toUpperCase() : 'ANIME';
+
+              const itemHTML = `
+              <div class="search-result-item" data-result-index="${results.indexOf(anime)}" role="button" tabindex="0">
+                <img src="${img}" alt="${title}">
+                <div class="search-result-info">
+                  <div class="search-result-title">${title}</div>
+                  <div class="search-result-meta">${type} â€¢ ${rating}</div>
+                </div>
+              </div>
+            `;
+              resultsContainer.insertAdjacentHTML('beforeend', itemHTML);
+            });
+          }
+        } catch (err) {
+          if (err.name === 'AbortError') return;
+          console.error('Search fetch error:', err);
+          resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--danger); text-align: center;">Search failed. Try typing again.</div>`;
+        }
+      }, 400);
+    }
+
+    const desktopInput = document.getElementById('desktop-search-input');
+    const desktopResults = document.getElementById('desktop-search-results');
+    if (desktopInput) {
+      desktopInput.addEventListener('input', (e) => handleSearch(e.target.value, desktopResults));
+    }
+
+    const mobileInput = document.getElementById('mobile-search-input');
+    const mobileResults = document.getElementById('mobile-search-results');
+    if (mobileInput) {
+      mobileInput.addEventListener('input', (e) => handleSearch(e.target.value, mobileResults));
+    }
+
+    const mobileSearchToggle = document.getElementById('mobile-search-toggle');
+    const mobileSearchBar = document.getElementById('mobile-search-bar');
+    if (mobileSearchToggle && mobileSearchBar) {
+      mobileSearchToggle.addEventListener('click', () => {
+        mobileSearchBar.classList.toggle('active');
+      });
+    }
+
+    document.addEventListener('click', (event) => {
+      const resultItem = event.target.closest('.search-result-item');
+      if (!resultItem) return;
+      const anime = resultItem.parentElement._animeResults?.[Number(resultItem.dataset.resultIndex)];
+      if (anime) openAnimeReviewFromSearch(anime);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (desktopResults && !e.target.closest('.search')) {
+        desktopResults.classList.remove('active');
+      }
+      if (mobileResults && !e.target.closest('#mobile-search-bar') && !e.target.closest('#mobile-search-toggle')) {
+        mobileResults.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+
+</html>
+

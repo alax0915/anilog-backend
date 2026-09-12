@@ -1,0 +1,1234 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="icon" type="image/png" href="./logo.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANILOG - Seasonal</title>
+
+  <!-- Google Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <style>
+    :root {
+      --bg: #05060c;
+      --panel: #090b13;
+      --panel2: #0d0f18;
+      --panel3: #11131d;
+      --border: #25283a;
+      --purple: #9d2cff;
+      --purple2: #c34cff;
+      --text: #f5f3f8;
+      --muted: #8f8d9d;
+      --dim: #676675;
+      --danger: #ff2d63;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      background: #03040a;
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    img {
+      display: block;
+      object-fit: cover;
+    }
+
+    /* ---------------- PRELOADER OVERLAY ---------------- */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #05050b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(157, 44, 255, 0.2);
+      border-top-color: var(--purple2);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .desktop-page,
+    .mobile-page {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease;
+    }
+
+    body.loaded .desktop-page,
+    body.loaded .mobile-page {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ---------------- MATERIAL ICONS ---------------- */
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    /* ---------------- DESKTOP LAYOUT ---------------- */
+
+    .desktop-page {
+      min-height: 100vh;
+      padding: 40px 8px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .desktop-shell {
+      position: relative;
+      width: min(1510px, 100%);
+      min-height: 935px;
+      display: grid;
+      grid-template-columns: 232px 1fr;
+      background:
+        radial-gradient(circle at 73% 20%, rgba(102, 20, 173, .16), transparent 28%),
+        linear-gradient(115deg, #090a12, #060810 58%, #080711);
+      border: 1px solid #272936;
+      border-radius: 9px;
+      overflow: visible;
+      box-shadow: 0 0 0 1px #25183b, 0 25px 70px rgba(0, 0, 0, .62);
+      backdrop-filter: blur(20px);
+    }
+
+    .desktop-shell::before {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      pointer-events: none;
+      z-index: 30;
+      border: 1px solid rgba(156, 47, 244, .48);
+      clip-path: polygon(0 0, 2% 0, 2.4% 1.5%, 98% 1.5%, 100% 0, 100% 98%, 98.4% 100%, 2% 100%, 0 98%);
+    }
+
+    /* ---------------- SIDEBAR & ANIMATIONS ---------------- */
+
+    .sidebar {
+      position: relative;
+      z-index: 10;
+      min-height: 933px;
+      padding: 26px 16px 16px;
+      border-right: 1px solid #252637;
+      background: linear-gradient(180deg, rgba(13, 14, 23, .97), rgba(5, 7, 13, .98));
+      border-top-left-radius: 9px;
+      border-bottom-left-radius: 9px;
+      perspective: 1000px;
+    }
+
+    body.loaded .sidebar {
+      animation: sidebarSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes sidebarSlideIn {
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .side-link {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+
+    body.loaded .side-link {
+      animation: navItemSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    body.loaded .side-link:nth-child(1) { animation-delay: 0.15s; }
+    body.loaded .side-link:nth-child(2) { animation-delay: 0.20s; }
+    body.loaded .side-link:nth-child(3) { animation-delay: 0.25s; }
+    body.loaded .side-link:nth-child(4) { animation-delay: 0.30s; }
+    body.loaded .side-link:nth-child(5) { animation-delay: 0.35s; }
+    body.loaded .side-link:nth-child(6) { animation-delay: 0.40s; }
+    body.loaded .side-link:nth-child(7) { animation-delay: 0.45s; }
+    body.loaded .side-link:nth-child(8) { animation-delay: 0.50s; }
+    body.loaded .side-link:nth-child(9) { animation-delay: 0.55s; }
+    body.loaded .side-link:nth-child(10) { animation-delay: 0.60s; }
+    body.loaded .side-link:nth-child(11) { animation-delay: 0.65s; }
+    body.loaded .side-link:nth-child(12) { animation-delay: 0.70s; }
+
+    @keyframes navItemSlideIn {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 10px 31px;
+    }
+
+    .sidebar-brand img {
+      width: 39px;
+      height: 39px;
+    }
+
+    .brand-name {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.7px;
+      background: linear-gradient(135deg, #ffffff, #c65cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+      border-right: 2px solid #c65cff;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: typingLoop 5s steps(6, end) infinite, blinkCursor 0.75s step-end infinite;
+    }
+
+    @keyframes typingLoop {
+      0%, 100% { width: 0; }
+      30%, 70% { width: 6.2ch; }
+    }
+
+    @keyframes blinkCursor {
+      from, to { border-color: transparent; }
+      50% { border-color: #c65cff; }
+    }
+
+    .brand-sub {
+      margin-top: 3px;
+      color: var(--purple2);
+      font-size: 8px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .side-link {
+      height: 41px;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      font-size: 14px;
+      text-align: left;
+      color: #efedf3;
+      transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .side-link:hover {
+      background: rgba(157, 44, 255, 0.1);
+      border-color: rgba(157, 44, 255, 0.3);
+    }
+
+    .side-link.active {
+      border-color: #a12aff;
+      background: linear-gradient(90deg, rgba(118, 22, 183, .43), rgba(67, 17, 102, .22));
+      box-shadow: inset 0 0 20px rgba(155, 34, 246, .09);
+    }
+
+    .user-card {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 46px;
+      height: 125px;
+      padding: 18px 14px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      border: 1px solid #9b31e7;
+      border-radius: 7px;
+      background: linear-gradient(145deg, rgba(14, 16, 27, .98), rgba(7, 8, 15, .98));
+      clip-path: polygon(4% 0, 96% 0, 100% 7%, 100% 93%, 96% 100%, 4% 100%, 0 93%, 0 7%);
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      opacity: 0;
+    }
+
+    body.loaded .user-card {
+      animation: userCardFlip 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s forwards;
+    }
+
+    @keyframes userCardFlip {
+      from {
+        opacity: 0;
+        transform: rotateY(-180deg);
+      }
+      to {
+        opacity: 1;
+        transform: rotateY(0deg);
+      }
+    }
+
+    .user-avatar {
+      width: 49px;
+      height: 49px;
+      flex: 0 0 49px;
+      border: 1px solid #a42df2;
+      border-radius: 50%;
+      padding: 3px;
+    }
+
+    .user-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .user-name {
+      margin: 0 0 4px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .user-level {
+      color: #9996a5;
+      font-size: 9px;
+      margin-bottom: 9px;
+    }
+
+    .xp-track {
+      width: 100%;
+      height: 4px;
+      background: #252633;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .xp-fill {
+      width: 63%;
+      height: 100%;
+      background: #9c2cff;
+    }
+
+    .xp-text {
+      margin-top: 7px;
+      color: #9c99a7;
+      font-size: 9px;
+    }
+
+    /* ---------------- MAIN SECTION ---------------- */
+
+    .main {
+      min-width: 0;
+      padding: 0 17px 45px;
+      position: relative;
+    }
+
+    .topbar {
+      height: 84px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid rgba(31, 34, 47, .65);
+      position: relative;
+      z-index: 100;
+    }
+
+    .search {
+      position: relative;
+      width: 300px;
+      height: 41px;
+      margin-left: 180px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      border: 1px solid #272a39;
+      border-radius: 22px;
+      background: rgba(16, 18, 28, .88);
+      transition: border-color 0.2s ease;
+      opacity: 0;
+    }
+
+    body.loaded .search {
+      animation: googleSearchExpand 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
+    }
+
+    @keyframes googleSearchExpand {
+      0% { opacity: 0; clip-path: circle(0px at 50% 50%); }
+      10% { opacity: 1; clip-path: circle(12px at 50% 50%); }
+      100% { opacity: 1; clip-path: none; }
+    }
+
+    .search:focus-within {
+      border-color: var(--purple2);
+    }
+
+    .search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: #eee;
+      font-size: 12px;
+    }
+
+    .top-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 27px;
+      padding-right: 16px;
+      opacity: 0;
+    }
+
+    body.loaded .top-actions {
+      animation: topActionsFadeIn 0.6s ease 0.5s forwards;
+    }
+
+    @keyframes topActionsFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .top-action-wrap {
+      position: relative;
+    }
+
+    .top-action {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #f2edf5;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .top-action:hover {
+      background: rgba(157, 44, 255, 0.15);
+    }
+
+    .profile-wrap {
+      position: relative;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .profile:hover {
+      background: rgba(157, 44, 255, 0.15);
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--purple2);
+    }
+
+    .dropdown-panel {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      width: 220px;
+      background: #0d0f1a;
+      border: 1px solid var(--purple);
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 150;
+      padding: 8px 0;
+    }
+
+    .top-action-wrap:hover .dropdown-panel,
+    .profile-wrap:hover .dropdown-panel {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-panel-header {
+      padding: 8px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--purple2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text);
+      transition: background 0.2s ease, color 0.2s ease;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+    }
+
+    .dropdown-item:hover {
+      background: rgba(157, 44, 255, 0.2);
+      color: #ffffff;
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 0;
+    }
+
+    /* Seasonal Specific Styles Matching Theme */
+    .hero {
+      position: relative;
+      height: 200px;
+      margin-top: 20px;
+      overflow: hidden;
+      border-radius: 8px;
+      padding: 30px;
+      opacity: 0;
+    }
+
+    body.loaded .hero {
+      animation: heroZoomIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+    }
+
+    @keyframes heroZoomIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .hero-art {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(90deg, rgba(4, 6, 13, .91) 0%, rgba(4, 5, 11, .68) 50%, transparent 100%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero h1 {
+      margin: 0 0 6px;
+      font-size: 32px;
+      letter-spacing: -1px;
+    }
+
+    .hero p {
+      margin: 0;
+      font-size: 14px;
+      color: #bfb7c6;
+    }
+
+    .hero-action {
+      position: absolute;
+      right: 30px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+      height: 40px;
+      padding: 0 20px;
+      border: 1px solid #a32bee;
+      border-radius: 6px;
+      background: linear-gradient(90deg, #7419bd, #51108b);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .tabs-row {
+      margin: 20px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tabs {
+      display: flex;
+      border: 1px solid #45225d;
+      border-radius: 6px;
+      background: rgba(8, 9, 17, .82);
+      overflow: hidden;
+    }
+
+    .tab {
+      height: 36px;
+      padding: 0 20px;
+      border: 0;
+      border-right: 1px solid #292130;
+      background: transparent;
+      font-size: 12px;
+      color: #bcb5c1;
+      white-space: nowrap;
+    }
+
+    .tab:last-child {
+      border: 0;
+    }
+
+    .tab.active {
+      background: linear-gradient(180deg, #751bc0, #4f1089);
+      color: #fff;
+    }
+
+    .table {
+      width: 100%;
+      border: 1px solid #34253e;
+      border-radius: 8px;
+      overflow: hidden;
+      background: rgba(5, 7, 14, .78);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      height: 45px;
+      border-bottom: 1px solid #30223a;
+      background: rgba(14, 10, 22, .78);
+      color: #b844ed;
+      font-size: 12px;
+      text-align: left;
+      padding: 0 16px;
+    }
+
+    td {
+      height: 60px;
+      padding: 0 16px;
+      border-bottom: 1px solid #1e202d;
+      font-size: 13px;
+    }
+
+    .title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .title img {
+      width: 45px;
+      height: 52px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .title b {
+      font-size: 13px;
+      display: block;
+    }
+
+    .title small {
+      color: #aaa3ad;
+      font-size: 11px;
+    }
+
+    .status, .priority {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 5px;
+      font-size: 11px;
+    }
+
+    .status {
+      background: #141522;
+      border: 1px solid #292333;
+      color: #c5bdc9;
+    }
+
+    .high { background: rgba(117, 13, 38, .35); color: #ff5475; }
+    .medium { background: rgba(110, 61, 10, .35); color: #ffb84e; }
+    .low { background: rgba(16, 58, 118, .42); color: #63a9ff; }
+    .featured { background: rgba(102, 61, 10, .42); color: #ffc05d; }
+    .continuing { background: rgba(71, 54, 14, .45); color: #f2c25f; }
+
+    .pagination {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .page-btn {
+      width: 36px;
+      height: 36px;
+      border: 1px solid #151924;
+      border-radius: 6px;
+      background: #070910;
+      font-size: 13px;
+    }
+
+    .page-btn.active {
+      border-color: #a32bee;
+      background: #6816b1;
+    }
+
+    /* ---------------- MOBILE LAYOUT ---------------- */
+    .mobile-page {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .desktop-page {
+        display: none;
+      }
+      .mobile-page {
+        display: block;
+        min-height: 100vh;
+        background: #05060c;
+        padding-bottom: 74px;
+      }
+
+      .mobile-topbar {
+        height: 69px;
+        padding: 17px 16px 7px;
+        display: flex;
+        align-items: center;
+        gap: 17px;
+        background: rgba(6, 7, 13, .96);
+      }
+
+      .mobile-brand {
+        margin: auto;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .mobile-brand img {
+        width: 31px;
+        height: 31px;
+      }
+
+      .mobile-brand .brand-name {
+        font-size: 17px;
+        font-weight: 800;
+      }
+
+      .mobile-brand .brand-sub {
+        font-size: 6px;
+        color: var(--purple2);
+      }
+
+      .mobile-content {
+        padding: 14px;
+      }
+
+      .mobile-anime-list {
+        display: grid;
+        gap: 8px;
+        margin-top: 18px;
+      }
+
+      .mobile-anime-card {
+        display: grid;
+        grid-template-columns: 48px minmax(0, 1fr);
+        gap: 10px;
+        padding: 8px;
+        border: 1px solid #302342;
+        border-radius: 6px;
+        background: rgba(11, 13, 21, .9);
+      }
+
+      .mobile-anime-card img {
+        width: 48px;
+        height: 64px;
+        border-radius: 4px;
+      }
+
+      .mobile-anime-card h2 {
+        margin: 1px 0 5px;
+        overflow: hidden;
+        font-size: 11px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .mobile-anime-card p {
+        margin: 3px 0;
+        color: #aaa2b4;
+        font-size: 9px;
+      }
+
+      .mobile-anime-pagination {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        margin: 12px 0 20px;
+      }
+
+      .mobile-anime-pagination button {
+        min-width: 27px;
+        height: 27px;
+        border: 1px solid #342448;
+        border-radius: 4px;
+        background: #11101c;
+        color: #eee;
+        font-size: 10px;
+      }
+
+      .mobile-anime-pagination button.active {
+        border-color: #b348ff;
+        background: #7023a7;
+      }
+
+      .mobile-hero {
+        position: relative;
+        height: 180px;
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 20px;
+      }
+
+      .mobile-hero img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .mobile-hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(3, 4, 10, .2), rgba(3, 4, 10, .9));
+      }
+
+      .mobile-hero-content {
+        position: relative;
+        z-index: 2;
+      }
+
+      .mobile-hero-content h1 {
+        font-size: 22px;
+        margin: 0 0 6px;
+      }
+
+      .mobile-hero-content p {
+        font-size: 11px;
+        color: #c3bcc8;
+        margin: 0;
+      }
+
+      .mobile-bottom-nav {
+        position: fixed;
+        z-index: 50;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 72px;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        border-top: 1px solid #242636;
+        background: rgba(7, 8, 14, .98);
+        backdrop-filter: blur(14px);
+      }
+
+      .mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        color: #d5d2dc;
+        font-size: 8px;
+      }
+
+      .mobile-nav-item.active {
+        color: #bd43ff;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- PRELOADER OVERLAY -->
+  <div id="preloader">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- ================= DESKTOP PAGE ================= -->
+  <div class="desktop-page">
+    <main class="desktop-shell">
+
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
+          <div>
+            <h1 class="brand-name">ANILOG</h1>
+            <div class="brand-sub">アニログ</div>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <button class="side-link " onclick="window.location.href='./anilog-home.html';"><span class="material-symbols-outlined">home</span>Home</button>
+          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';"><span class="material-symbols-outlined">list_alt</span>Watchlist</button>
+          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span class="material-symbols-outlined">play_circle</span>Currently Watching</button>
+          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span class="material-symbols-outlined">check_circle</span>Completed</button>
+          <button class="side-link active" onclick="window.location.href='./anilog-seasonal-all.html';"><span class="material-symbols-outlined">calendar_month</span>Seasonal</button>
+          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span class="material-symbols-outlined">rate_review</span>Reviews</button>
+          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span>Profile</button>
+          <button class="side-link" onclick="window.location.href='./anilog-favorites.html';"><span class="material-symbols-outlined">bookmark</span>Favorites</button>
+          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span class="material-symbols-outlined">leaderboard</span>Top Lists</button>
+          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span class="material-symbols-outlined">shopping_bag</span>Merch</button>
+          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span class="material-symbols-outlined">history</span>Logs</button>
+          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span class="material-symbols-outlined">target</span>Goals</button>
+          <button class="side-link " onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
+        </nav>
+
+
+        <div class="user-card">
+          <img class="user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="Avatar">
+          <div class="user-info">
+            <h3 class="user-name">ShadowX</h3>
+            <div class="user-level">Level 27</div>
+            <div class="xp-track">
+              <div class="xp-fill"></div>
+            </div>
+            <div class="xp-text">XP 4,250 / 6,800</div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="main">
+        <header class="topbar">
+          <div class="search">
+            <input type="text" placeholder="Search anime...">
+            <span class="material-symbols-outlined">search</span>
+          </div>
+
+          <div class="top-actions">
+            <div class="top-action-wrap">
+              <div class="top-action"><span class="material-symbols-outlined">notifications</span></div>
+            </div>
+            <div class="top-action-wrap">
+              <div class="top-action streak">
+                <span class="material-symbols-outlined" style="color: #ff2d63;">local_fire_department</span>
+                <span>12</span>
+              </div>
+            </div>
+            <div class="top-action-wrap">
+              <div class="top-action"><span class="material-symbols-outlined">settings</span></div>
+            </div>
+            <div class="profile-wrap">
+              <div class="profile">
+                <img class="avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="User">
+                <span class="material-symbols-outlined">expand_more</span>
+              </div>
+              <div class="dropdown-panel">
+                <div class="dropdown-panel-header">User Profile</div>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span> View Profile</button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-edit-profile.html';"><span class="material-symbols-outlined">edit</span> Edit Profile</button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item" style="color: var(--danger);"><span class="material-symbols-outlined">logout</span> Log Out</button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section class="hero">
+          <img class="hero-art" src="./pc-bg.png" alt="Hero Art" onerror="this.style.display='none'">
+          <div class="hero-content">
+            <h1 id="desktopTitle">Seasonal Overview</h1>
+            <p id="desktopSubtitle">Plan your anime journey. Prioritize and organize what to watch next.</p>
+          </div>
+          <button class="hero-action" id="heroAction">+ Add Anime</button>
+        </section>
+
+        <div class="tabs-row">
+          <div class="tabs" id="desktopTabs"></div>
+        </div>
+
+        <div class="table">
+          <table>
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="pagination"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ================= MOBILE PAGE ================= -->
+  <div class="mobile-page">
+    <header class="mobile-topbar">
+      <span class="material-symbols-outlined">menu</span>
+      <div class="mobile-brand">
+        <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
+        <div>
+          <div class="brand-name">ANILOG</div>
+          <div class="brand-sub">アニログ</div>
+        </div>
+      </div>
+      <span class="material-symbols-outlined">search</span>
+    </header>
+
+    <div class="mobile-content">
+      <section class="mobile-hero">
+        <img src="./pc-bg.png" alt="Banner" onerror="this.style.display='none'">
+        <div class="mobile-hero-content">
+          <h1 id="mobileTitle">Seasonal<br>Overview</h1>
+          <p id="mobileSubtitle">Plan your anime journey.<br>What to watch next.</p>
+        </div>
+      </section>
+      <section class="mobile-anime-list" id="mobile-anime-list"></section>
+      <div class="mobile-anime-pagination" id="mobile-anime-pagination"></div>
+    </div>
+
+    <nav class="mobile-bottom-nav">
+      <div class="mobile-nav-item" onclick="window.location.href='./anilog-home.html';">
+        <span class="material-symbols-outlined">home</span>
+        <span>Home</span>
+      </div>
+      <div class="mobile-nav-item active">
+        <span class="material-symbols-outlined">calendar_month</span>
+        <span>Seasonal</span>
+      </div>
+      <div class="mobile-nav-item">
+        <span class="material-symbols-outlined">play_arrow</span>
+        <span>Watching</span>
+      </div>
+      <div class="mobile-nav-item">
+        <span class="material-symbols-outlined">check_circle</span>
+        <span>Completed</span>
+      </div>
+      <div class="mobile-nav-item">
+        <span class="material-symbols-outlined">more_vert</span>
+        <span>More</span>
+      </div>
+    </nav>
+  </div>
+
+  <script>
+    window.addEventListener('load', async () => {
+      if (document.fonts) {
+        await document.fonts.ready;
+      }
+      const preloader = document.getElementById('preloader');
+      preloader.style.opacity = '0';
+      preloader.style.visibility = 'hidden';
+      document.body.classList.add('loaded');
+    });
+
+    const pageSize = 4;
+    let currentPage = 1;
+    let seasonalAnime = [];
+
+    function escapeHTML(value) {
+      return String(value ?? '').replace(/[&<>'"]/g, character => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      }[character]));
+    }
+
+    function currentSeason() {
+      const month = new Date().getMonth() + 1;
+      if (month <= 3) return 'winter';
+      if (month <= 6) return 'spring';
+      if (month <= 9) return 'summer';
+      return 'fall';
+    }
+
+    function animeDetails(anime, included) {
+      const attr = anime.attributes || {};
+      const genreIds = anime.relationships?.genres?.data?.map(genre => genre.id) || [];
+      const genres = genreIds.map(id => included.find(item => item.type === 'genres' && item.id === id)?.attributes?.name).filter(Boolean);
+      const title = attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled';
+      return {
+        title,
+        image: attr.posterImage?.medium || attr.posterImage?.small || attr.posterImage?.tiny || '',
+        genres: genres.join(', ') || 'Genre unavailable',
+        episodes: attr.episodeCount || 'TBA',
+        rating: attr.averageRating ? `${(parseFloat(attr.averageRating) / 10).toFixed(1)}/10` : 'Not rated',
+        status: attr.status === 'current' ? 'Airing' : attr.status || 'TBA',
+        notes: attr.synopsis ? attr.synopsis.slice(0, 70) + (attr.synopsis.length > 70 ? '...' : '') : 'No notes yet'
+      };
+    }
+
+    function renderPagination(container, totalPages) {
+      if (!container) return;
+      
+      let buttonsHTML = '';
+
+      // Prev Button
+      buttonsHTML += `<button class="page-btn" data-prev ${currentPage === 1 ? 'disabled style="opacity:0.4;cursor:default;"' : ''}>‹</button>`;
+
+      for (let page = 1; page <= totalPages; page++) {
+        buttonsHTML += `<button class="page-btn ${page === currentPage ? 'active' : ''}" data-page="${page}">${page}</button>`;
+      }
+
+      // Next Button
+      buttonsHTML += `<button class="page-btn" data-next ${currentPage === totalPages ? 'disabled style="opacity:0.4;cursor:default;"' : ''}>›</button>`;
+
+      container.innerHTML = buttonsHTML;
+
+      container.querySelectorAll('[data-page]').forEach(button => {
+        button.addEventListener('click', () => {
+          currentPage = Number(button.dataset.page);
+          renderAnimePage();
+        });
+      });
+
+      const prevBtn = container.querySelector('[data-prev]');
+      if (prevBtn && currentPage > 1) {
+        prevBtn.addEventListener('click', () => {
+          currentPage--;
+          renderAnimePage();
+        });
+      }
+
+      const nextBtn = container.querySelector('[data-next]');
+      if (nextBtn && currentPage < totalPages) {
+        nextBtn.addEventListener('click', () => {
+          currentPage++;
+          renderAnimePage();
+        });
+      }
+    }
+
+    function renderAnimePage() {
+      const start = (currentPage - 1) * pageSize;
+      const visibleAnime = seasonalAnime.slice(start, start + pageSize);
+
+      document.getElementById('tableBody').innerHTML = visibleAnime.map(anime => `<tr>
+        <td><div class="title"><img src="${escapeHTML(anime.image)}" alt="${escapeHTML(anime.title)}"><div><b>${escapeHTML(anime.title)}</b><small>${escapeHTML(anime.status)}</small></div></div></td>
+        <td>${escapeHTML(anime.genres)}</td><td>${escapeHTML(anime.episodes)}</td>
+        <td><span class="priority high">★ ${escapeHTML(anime.rating)}</span></td>
+        <td><span class="status">◯ ${escapeHTML(anime.status)}</span></td>
+        <td>${escapeHTML(anime.notes)}</td><td style="color: var(--purple2); letter-spacing: 2px;">•••</td>
+      </tr>`).join('');
+
+      document.getElementById('mobile-anime-list').innerHTML = visibleAnime.map(anime => `<article class="mobile-anime-card">
+        <img src="${escapeHTML(anime.image)}" alt="${escapeHTML(anime.title)}"><div><h2>${escapeHTML(anime.title)}</h2><p>${escapeHTML(anime.genres)}</p><p>Episodes: ${escapeHTML(anime.episodes)} · ★ ${escapeHTML(anime.rating)}</p><p>${escapeHTML(anime.notes)}</p></div>
+      </article>`).join('');
+
+      const totalPages = Math.max(1, Math.ceil(seasonalAnime.length / pageSize));
+      renderPagination(document.querySelector('.pagination'), totalPages);
+      renderPagination(document.getElementById('mobile-anime-pagination'), totalPages);
+    }
+
+    async function loadSeasonalAnime() {
+      const season = currentSeason();
+      const year = new Date().getFullYear();
+      const endpoint = `https://kitsu.io/api/edge/anime?filter[season]=${season}&filter[seasonYear]=${year}&sort=-userCount&include=genres&page[limit]=20`;
+      
+      try {
+        const response = await fetch(endpoint, { headers: { Accept: 'application/vnd.api+json' } });
+        let json;
+        if (response.ok) {
+          json = await response.json();
+        } else {
+          const fallback = await fetch('https://kitsu.io/api/edge/anime?filter[status]=current&sort=-userCount&include=genres&page[limit]=20', { headers: { Accept: 'application/vnd.api+json' } });
+          if (!fallback.ok) throw new Error(`HTTP_${response.status}`);
+          json = await fallback.json();
+        }
+        seasonalAnime = (json.data || []).filter(anime => window.anilogContentFilter?.allows(anime) !== false).map(anime => animeDetails(anime, json.included || []));
+        const displaySeason = season[0].toUpperCase() + season.slice(1);
+        document.getElementById('desktopTitle').textContent = `${displaySeason} Seasonal Overview`;
+        document.getElementById('mobileTitle').innerHTML = `${displaySeason}<br>Overview`;
+        document.getElementById('desktopSubtitle').textContent = `${seasonalAnime.length} live anime from the current season.`;
+        document.getElementById('mobileSubtitle').textContent = 'Live anime from the current season.';
+      } catch (error) {
+        console.error('Failed to load seasonal anime:', error);
+        seasonalAnime = [];
+        document.getElementById('desktopSubtitle').textContent = 'Seasonal anime could not be loaded right now.';
+      }
+      renderAnimePage();
+    }
+
+    document.getElementById('tableHead').innerHTML = '<tr><th>TITLE</th><th>GENRE</th><th>EPISODES</th><th>STARS</th><th>STATUS</th><th>NOTES</th><th></th></tr>';
+    loadSeasonalAnime();
+  </script>
+</body>
+
+</html>

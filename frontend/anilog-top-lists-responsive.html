@@ -1,0 +1,1599 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="icon" type="image/png" href="./logo.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANILOG - Top Lists</title>
+
+  <!-- Google Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <style>
+    :root {
+      --bg: #05060c;
+      --panel: #090b13;
+      --panel2: #0d0f18;
+      --panel3: #11131d;
+      --border: #25283a;
+      --purple: #9d2cff;
+      --purple2: #c34cff;
+      --text: #f5f3f8;
+      --muted: #8f8d9d;
+      --dim: #676675;
+      --danger: #ff2d63;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      background: #03040a;
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    img {
+      display: block;
+      object-fit: cover;
+    }
+
+    /* ---------------- PRELOADER OVERLAY ---------------- */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #05050b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(157, 44, 255, 0.2);
+      border-top-color: var(--purple2);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .desktop-page,
+    .mobile-page {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease;
+    }
+
+    body.loaded .desktop-page,
+    body.loaded .mobile-page {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ---------------- MATERIAL ICONS ---------------- */
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    /* ---------------- DESKTOP LAYOUT ---------------- */
+
+    .desktop-page {
+      min-height: 100vh;
+      padding: 40px 8px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .desktop-shell {
+      position: relative;
+      width: min(1510px, 100%);
+      min-height: 935px;
+      display: grid;
+      grid-template-columns: 232px 1fr;
+      background:
+        radial-gradient(circle at 73% 20%, rgba(102, 20, 173, .16), transparent 28%),
+        linear-gradient(115deg, #090a12, #060810 58%, #080711);
+      border: 1px solid #272936;
+      border-radius: 9px;
+      overflow: visible;
+      box-shadow: 0 0 0 1px #25183b, 0 25px 70px rgba(0, 0, 0, .62);
+      backdrop-filter: blur(20px);
+    }
+
+    .desktop-shell::before {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      pointer-events: none;
+      z-index: 30;
+      border: 1px solid rgba(156, 47, 244, .48);
+      clip-path: polygon(0 0, 2% 0, 2.4% 1.5%, 98% 1.5%, 100% 0, 100% 98%, 98.4% 100%, 2% 100%, 0 98%);
+    }
+
+    /* ---------------- SIDEBAR & ANIMATIONS ---------------- */
+
+    .sidebar {
+      position: relative;
+      z-index: 10;
+      min-height: 933px;
+      padding: 26px 16px 16px;
+      border-right: 1px solid #252637;
+      background: linear-gradient(180deg, rgba(13, 14, 23, .97), rgba(5, 7, 13, .98));
+      border-top-left-radius: 9px;
+      border-bottom-left-radius: 9px;
+      perspective: 1000px;
+    }
+
+    body.loaded .sidebar {
+      animation: sidebarSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes sidebarSlideIn {
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .side-link {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+
+    body.loaded .side-link {
+      animation: navItemSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    body.loaded .side-link:nth-child(1) { animation-delay: 0.15s; }
+    body.loaded .side-link:nth-child(2) { animation-delay: 0.20s; }
+    body.loaded .side-link:nth-child(3) { animation-delay: 0.25s; }
+    body.loaded .side-link:nth-child(4) { animation-delay: 0.30s; }
+    body.loaded .side-link:nth-child(5) { animation-delay: 0.35s; }
+    body.loaded .side-link:nth-child(6) { animation-delay: 0.40s; }
+    body.loaded .side-link:nth-child(7) { animation-delay: 0.45s; }
+    body.loaded .side-link:nth-child(8) { animation-delay: 0.50s; }
+    body.loaded .side-link:nth-child(9) { animation-delay: 0.55s; }
+    body.loaded .side-link:nth-child(10) { animation-delay: 0.60s; }
+    body.loaded .side-link:nth-child(11) { animation-delay: 0.65s; }
+    body.loaded .side-link:nth-child(12) { animation-delay: 0.70s; }
+
+    @keyframes navItemSlideIn {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 10px 31px;
+    }
+
+    .sidebar-brand img {
+      width: 39px;
+      height: 39px;
+    }
+
+    .brand-name {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.7px;
+      background: linear-gradient(135deg, #ffffff, #c65cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+      border-right: 2px solid #c65cff;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: typingLoop 5s steps(6, end) infinite, blinkCursor 0.75s step-end infinite;
+    }
+
+    @keyframes typingLoop {
+      0%, 100% { width: 0; }
+      30%, 70% { width: 6.2ch; }
+    }
+
+    @keyframes blinkCursor {
+      from, to { border-color: transparent; }
+      50% { border-color: #c65cff; }
+    }
+
+    .brand-sub {
+      margin-top: 3px;
+      color: var(--purple2);
+      font-size: 8px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .side-link {
+      height: 41px;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      font-size: 14px;
+      text-align: left;
+      color: #efedf3;
+      transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      width: 100%;
+    }
+
+    .side-link:hover {
+      background: rgba(157, 44, 255, 0.1);
+      border-color: rgba(157, 44, 255, 0.3);
+    }
+
+    .side-link.active {
+      border-color: #a12aff;
+      background: linear-gradient(90deg, rgba(118, 22, 183, .43), rgba(67, 17, 102, .22));
+      box-shadow: inset 0 0 20px rgba(155, 34, 246, .09);
+    }
+
+    .user-card {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 46px;
+      height: 125px;
+      padding: 18px 14px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      border: 1px solid #9b31e7;
+      border-radius: 7px;
+      background: linear-gradient(145deg, rgba(14, 16, 27, .98), rgba(7, 8, 15, .98));
+      clip-path: polygon(4% 0, 96% 0, 100% 7%, 100% 93%, 96% 100%, 4% 100%, 0 93%, 0 7%);
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      opacity: 0;
+    }
+
+    body.loaded .user-card {
+      animation: userCardFlip 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s forwards;
+    }
+
+    @keyframes userCardFlip {
+      from {
+        opacity: 0;
+        transform: rotateY(-180deg);
+      }
+      to {
+        opacity: 1;
+        transform: rotateY(0deg);
+      }
+    }
+
+    .user-avatar {
+      width: 49px;
+      height: 49px;
+      flex: 0 0 49px;
+      border: 1px solid #a42df2;
+      border-radius: 50%;
+      padding: 3px;
+    }
+
+    .user-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .user-name {
+      margin: 0 0 4px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .user-level {
+      color: #9996a5;
+      font-size: 9px;
+      margin-bottom: 9px;
+    }
+
+    .xp-track {
+      width: 100%;
+      height: 4px;
+      background: #252633;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .xp-fill {
+      width: 63%;
+      height: 100%;
+      background: #9c2cff;
+    }
+
+    .xp-text {
+      margin-top: 7px;
+      color: #9c99a7;
+      font-size: 9px;
+    }
+
+    /* ---------------- MAIN SECTION & TOPBAR ---------------- */
+
+    .main {
+      min-width: 0;
+      padding: 0 17px 45px;
+    }
+
+    .topbar {
+      height: 84px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid rgba(31, 34, 47, .65);
+      position: relative;
+      z-index: 100;
+    }
+
+    .search {
+      position: relative;
+      width: 300px;
+      height: 41px;
+      margin-left: 180px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      border: 1px solid #272a39;
+      border-radius: 22px;
+      background: rgba(16, 18, 28, .88);
+      transition: border-color 0.2s ease;
+      opacity: 0;
+    }
+
+    body.loaded .search {
+      animation: googleSearchExpand 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
+    }
+
+    @keyframes googleSearchExpand {
+      0% {
+        opacity: 0;
+        clip-path: circle(0px at 50% 50%);
+      }
+      10% {
+        opacity: 1;
+        clip-path: circle(12px at 50% 50%);
+      }
+      100% {
+        opacity: 1;
+        clip-path: none;
+      }
+    }
+
+    .search:focus-within {
+      border-color: var(--purple2);
+    }
+
+    .search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: #eee;
+      font-size: 12px;
+    }
+
+    .search-results-dropdown {
+      position: absolute;
+      top: 48px;
+      left: 0;
+      right: 0;
+      max-height: 380px;
+      overflow-y: auto;
+      background: #090b14;
+      border: 1px solid var(--purple);
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+    }
+
+    .search-results-dropdown.active {
+      display: flex;
+    }
+
+    .search-result-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-bottom: 1px solid #1a1c29;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .search-result-item:last-child {
+      border-bottom: none;
+    }
+
+    .search-result-item:hover {
+      background: rgba(157, 44, 255, 0.15);
+    }
+
+    .search-result-item img {
+      width: 32px;
+      height: 45px;
+      border-radius: 4px;
+    }
+
+    .search-result-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      overflow: hidden;
+    }
+
+    .search-result-title {
+      font-size: 12px;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 600;
+    }
+
+    .search-result-meta {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .top-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 27px;
+      padding-right: 16px;
+      opacity: 0;
+    }
+
+    body.loaded .top-actions {
+      animation: topActionsFadeIn 0.6s ease 0.5s forwards;
+    }
+
+    @keyframes topActionsFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .top-action-wrap {
+      position: relative;
+    }
+
+    .top-action {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #f2edf5;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .top-action:hover {
+      background: rgba(157, 44, 255, 0.15);
+    }
+
+    .profile-wrap {
+      position: relative;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .profile:hover {
+      background: rgba(157, 44, 255, 0.15);
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--purple2);
+    }
+
+    .dropdown-panel {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      width: 220px;
+      background: #0d0f1a;
+      border: 1px solid var(--purple);
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 150;
+      padding: 8px 0;
+    }
+
+    .top-action-wrap:hover .dropdown-panel,
+    .profile-wrap:hover .dropdown-panel {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-panel-header {
+      padding: 8px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--purple2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text);
+      transition: background 0.2s ease, color 0.2s ease;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+    }
+
+    .dropdown-item:hover {
+      background: rgba(157, 44, 255, 0.2);
+      color: #ffffff;
+    }
+
+    .dropdown-item .material-symbols-outlined {
+      font-size: 18px;
+      color: var(--muted);
+    }
+
+    .dropdown-item:hover .material-symbols-outlined {
+      color: var(--purple2);
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 0;
+    }
+
+    /* ---------------- TOP LISTS CONTENT & GRID STYLES ---------------- */
+    .title {
+      font-size: 28px;
+      font-weight: 800;
+      margin: 24px 0 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1.05fr .82fr .82fr;
+      grid-template-rows: auto auto auto;
+      gap: 12px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card {
+      border: 1px solid #3a2055;
+      border-radius: 8px;
+      background: linear-gradient(145deg, rgba(22, 14, 35, .9), rgba(8, 9, 18, .91));
+      box-shadow: inset 0 0 18px rgba(126, 26, 221, .05);
+      overflow: hidden;
+    }
+
+    .card-title {
+      height: 39px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #281838;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .card-title .purple {
+      color: #bd3cff;
+    }
+
+    .top-anime {
+      grid-column: 1 / 3;
+    }
+
+    .anime-list {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+    }
+
+    .anime {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .poster {
+      width: 100%;
+      height: 110px;
+      border-radius: 6px;
+      border: 1px solid #452061;
+      background:
+        linear-gradient(145deg, #322040, #0c0915 70%),
+        radial-gradient(circle at 70% 35%, #a33cff, transparent 35%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .poster::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(177, 52, 255, .32), transparent 48%, rgba(255, 255, 255, .05));
+    }
+
+    .anime-name {
+      font-size: 10px;
+      margin-top: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 600;
+    }
+
+    .rating {
+      font-size: 9px;
+      color: #c447ff;
+      margin-top: 3px;
+    }
+
+    .media-card {
+      min-height: 140px;
+    }
+
+    .media-art {
+      margin: 10px;
+      height: 90px;
+      border: 1px solid #492366;
+      border-radius: 6px;
+      background:
+        radial-gradient(circle at 30% 45%, rgba(255, 140, 70, .38), transparent 28%),
+        radial-gradient(circle at 70% 60%, rgba(115, 45, 210, .55), transparent 35%),
+        linear-gradient(135deg, #32251f, #110b18 55%, #3d154d);
+      position: relative;
+    }
+
+    .play {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #dc6aff;
+      font-size: 18px;
+      border: 1px solid #b12cff;
+      background: rgba(83, 20, 135, .72);
+      box-shadow: 0 0 16px rgba(174, 42, 255, .45);
+    }
+
+    .fights {
+      grid-column: 1 / 3;
+    }
+
+    .fight-list {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+    }
+
+    .fight {
+      flex: 1;
+      border: 1px solid #2e2140;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #0d0d18;
+    }
+
+    .fight-img {
+      height: 70px;
+      background: linear-gradient(135deg, #55201f, #171326 52%, #4e1874);
+    }
+
+    .fight:first-child {
+      border-color: #b02cff;
+      box-shadow: 0 0 10px rgba(176, 44, 255, .2);
+    }
+
+    .fight-name {
+      font-size: 9px;
+      padding: 6px 6px 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 600;
+    }
+
+    .fight-ep {
+      font-size: 8px;
+      color: #9c91ad;
+      padding: 0 6px 6px;
+    }
+
+    .studios {
+      grid-column: 1 / 3;
+    }
+
+    .studio-list {
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .studio {
+      flex: 1;
+      height: 75px;
+      border: 1px solid #472263;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+      font-weight: 800;
+      background: linear-gradient(145deg, #1a1429, #0b0b14);
+      color: #43d7a0;
+    }
+
+    .studio:nth-child(2) { color: #fff; }
+    .studio:nth-child(3) { color: #ddd; }
+
+    .sound .wave {
+      height: 64px;
+      margin: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .wave i {
+      width: 4px;
+      border-radius: 3px;
+      background: #9c36ff;
+      display: block;
+    }
+
+    .actor-list {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .actor {
+      text-align: center;
+      font-size: 9px;
+      color: #aaa;
+    }
+
+    .actor-face {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 4px;
+      border-radius: 50%;
+      border: 1px solid #9c32ff;
+      background: radial-gradient(circle, #706070, #171322);
+    }
+
+    .tags {
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .tag {
+      font-size: 9px;
+      text-align: center;
+      padding: 7px;
+      border: 1px solid #3b264d;
+      border-radius: 4px;
+      color: #ddd;
+    }
+
+    .tag.active {
+      border-color: #b72eff;
+      color: #fff;
+      background: rgba(183, 46, 255, 0.1);
+    }
+
+    /* ---------------- MOBILE LAYOUT & ANIMATIONS ---------------- */
+    .mobile-page {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .desktop-page {
+        display: none;
+      }
+
+      .mobile-page {
+        display: block;
+        min-height: 100vh;
+        background: #05060c;
+      }
+
+      .mobile-shell {
+        position: relative;
+        min-height: 100vh;
+        padding: 0 0 74px;
+        overflow: hidden;
+        background: radial-gradient(circle at 65% 13%, rgba(96, 24, 154, .16), transparent 28%), #05060c;
+      }
+
+      .mobile-topbar {
+        height: 69px;
+        padding: 17px 16px 7px;
+        display: flex;
+        align-items: center;
+        gap: 17px;
+        background: rgba(6, 7, 13, .96);
+        position: relative;
+        z-index: 100;
+      }
+
+      .mobile-brand {
+        margin: auto;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .mobile-brand img {
+        width: 31px;
+        height: 31px;
+      }
+
+      .mobile-brand .brand-name {
+        font-size: 17px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #ffffff, #c65cff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .mobile-brand .brand-sub {
+        font-size: 6px;
+        color: var(--purple2);
+      }
+
+      .mobile-search-bar {
+        display: none;
+        padding: 10px 16px;
+        background: #090b14;
+        border-bottom: 1px solid var(--border);
+        position: relative;
+        z-index: 150;
+      }
+
+      .mobile-search-bar.active {
+        display: block;
+      }
+
+      .mobile-search-input-wrap {
+        display: flex;
+        align-items: center;
+        background: rgba(16, 18, 28, .88);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 6px 12px;
+      }
+
+      .mobile-search-input-wrap input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--text);
+        font-size: 13px;
+      }
+
+      .mobile-content {
+        padding: 14px 13px 0;
+      }
+
+      .mobile-title {
+        font-size: 22px;
+        font-weight: 800;
+        margin: 12px 0 16px;
+      }
+
+      .mobile-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .m-card {
+        border: 1px solid #39204f;
+        border-radius: 8px;
+        background: linear-gradient(145deg, rgba(20, 13, 31, .95), rgba(7, 8, 16, .95));
+        overflow: hidden;
+      }
+
+      .m-head {
+        height: 42px;
+        padding: 0 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #2b193c;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .m-head span:last-child {
+        color: #b53aff;
+      }
+
+      .m-anime {
+        padding: 10px;
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+      }
+
+      .m-anime .anime {
+        min-width: 90px;
+        flex: 0 0 90px;
+      }
+
+      .m-anime .poster {
+        height: 120px;
+      }
+
+      .m-media .media-art {
+        height: 100px;
+        margin: 10px;
+      }
+
+      .m-studio {
+        display: flex;
+        gap: 8px;
+        padding: 10px;
+      }
+
+      .m-studio .studio {
+        height: 65px;
+      }
+
+      .m-wave {
+        height: 50px;
+        margin: 10px 14px;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+
+      .m-wave i {
+        width: 3px;
+        background: #a438ff;
+        border-radius: 3px;
+      }
+
+      .mobile-bottom-nav {
+        position: fixed;
+        z-index: 50;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 72px;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        border-top: 1px solid #242636;
+        background: rgba(7, 8, 14, .98);
+        backdrop-filter: blur(14px);
+      }
+
+      .mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        color: #d5d2dc;
+        font-size: 8px;
+        cursor: pointer;
+      }
+
+      .mobile-nav-item.active {
+        color: #bd43ff;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- PRELOADER OVERLAY -->
+  <div id="preloader">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- =========================================================
+     DESKTOP PAGE
+     ========================================================= -->
+  <div class="desktop-page">
+    <main class="desktop-shell">
+
+      <!-- EXACT LEFT NAVIGATION BAR FROM ANILOG HOME -->
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
+          <div>
+            <h1 class="brand-name">ANILOG</h1>
+            <div class="brand-sub">アニログ</div>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span class="material-symbols-outlined">home</span>Home</button>
+          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';"><span class="material-symbols-outlined">list_alt</span>Watchlist</button>
+          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span class="material-symbols-outlined">play_circle</span>Currently Watching</button>
+          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span class="material-symbols-outlined">check_circle</span>Completed</button>
+          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span class="material-symbols-outlined">calendar_month</span>Seasonal</button>
+          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span class="material-symbols-outlined">rate_review</span>Reviews</button>
+          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span>Profile</button>
+          <button class="side-link" onclick="window.location.href='./anilog-favorites.html';"><span class="material-symbols-outlined">bookmark</span>Favorites</button>
+          <button class="side-link active" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span class="material-symbols-outlined">leaderboard</span>Top Lists</button>
+          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span class="material-symbols-outlined">shopping_bag</span>Merch</button>
+          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span class="material-symbols-outlined">history</span>Logs</button>
+          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span class="material-symbols-outlined">target</span>Goals</button>
+          <button class="side-link" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
+        </nav>
+
+
+        <div class="user-card">
+          <img class="user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="Avatar">
+          <div class="user-info">
+            <h3 class="user-name">ShadowX</h3>
+            <div class="user-level">Level 27</div>
+            <div class="xp-track">
+              <div class="xp-fill"></div>
+            </div>
+            <div class="xp-text">XP 4,250 / 6,800</div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="main">
+
+        <!-- EXACT TOP NAVIGATION BAR FROM ANILOG HOME -->
+        <header class="topbar">
+          <div class="search">
+            <input type="text" id="desktop-search-input" placeholder="Search anime...">
+            <span class="material-symbols-outlined">search</span>
+            <div class="search-results-dropdown" id="desktop-search-results"></div>
+          </div>
+
+          <div class="top-actions">
+            <div class="top-action-wrap">
+              <div class="top-action"><span class="material-symbols-outlined">notifications</span></div>
+            </div>
+
+            <div class="top-action-wrap">
+              <div class="top-action streak">
+                <span class="material-symbols-outlined" style="color: #ff2d63;">local_fire_department</span>
+                <span>12</span>
+              </div>
+            </div>
+
+            <!-- SETTINGS HOVER DROPDOWN -->
+            <div class="top-action-wrap">
+              <div class="top-action">
+                <span class="material-symbols-outlined">settings</span>
+              </div>
+              <div class="dropdown-panel">
+                <div class="dropdown-panel-header">System Settings</div>
+                <button class="dropdown-item">
+                  <span class="material-symbols-outlined">dark_mode</span> App Theme
+                </button>
+                <button class="dropdown-item">
+                  <span class="material-symbols-outlined">notifications_active</span> Notifications
+                </button>
+                <button class="dropdown-item">
+                  <span class="material-symbols-outlined">subtitles</span> Default Sub/Dub
+                </button>
+                <button class="dropdown-item">
+                  <span class="material-symbols-outlined">explicit</span> Content Filter
+                </button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item">
+                  <span class="material-symbols-outlined">tune</span> Preferences
+                </button>
+              </div>
+            </div>
+
+            <!-- PROFILE HOVER DROPDOWN -->
+            <div class="profile-wrap">
+              <div class="profile">
+                <img class="avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="User">
+                <span class="material-symbols-outlined">expand_more</span>
+              </div>
+              <div class="dropdown-panel">
+                <div class="dropdown-panel-header">User Profile</div>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';">
+                  <span class="material-symbols-outlined">account_circle</span> View Profile
+                </button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-edit-profile.html';">
+                  <span class="material-symbols-outlined">edit</span> Edit Profile
+                </button>
+                <button class="dropdown-item">
+                  <span class="material-symbols-outlined">workspace_premium</span> VIP Membership
+                </button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item" style="color: var(--danger);">
+                  <span class="material-symbols-outlined" style="color: var(--danger);">logout</span> Log Out
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </header>
+
+        <h1 class="title">Top Lists</h1>
+
+        <div class="content-grid">
+          <section class="card top-anime">
+            <div class="card-title"><span class="purple"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">military_tech</span></span> Top 10 Anime</div>
+            <div class="anime-list">
+              <div class="anime">
+                <div class="poster"></div>
+                <div class="anime-name">Attack on Titan</div>
+                <div class="rating">★ 9.8</div>
+              </div>
+              <div class="anime">
+                <div class="poster"></div>
+                <div class="anime-name">Chainsaw Man</div>
+                <div class="rating">★ 4.5</div>
+              </div>
+              <div class="anime">
+                <div class="poster"></div>
+                <div class="anime-name">Chainsaw Man</div>
+                <div class="rating">★ 7.8</div>
+              </div>
+              <div class="anime">
+                <div class="poster"></div>
+                <div class="anime-name">Attack on Titan</div>
+                <div class="rating">★ 7.5</div>
+              </div>
+              <div class="anime">
+                <div class="poster"></div>
+                <div class="anime-name">Chainsaw Man</div>
+                <div class="rating">★ 7.5</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card media-card">
+            <div class="card-title"><span class="purple"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">queue_music</span></span> Top Openings</div>
+            <div class="media-art">
+              <div class="play">▶</div>
+            </div>
+          </section>
+
+          <section class="card media-card">
+            <div class="card-title"><span class="purple"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">queue_music</span></span> Top Endings</div>
+            <div class="media-art">
+              <div class="play">▶</div>
+            </div>
+          </section>
+
+          <section class="card media-card">
+            <div class="card-title"><span class="purple"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">queue_music</span></span> Top Endings</div>
+            <div class="media-art">
+              <div class="play">▶</div>
+            </div>
+          </section>
+
+          <section class="card fights">
+            <div class="card-title"><span class="purple"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">swords</span></span> Best Fights</div>
+            <div class="fight-list">
+              <div class="fight">
+                <div class="fight-img"></div>
+                <div class="fight-name">Jujutsu Kaisen</div>
+                <div class="fight-ep">EP 18 / 23</div>
+              </div>
+              <div class="fight">
+                <div class="fight-img"></div>
+                <div class="fight-name">Demon Slayer</div>
+                <div class="fight-ep">EP 7 / 23</div>
+              </div>
+              <div class="fight">
+                <div class="fight-img"></div>
+                <div class="fight-name">Chainsaw Man</div>
+                <div class="fight-ep">EP 7 / 11</div>
+              </div>
+              <div class="fight">
+                <div class="fight-img"></div>
+                <div class="fight-name">Frieren</div>
+                <div class="fight-ep">EP 9 / 12</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card sound">
+            <div class="card-title"><span class="purple"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">music_note</span></span> Best Soundtracks</div>
+            <div class="wave">
+              <i style="height:8px"></i><i style="height:18px"></i><i style="height:11px"></i><i style="height:28px"></i><i style="height:15px"></i><i style="height:42px"></i><i style="height:23px"></i><i style="height:36px"></i><i style="height:19px"></i><i style="height:50px"></i><i style="height:27px"></i><i style="height:39px"></i><i style="height:18px"></i><i style="height:31px"></i><i style="height:44px"></i><i style="height:25px"></i><i style="height:12px"></i><i style="height:30px"></i><i style="height:16px"></i><i style="height:8px"></i><i style="height:22px"></i><i style="height:36px"></i><i style="height:15px"></i><i style="height:10px"></i><i style="height:25px"></i><i style="height:18px"></i><i style="height:9px"></i><i style="height:28px"></i><i style="height:13px"></i><i style="height:7px"></i>
+            </div>
+          </section>
+
+          <section class="card studios">
+            <div class="card-title"><span class="purple"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">domain</span></span> Best Studios</div>
+            <div class="studio-list">
+              <div class="studio">MAPPA</div>
+              <div class="studio">ufotable</div>
+              <div class="studio">TOEI</div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-title"><span class="purple"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">label</span></span> Categories</div>
+            <div class="tags">
+              <div class="tag active">BST</div>
+              <div class="tag">MAP</div>
+              <div class="tag">NPI</div>
+              <div class="tag">UFO</div>
+              <div class="tag">BET</div>
+              <div class="tag">NBN</div>
+              <div class="tag">WAO</div>
+              <div class="tag">VIPS</div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-title"><span class="purple"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">mic</span></span> Best Voice Actors</div>
+            <div class="actor-list">
+              <div class="actor">
+                <div class="actor-face"></div>Menan Aouchi
+              </div>
+              <div class="actor">
+                <div class="actor-face"></div>Tomo Roma
+              </div>
+              <div class="actor">
+                <div class="actor-face"></div>Honie Aorino
+              </div>
+              <div class="actor">
+                <div class="actor-face"></div>Rete Atnai
+              </div>
+            </div>
+          </section>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- =========================================================
+     MOBILE PAGE
+     ========================================================= -->
+  <div class="mobile-page">
+    <main class="mobile-shell">
+
+      <header class="mobile-topbar">
+        <span class="material-symbols-outlined">menu</span>
+        <div class="mobile-brand">
+          <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
+          <div>
+            <div class="brand-name">ANILOG</div>
+            <div class="brand-sub">アニログ</div>
+          </div>
+        </div>
+        <span class="material-symbols-outlined" id="mobile-search-toggle" style="cursor: pointer;">search</span>
+      </header>
+
+      <!-- Mobile Expandable Search Bar -->
+      <div class="mobile-search-bar" id="mobile-search-bar">
+        <div class="mobile-search-input-wrap">
+          <input type="text" id="mobile-search-input" placeholder="Search anime...">
+        </div>
+        <div class="search-results-dropdown" id="mobile-search-results"></div>
+      </div>
+
+      <div class="mobile-content">
+        <h1 class="mobile-title">Top Lists</h1>
+
+        <div class="mobile-cards">
+          <section class="m-card">
+            <div class="m-head"><span>Top 10 Anime</span><span>▼</span></div>
+            <div class="m-anime">
+              <div class="anime">
+                <div class="poster"></div>
+                <div class="anime-name">Attack on Titan</div>
+                <div class="rating">★ 9.8</div>
+              </div>
+              <div class="anime">
+                <div class="poster"></div>
+                <div class="anime-name">Chainsaw Man</div>
+                <div class="rating">★ 4.5</div>
+              </div>
+              <div class="anime">
+                <div class="poster"></div>
+                <div class="anime-name">Jujutsu Kaisen</div>
+                <div class="rating">★ 7.8</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="m-card">
+            <div class="m-head"><span>Top Openings</span><span>▼</span></div>
+          </section>
+          
+          <section class="m-card">
+            <div class="m-head"><span>Top Endings</span><span>▼</span></div>
+          </section>
+
+          <section class="m-card">
+            <div class="m-head"><span>Best Fights</span><span>▼</span></div>
+          </section>
+
+          <section class="m-card">
+            <div class="m-head"><span>Best Soundtracks</span><span>▲</span></div>
+            <div class="m-wave">
+              <i style="height:8px"></i><i style="height:18px"></i><i style="height:11px"></i><i style="height:28px"></i><i style="height:15px"></i><i style="height:42px"></i><i style="height:23px"></i><i style="height:36px"></i><i style="height:19px"></i><i style="height:50px"></i><i style="height:27px"></i><i style="height:39px"></i><i style="height:18px"></i><i style="height:31px"></i><i style="height:44px"></i><i style="height:25px"></i><i style="height:12px"></i><i style="height:30px"></i><i style="height:16px"></i><i style="height:8px"></i><i style="height:22px"></i><i style="height:36px"></i><i style="height:15px"></i><i style="height:10px"></i><i style="height:25px"></i><i style="height:18px"></i><i style="height:9px"></i><i style="height:28px"></i><i style="height:13px"></i><i style="height:7px"></i>
+            </div>
+          </section>
+
+          <section class="m-card">
+            <div class="m-head"><span>Best Studios</span><span>▲</span></div>
+            <div class="m-studio">
+              <div class="studio">MAPPA</div>
+              <div class="studio">ufotable</div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- EXACT MOBILE BOTTOM NAVIGATION FROM ANILOG HOME -->
+      <nav class="mobile-bottom-nav">
+        <div class="mobile-nav-item" onclick="window.location.href='./anilog-home.html';">
+          <span class="material-symbols-outlined">home</span>
+          <span>Home</span>
+        </div>
+        <div class="mobile-nav-item" onclick="window.location.href='./anilog-watchlist.html';">
+          <span class="material-symbols-outlined">list_alt</span>
+          <span>Watchlist</span>
+        </div>
+        <div class="mobile-nav-item" onclick="window.location.href='./anilog-currentlywatching.html';">
+          <span class="material-symbols-outlined">play_arrow</span>
+          <span>Watching</span>
+        </div>
+        <div class="mobile-nav-item" onclick="window.location.href='./anilog-completed.html';">
+          <span class="material-symbols-outlined">check_circle</span>
+          <span>Completed</span>
+        </div>
+        <div class="mobile-nav-item active">
+          <span class="material-symbols-outlined">more_vert</span>
+          <span>More</span>
+        </div>
+      </nav>
+
+    </main>
+  </div>
+
+  <script>
+    // Preloader and Animation Sequence Trigger
+    window.addEventListener('load', async () => {
+      if (document.fonts) {
+        await document.fonts.ready;
+      }
+      const preloader = document.getElementById('preloader');
+      preloader.style.opacity = '0';
+      preloader.style.visibility = 'hidden';
+      document.body.classList.add('loaded');
+    });
+
+    // Kitsu Live Search Logic for Top Lists page
+    let searchTimeout = null;
+    let currentAbortController = null;
+
+    function openAnimeReviewFromSearch(anime) {
+      const attr = anime.attributes || {};
+      const reviewData = {
+        id: anime.id,
+        title: attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled',
+        image: attr.posterImage?.large || attr.posterImage?.medium || attr.posterImage?.original || '',
+        episodes: attr.episodeCount || '',
+        status: attr.status || '',
+        type: attr.showType || '',
+        rating: attr.averageRating || '',
+        synopsis: attr.synopsis || '',
+        startDate: attr.startDate || ''
+      };
+      window.location.href = `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(JSON.stringify(reviewData))}`;
+    }
+
+    function handleSearch(query, resultsContainer) {
+      const cleanQuery = query.trim();
+
+      if (cleanQuery.length < 3) {
+        resultsContainer.classList.remove('active');
+        resultsContainer.innerHTML = '';
+        if (currentAbortController) currentAbortController.abort();
+        return;
+      }
+
+      clearTimeout(searchTimeout);
+
+      searchTimeout = setTimeout(async () => {
+        if (currentAbortController) {
+          currentAbortController.abort();
+        }
+        currentAbortController = new AbortController();
+
+        resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">Searching...</div>`;
+        resultsContainer.classList.add('active');
+
+        try {
+          const targetUrl = `https://kitsu.io/api/edge/anime?filter[text]=${encodeURIComponent(cleanQuery)}&page[limit]=6`;
+          const response = await fetch(targetUrl, {
+            signal: currentAbortController.signal,
+            headers: {
+              'Accept': 'application/vnd.api+json',
+              'Content-Type': 'application/vnd.api+json'
+            }
+          });
+
+          if (!response.ok) throw new Error(`HTTP_${response.status}`);
+          const data = await response.json();
+          const results = data.data || [];
+          resultsContainer._animeResults = results;
+
+          resultsContainer.innerHTML = '';
+
+          if (results.length === 0) {
+            resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">No anime found</div>`;
+          } else {
+            results.forEach(anime => {
+              const attr = anime.attributes || {};
+              const title = attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled';
+              const img = attr.posterImage?.tiny || attr.posterImage?.small || '';
+              const rating = attr.averageRating ? `★ ${(parseFloat(attr.averageRating) / 10).toFixed(1)}` : 'N/A';
+              const type = attr.showType ? attr.showType.toUpperCase() : 'ANIME';
+
+              const itemHTML = `
+              <div class="search-result-item" data-result-index="${results.indexOf(anime)}" role="button" tabindex="0">
+                <img src="${img}" alt="${title}">
+                <div class="search-result-info">
+                  <div class="search-result-title">${title}</div>
+                  <div class="search-result-meta">${type} • ${rating}</div>
+                </div>
+              </div>
+            `;
+              resultsContainer.insertAdjacentHTML('beforeend', itemHTML);
+            });
+          }
+        } catch (err) {
+          if (err.name === 'AbortError') return;
+          resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--danger); text-align: center;">Search failed.</div>`;
+        }
+      }, 400);
+    }
+
+    const desktopInput = document.getElementById('desktop-search-input');
+    const desktopResults = document.getElementById('desktop-search-results');
+    if (desktopInput) {
+      desktopInput.addEventListener('input', (e) => handleSearch(e.target.value, desktopResults));
+    }
+
+    const mobileInput = document.getElementById('mobile-search-input');
+    const mobileResults = document.getElementById('mobile-search-results');
+    if (mobileInput) {
+      mobileInput.addEventListener('input', (e) => handleSearch(e.target.value, mobileResults));
+    }
+
+    const mobileSearchToggle = document.getElementById('mobile-search-toggle');
+    const mobileSearchBar = document.getElementById('mobile-search-bar');
+    if (mobileSearchToggle && mobileSearchBar) {
+      mobileSearchToggle.addEventListener('click', () => {
+        mobileSearchBar.classList.toggle('active');
+      });
+    }
+
+    document.addEventListener('click', (event) => {
+      const resultItem = event.target.closest('.search-result-item');
+      if (!resultItem) return;
+      const anime = resultItem.parentElement._animeResults?.[Number(resultItem.dataset.resultIndex)];
+      if (anime) openAnimeReviewFromSearch(anime);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.search')) {
+        if (desktopResults) desktopResults.classList.remove('active');
+      }
+      if (!e.target.closest('#mobile-search-bar') && !e.target.closest('#mobile-search-toggle')) {
+        if (mobileResults) mobileResults.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+
+</html>

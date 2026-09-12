@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="icon" type="image/png" href="./logo.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANILOG - Notifications</title>
+
+  <!-- Google Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <style>
+    :root {
+      --bg: #05060c;
+      --panel: #090b13;
+      --panel2: #0d0f18;
+      --panel3: #11131d;
+      --border: #25283a;
+      --purple: #9d2cff;
+      --purple2: #c34cff;
+      --text: #f5f3f8;
+      --muted: #8f8d9d;
+      --dim: #676675;
+      --danger: #ff2d63;
+      --success: #00e676;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      background: #03040a;
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    img {
+      display: block;
+      object-fit: cover;
+    }
+
+    /* PRELOADER */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #05050b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(157, 44, 255, 0.2);
+      border-top-color: var(--purple2);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .page-wrapper {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease;
+    }
+
+    body.loaded .page-wrapper {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    /* LAYOUT STRUCTURE */
+    .page-wrapper {
+      min-height: 100vh;
+      padding: 40px 8px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .desktop-shell {
+      position: relative;
+      width: min(1510px, 100%);
+      min-height: 935px;
+      display: grid;
+      grid-template-columns: 232px 1fr;
+      background:
+        radial-gradient(circle at 73% 20%, rgba(102, 20, 173, .16), transparent 28%),
+        linear-gradient(115deg, #090a12, #060810 58%, #080711);
+      border: 1px solid #272936;
+      border-radius: 9px;
+      overflow: visible;
+      box-shadow: 0 0 0 1px #25183b, 0 25px 70px rgba(0, 0, 0, .62);
+      backdrop-filter: blur(20px);
+    }
+
+    .desktop-shell::before {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      pointer-events: none;
+      z-index: 30;
+      border: 1px solid rgba(156, 47, 244, .48);
+      clip-path: polygon(0 0, 2% 0, 2.4% 1.5%, 98% 1.5%, 100% 0, 100% 98%, 98.4% 100%, 2% 100%, 0 98%);
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      position: relative;
+      z-index: 10;
+      min-height: 933px;
+      padding: 26px 16px 16px;
+      border-right: 1px solid #252637;
+      background: linear-gradient(180deg, rgba(13, 14, 23, .97), rgba(5, 7, 13, .98));
+      border-top-left-radius: 9px;
+      border-bottom-left-radius: 9px;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 10px 31px;
+    }
+
+    .sidebar-brand img {
+      width: 39px;
+      height: 39px;
+    }
+
+    .brand-name {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.7px;
+      background: linear-gradient(135deg, #ffffff, #c65cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+
+    .brand-sub {
+      margin-top: 3px;
+      color: var(--purple2);
+      font-size: 8px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .side-link {
+      height: 41px;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      font-size: 14px;
+      text-align: left;
+      color: #efedf3;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .side-link:hover {
+      background: rgba(157, 44, 255, 0.1);
+      border-color: rgba(157, 44, 255, 0.3);
+    }
+
+    .side-link.active {
+      border-color: #a12aff;
+      background: linear-gradient(90deg, rgba(118, 22, 183, .43), rgba(67, 17, 102, .22));
+      box-shadow: inset 0 0 20px rgba(155, 34, 246, .09);
+    }
+
+    .user-card {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 46px;
+      height: 125px;
+      padding: 18px 14px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      border: 1px solid #9b31e7;
+      border-radius: 7px;
+      background: linear-gradient(145deg, rgba(14, 16, 27, .98), rgba(7, 8, 15, .98));
+      clip-path: polygon(4% 0, 96% 0, 100% 7%, 100% 93%, 96% 100%, 4% 100%, 0 93%, 0 7%);
+    }
+
+    .user-avatar {
+      width: 49px;
+      height: 49px;
+      flex: 0 0 49px;
+      border: 1px solid #a42df2;
+      border-radius: 50%;
+      padding: 3px;
+    }
+
+    .user-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .user-name {
+      margin: 0 0 4px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .user-level {
+      color: #9996a5;
+      font-size: 9px;
+      margin-bottom: 9px;
+    }
+
+    .xp-track {
+      width: 100%;
+      height: 4px;
+      background: #252633;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .xp-fill {
+      width: 63%;
+      height: 100%;
+      background: #9c2cff;
+    }
+
+    .xp-text {
+      margin-top: 7px;
+      color: #9c99a7;
+      font-size: 9px;
+    }
+
+    /* MAIN CONTENT */
+    .main {
+      min-width: 0;
+      padding: 0 24px 45px;
+    }
+
+    .topbar {
+      height: 84px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(31, 34, 47, .65);
+    }
+
+    .page-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .notif-count-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 12px;
+      background: var(--purple);
+      color: #fff;
+      transition: all 0.3s ease;
+    }
+
+    .top-actions-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 6px;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text);
+      transition: all 0.2s ease;
+    }
+
+    .top-actions-btn:hover:not(:disabled) {
+      border-color: var(--purple2);
+      background: rgba(157, 44, 255, 0.15);
+    }
+
+    .top-actions-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      border-color: var(--border);
+      background: var(--panel);
+    }
+
+    /* NOTIFICATIONS FILTER & LIST */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      margin: 24px 0 16px;
+    }
+
+    .filter-btn {
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn.active,
+    .filter-btn:hover {
+      background: rgba(157, 44, 255, 0.2);
+      border-color: var(--purple2);
+      color: #fff;
+    }
+
+    .notif-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .notif-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 18px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      position: relative;
+    }
+
+    .notif-card:hover {
+      transform: translateX(4px);
+      border-color: var(--purple2);
+      background: var(--panel2);
+    }
+
+    .notif-card.unread {
+      border-left: 4px solid var(--purple2);
+      background: linear-gradient(90deg, rgba(157, 44, 255, 0.08), var(--panel));
+    }
+
+    .notif-poster {
+      width: 50px;
+      height: 68px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      object-fit: cover;
+      border: 1px solid var(--border);
+    }
+
+    .notif-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .notif-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .notif-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .notif-time {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .notif-body {
+      font-size: 12px;
+      color: #d1cfd8;
+      line-height: 1.4;
+    }
+
+    .notif-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--purple2);
+      text-transform: uppercase;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .page-wrapper {
+        padding: 0 0 74px;
+      }
+
+      .desktop-shell {
+        grid-template-columns: 1fr;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        background: transparent;
+      }
+
+      .desktop-shell::before,
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        padding: 0 14px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="page-wrapper">
+    <main class="desktop-shell">
+
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
+          <div>
+            <h1 class="brand-name">ANILOG</h1>
+            <div class="brand-sub">アニログ</div>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span class="material-symbols-outlined">home</span>Home</button>
+          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';"><span class="material-symbols-outlined">list_alt</span>Watchlist</button>
+          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span class="material-symbols-outlined">play_circle</span>Currently Watching</button>
+          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span class="material-symbols-outlined">check_circle</span>Completed</button>
+          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span class="material-symbols-outlined">calendar_month</span>Seasonal</button>
+          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span class="material-symbols-outlined">rate_review</span>Reviews</button>
+          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span>Profile</button>
+          <button class="side-link" onclick="window.location.href='./anilog-favorites.html';"><span class="material-symbols-outlined">bookmark</span>Favorites</button>
+          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span class="material-symbols-outlined">leaderboard</span>Top Lists</button>
+          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span class="material-symbols-outlined">shopping_bag</span>Merch</button>
+          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span class="material-symbols-outlined">history</span>Logs</button>
+          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span class="material-symbols-outlined">target</span>Goals</button>
+          <button class="side-link" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
+        </nav>
+
+        <div class="user-card">
+          <img class="user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="Avatar">
+          <div class="user-info">
+            <h3 class="user-name">ShadowX</h3>
+            <div class="user-level">Level 27</div>
+            <div class="xp-track">
+              <div class="xp-fill"></div>
+            </div>
+            <div class="xp-text">XP 4,250 / 6,800</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <section class="main">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+          <div class="page-title-wrap">
+            <span class="material-symbols-outlined" style="font-size:28px; color:var(--purple2)">notifications</span>
+            <h1 class="page-title">Notifications</h1>
+            <span class="notif-count-badge" id="notif-badge-count">0 New</span>
+          </div>
+          <button class="top-actions-btn" id="btn-mark-read">
+            <span class="material-symbols-outlined">done_all</span> Mark All as Read
+          </button>
+        </header>
+
+        <!-- FILTER BAR -->
+        <div class="filter-bar">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="episodes">New Episodes</button>
+          <button class="filter-btn" data-filter="system">System Alerts</button>
+        </div>
+
+        <!-- NOTIFICATION CONTAINER -->
+        <div class="notif-container" id="notif-container">
+          <!-- Rendered dynamically -->
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'anilog_read_notif_ids';
+
+    /**
+     * Verified Kitsu Anime Data with Explicit Numeric API IDs
+     */
+    const notificationsData = [
+      {
+        id: "notif-1",
+        animeId: "46351", // Numeric Kitsu ID: Solo Leveling
+        animeTitle: "Solo Leveling",
+        poster: "https://media.kitsu.app/anime/poster_images/46351/large.jpg",
+        type: "episodes",
+        title: "New Episode Released",
+        message: "Episode 12 of Solo Leveling is now available to stream!",
+        time: "10m ago",
+        unread: true
+      },
+      {
+        id: "notif-2",
+        animeId: "42765", // Numeric Kitsu ID: Jujutsu Kaisen 2nd Season
+        animeTitle: "Jujutsu Kaisen 2nd Season",
+        poster: "https://media.kitsu.app/anime/poster_images/42765/large.jpg",
+        type: "episodes",
+        title: "Watchlist Update",
+        message: "Jujutsu Kaisen Season 2 was added to your currently watching list.",
+        time: "2h ago",
+        unread: true
+      },
+      {
+        id: "notif-3",
+        animeId: "13781", // Numeric Kitsu ID: Demon Slayer
+        animeTitle: "Demon Slayer: Kimetsu no Yaiba",
+        poster: "https://media.kitsu.app/anime/poster_images/13781/large.jpg",
+        type: "episodes",
+        title: "New Season Announced",
+        message: "Hashira Training Arc date confirmed! Click for details.",
+        time: "1d ago",
+        unread: false
+      },
+      {
+        id: "notif-4",
+        animeId: "43806", // Numeric Kitsu ID: Chainsaw Man
+        animeTitle: "Chainsaw Man",
+        poster: "https://media.kitsu.app/anime/poster_images/43806/large.jpg",
+        type: "episodes",
+        title: "Movie Announcement",
+        message: "Chainsaw Man – The Movie: Reze Arc announced!",
+        time: "3d ago",
+        unread: false
+      }
+    ];
+
+    /**
+     * Load persistent read state from localStorage
+     */
+    function getReadNotificationIds() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    /**
+     * Save read state to localStorage
+     */
+    function saveReadNotificationIds(ids) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+    }
+
+    /**
+     * Initialize notifications data with stored read states
+     */
+    function initNotificationStates() {
+      const readIds = getReadNotificationIds();
+      notificationsData.forEach(item => {
+        if (readIds.includes(item.id)) {
+          item.unread = false;
+        }
+      });
+    }
+
+    window.addEventListener('load', () => {
+      const preloader = document.getElementById('preloader');
+      initNotificationStates();
+      renderNotifications('all');
+
+      if (preloader) {
+        preloader.style.opacity = '0';
+        preloader.style.visibility = 'hidden';
+      }
+      document.body.classList.add('loaded');
+    });
+
+    /**
+     * Updates top header counter & button states
+     */
+    function updateHeaderStats() {
+      const unreadCount = notificationsData.filter(item => item.unread).length;
+      const badgeCount = document.getElementById('notif-badge-count');
+      const markReadBtn = document.getElementById('btn-mark-read');
+
+      if (badgeCount) {
+        badgeCount.textContent = `${unreadCount} New`;
+        badgeCount.style.background = unreadCount > 0 ? 'var(--purple)' : 'var(--panel3)';
+        badgeCount.style.color = unreadCount > 0 ? '#fff' : 'var(--muted)';
+      }
+
+      if (markReadBtn) {
+        markReadBtn.disabled = (unreadCount === 0);
+      }
+    }
+
+    /**
+     * Render Notifications List & Attach Exact Numeric Kitsu IDs
+     */
+    function renderNotifications(filter) {
+      const container = document.getElementById('notif-container');
+      container.innerHTML = '';
+
+      const filtered = notificationsData.filter(item => filter === 'all' || item.type === filter);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="padding: 20px; color: var(--muted); text-align: center;">No notifications found.</div>`;
+        updateHeaderStats();
+        return;
+      }
+
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = `notif-card ${item.unread ? 'unread' : ''}`;
+        card.setAttribute('data-anime-id', item.animeId);
+        
+        card.innerHTML = `
+          <img class="notif-poster" src="${item.poster}" alt="${item.animeTitle}" onerror="this.src='https://via.placeholder.com/50x68?text=Anime'">
+          <div class="notif-content">
+            <div class="notif-header">
+              <div class="notif-badge"><span class="material-symbols-outlined" style="font-size:12px">circle</span> ${item.title}</div>
+              <span class="notif-time">${item.time}</span>
+            </div>
+            <div class="notif-title">${item.animeTitle}</div>
+            <div class="notif-body">${item.message}</div>
+          </div>
+        `;
+
+        card.addEventListener('click', () => openNotificationDetail(item));
+        container.appendChild(card);
+      });
+
+      updateHeaderStats();
+    }
+
+    /**
+     * Exact Kitsu Numeric ID Navigation Handler
+     */
+    function openNotificationDetail(notif) {
+      notif.unread = false;
+
+      // Save single notification read status
+      const readIds = getReadNotificationIds();
+      if (!readIds.includes(notif.id)) {
+        readIds.push(notif.id);
+        saveReadNotificationIds(readIds);
+      }
+
+      // Construct standard Kitsu item structure for sessionStorage compatibility
+      const animePayload = {
+        id: String(notif.animeId),
+        attributes: {
+          canonicalTitle: notif.animeTitle,
+          posterImage: { 
+            large: notif.poster, 
+            medium: notif.poster, 
+            original: notif.poster 
+          }
+        }
+      };
+
+      // Cache directly into Session Storage for instantaneous load fallback
+      sessionStorage.setItem('selectedAnime', JSON.stringify(animePayload));
+
+      // Build target URL passing exact numeric id and encoded title
+      const targetUrl = `./anilog-anime-detail.html?id=${encodeURIComponent(notif.animeId)}&title=${encodeURIComponent(notif.animeTitle)}`;
+      window.location.href = targetUrl;
+    }
+
+    // Filter Buttons Listener
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        renderNotifications(e.target.dataset.filter);
+      });
+    });
+
+    // Mark All as Read Functional Action
+    const markReadBtn = document.getElementById('btn-mark-read');
+    markReadBtn.addEventListener('click', () => {
+      // Mark all in memory as read
+      notificationsData.forEach(item => item.unread = false);
+      
+      // Save all IDs to localStorage
+      const allIds = notificationsData.map(item => item.id);
+      saveReadNotificationIds(allIds);
+
+      // Trigger UI feedback
+      const originalHTML = markReadBtn.innerHTML;
+      markReadBtn.innerHTML = `<span class="material-symbols-outlined" style="color:var(--success)">check_circle</span> All Marked as Read`;
+      
+      const activeFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
+      renderNotifications(activeFilter);
+
+      setTimeout(() => {
+        markReadBtn.innerHTML = originalHTML;
+        updateHeaderStats();
+      }, 1500);
+    });
+  </script>
+</body>
+
+</html>

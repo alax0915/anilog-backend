@@ -1,0 +1,1918 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="icon" type="image/png" href="./logo.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANILOG - Anime Review</title>
+
+  <!-- Google Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <style>
+    :root {
+      --bg: #05060c;
+      --panel: #090b13;
+      --panel2: #0d0f18;
+      --panel3: #11131d;
+      --border: #25283a;
+      --purple: #9d2cff;
+      --purple2: #c34cff;
+      --text: #f5f3f8;
+      --muted: #8f8d9d;
+      --dim: #676675;
+      --danger: #ff2d63;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      background: #03040a;
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    img {
+      display: block;
+      object-fit: cover;
+    }
+
+    /* ---------------- PRELOADER OVERLAY ---------------- */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #05050b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(157, 44, 255, 0.2);
+      border-top-color: var(--purple2);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .desktop-page,
+    .mobile-page {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease;
+    }
+
+    body.loaded .desktop-page,
+    body.loaded .mobile-page {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ---------------- MATERIAL ICONS ---------------- */
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    /* ---------------- DESKTOP LAYOUT ---------------- */
+
+    .desktop-page {
+      min-height: 100vh;
+      padding: 40px 8px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .desktop-shell {
+      position: relative;
+      width: min(1510px, 100%);
+      min-height: 935px;
+      display: grid;
+      grid-template-columns: 232px 1fr;
+      background:
+        radial-gradient(circle at 73% 20%, rgba(102, 20, 173, .16), transparent 28%),
+        linear-gradient(115deg, #090a12, #060810 58%, #080711);
+      border: 1px solid #272936;
+      border-radius: 9px;
+      overflow: visible;
+      box-shadow: 0 0 0 1px #25183b, 0 25px 70px rgba(0, 0, 0, .62);
+      backdrop-filter: blur(20px);
+    }
+
+    .desktop-shell::before {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      pointer-events: none;
+      z-index: 30;
+      border: 1px solid rgba(156, 47, 244, .48);
+      clip-path: polygon(0 0, 2% 0, 2.4% 1.5%, 98% 1.5%, 100% 0, 100% 98%, 98.4% 100%, 2% 100%, 0 98%);
+    }
+
+    /* ---------------- SIDEBAR & ANIMATIONS ---------------- */
+
+    .sidebar {
+      position: relative;
+      z-index: 10;
+      min-height: 933px;
+      padding: 26px 16px 16px;
+      border-right: 1px solid #252637;
+      background: linear-gradient(180deg, rgba(13, 14, 23, .97), rgba(5, 7, 13, .98));
+      border-top-left-radius: 9px;
+      border-bottom-left-radius: 9px;
+      perspective: 1000px;
+    }
+
+    body.loaded .sidebar {
+      animation: sidebarSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes sidebarSlideIn {
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .side-link {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+
+    body.loaded .side-link {
+      animation: navItemSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    body.loaded .side-link:nth-child(1) {
+      animation-delay: 0.15s;
+    }
+
+    body.loaded .side-link:nth-child(2) {
+      animation-delay: 0.20s;
+    }
+
+    body.loaded .side-link:nth-child(3) {
+      animation-delay: 0.25s;
+    }
+
+    body.loaded .side-link:nth-child(4) {
+      animation-delay: 0.30s;
+    }
+
+    body.loaded .side-link:nth-child(5) {
+      animation-delay: 0.35s;
+    }
+
+    body.loaded .side-link:nth-child(6) {
+      animation-delay: 0.40s;
+    }
+
+    body.loaded .side-link:nth-child(7) {
+      animation-delay: 0.45s;
+    }
+
+    body.loaded .side-link:nth-child(8) {
+      animation-delay: 0.50s;
+    }
+
+    body.loaded .side-link:nth-child(9) {
+      animation-delay: 0.55s;
+    }
+
+    body.loaded .side-link:nth-child(10) {
+      animation-delay: 0.60s;
+    }
+
+    body.loaded .side-link:nth-child(11) {
+      animation-delay: 0.65s;
+    }
+
+    body.loaded .side-link:nth-child(12) {
+      animation-delay: 0.70s;
+    }
+
+    @keyframes navItemSlideIn {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 10px 31px;
+    }
+
+    .sidebar-brand img {
+      width: 39px;
+      height: 39px;
+      object-fit: contain;
+    }
+
+    .brand-name {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.7px;
+      background: linear-gradient(135deg, #ffffff, #c65cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+      border-right: 2px solid #c65cff;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: typingLoop 5s steps(6, end) infinite, blinkCursor 0.75s step-end infinite;
+    }
+
+    @keyframes typingLoop {
+
+      0%,
+      100% {
+        width: 0;
+      }
+
+      30%,
+      70% {
+        width: 6.2ch;
+      }
+    }
+
+    @keyframes blinkCursor {
+
+      from,
+      to {
+        border-color: transparent;
+      }
+
+      50% {
+        border-color: #c65cff;
+      }
+    }
+
+    .brand-sub {
+      margin-top: 3px;
+      color: var(--purple2);
+      font-size: 8px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .side-link {
+      height: 41px;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      font-size: 14px;
+      text-align: left;
+      color: #efedf3;
+      transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+      width: 100%;
+    }
+
+    .side-link:hover {
+      background: rgba(157, 44, 255, 0.1);
+      border-color: rgba(157, 44, 255, 0.3);
+    }
+
+    .side-link.active {
+      border-color: #a12aff;
+      background: linear-gradient(90deg, rgba(118, 22, 183, .43), rgba(67, 17, 102, .22));
+      box-shadow: inset 0 0 20px rgba(155, 34, 246, .09);
+    }
+
+    .user-card {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 46px;
+      height: 125px;
+      padding: 18px 14px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      border: 1px solid #9b31e7;
+      border-radius: 7px;
+      background: linear-gradient(145deg, rgba(14, 16, 27, .98), rgba(7, 8, 15, .98));
+      clip-path: polygon(4% 0, 96% 0, 100% 7%, 100% 93%, 96% 100%, 4% 100%, 0 93%, 0 7%);
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      opacity: 0;
+    }
+
+    body.loaded .user-card {
+      animation: userCardFlip 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s forwards;
+    }
+
+    @keyframes userCardFlip {
+      from {
+        opacity: 0;
+        transform: rotateY(-180deg);
+      }
+
+      to {
+        opacity: 1;
+        transform: rotateY(0deg);
+      }
+    }
+
+    .user-avatar {
+      width: 49px;
+      height: 49px;
+      flex: 0 0 49px;
+      border: 1px solid #a42df2;
+      border-radius: 50%;
+      padding: 3px;
+      object-fit: cover;
+    }
+
+    .user-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .user-name {
+      margin: 0 0 4px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .user-level {
+      color: #9996a5;
+      font-size: 9px;
+      margin-bottom: 9px;
+    }
+
+    .xp-track {
+      width: 100%;
+      height: 4px;
+      background: #252633;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .xp-fill {
+      width: 63%;
+      height: 100%;
+      background: #9c2cff;
+    }
+
+    .xp-text {
+      margin-top: 7px;
+      color: #9c99a7;
+      font-size: 9px;
+    }
+
+    /* ---------------- MAIN SECTION ---------------- */
+
+    .main {
+      min-width: 0;
+      padding: 0 26px 45px;
+      position: relative;
+      background:
+        linear-gradient(180deg, rgba(8, 7, 19, .72), rgba(7, 7, 15, .9)),
+        url("./pc-bg.png") center/cover;
+    }
+
+    .topbar {
+      height: 84px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid rgba(31, 34, 47, .65);
+      position: relative;
+      z-index: 100;
+    }
+
+    .search {
+      position: relative;
+      width: 300px;
+      height: 41px;
+      margin-left: 0;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      border: 1px solid #272a39;
+      border-radius: 22px;
+      background: rgba(16, 18, 28, .88);
+      transition: border-color 0.2s ease;
+      opacity: 0;
+    }
+
+    body.loaded .search {
+      animation: googleSearchExpand 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
+    }
+
+    @keyframes googleSearchExpand {
+      0% {
+        opacity: 0;
+        clip-path: circle(0px at 50% 50%);
+      }
+
+      10% {
+        opacity: 1;
+        clip-path: circle(12px at 50% 50%);
+      }
+
+      100% {
+        opacity: 1;
+        clip-path: none;
+      }
+    }
+
+    .search:focus-within {
+      border-color: var(--purple2);
+    }
+
+    .search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: #eee;
+      font-size: 12px;
+    }
+
+    .search-results-dropdown {
+      position: absolute;
+      top: 48px;
+      left: 0;
+      right: 0;
+      max-height: 380px;
+      overflow-y: auto;
+      background: #090b14;
+      border: 1px solid var(--purple);
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+    }
+
+    .search-results-dropdown.active {
+      display: flex;
+    }
+
+    .search-result-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-bottom: 1px solid #1a1c29;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .search-result-item:last-child {
+      border-bottom: none;
+    }
+
+    .search-result-item:hover {
+      background: rgba(157, 44, 255, 0.15);
+    }
+
+    .search-result-item img {
+      width: 32px;
+      height: 45px;
+      border-radius: 4px;
+      object-fit: cover;
+    }
+
+    .search-result-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      overflow: hidden;
+    }
+
+    .search-result-title {
+      font-size: 12px;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 600;
+    }
+
+    .search-result-meta {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .top-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 27px;
+      padding-right: 16px;
+      opacity: 0;
+    }
+
+    body.loaded .top-actions {
+      animation: topActionsFadeIn 0.6s ease 0.5s forwards;
+    }
+
+    @keyframes topActionsFadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .top-action-wrap {
+      position: relative;
+    }
+
+    .top-action {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #f2edf5;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .top-action:hover {
+      background: rgba(157, 44, 255, 0.15);
+    }
+
+    .profile-wrap {
+      position: relative;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .profile:hover {
+      background: rgba(157, 44, 255, 0.15);
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--purple2);
+      object-fit: cover;
+    }
+
+    .dropdown-panel {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      width: 220px;
+      background: #0d0f1a;
+      border: 1px solid var(--purple);
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 150;
+      padding: 8px 0;
+    }
+
+    .top-action-wrap:hover .dropdown-panel,
+    .profile-wrap:hover .dropdown-panel {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-panel-header {
+      padding: 8px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--purple2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text);
+      transition: background 0.2s ease, color 0.2s ease;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+    }
+
+    .dropdown-item:hover {
+      background: rgba(157, 44, 255, 0.2);
+      color: #ffffff;
+    }
+
+    .dropdown-item .material-symbols-outlined {
+      font-size: 18px;
+      color: var(--muted);
+    }
+
+    .dropdown-item:hover .material-symbols-outlined {
+      color: var(--purple2);
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 0;
+    }
+
+    /* Review Specific Content Styles */
+    h1 {
+      font-size: 25px;
+      margin: 13px 0 18px;
+      line-height: 1.1;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 10px;
+    }
+
+    .left-grid {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .card {
+      border: 1px solid #33224b;
+      border-radius: 9px;
+      background: rgba(12, 11, 22, .87);
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      padding: 10px 12px 7px;
+    }
+
+    .basic {
+      grid-column: 1;
+    }
+
+    .plot {
+      grid-column: 2;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      padding: 0 10px 10px;
+    }
+
+    .info {
+      padding: 7px 9px;
+      border-top: 1px solid #29213a;
+      border-right: 1px solid #29213a;
+      min-height: 48px;
+    }
+
+    .info:nth-child(3n) {
+      border-right: 0;
+    }
+
+    .info label {
+      display: block;
+      color: #b44fff;
+      font-size: 10px;
+      margin-bottom: 6px;
+    }
+
+    .info span {
+      font-size: 11px;
+      color: #e8e3ed;
+    }
+
+    .scrolltext {
+      height: 121px;
+      overflow: auto;
+      padding: 0 13px 9px;
+      font-size: 10.5px;
+      line-height: 1.35;
+      color: #e0dce5;
+    }
+
+    .scrolltext::-webkit-scrollbar,
+    .mini-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .scrolltext::-webkit-scrollbar-thumb,
+    .mini-scroll::-webkit-scrollbar-thumb {
+      background: #4c3563;
+      border-radius: 4px;
+    }
+
+    .characters {
+      grid-column: 1 / -1;
+    }
+
+    .characters-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 2px 10px 10px;
+      overflow-x: auto;
+    }
+
+    .char {
+      width: 74px;
+      flex: 0 0 74px;
+      text-align: center;
+    }
+
+    .char img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 1px solid #9140c5;
+      object-fit: cover;
+    }
+
+    .char div {
+      font-size: 11px;
+      margin-top: 5px;
+    }
+
+    .arrow {
+      color: #b64aff;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .rating {
+      grid-column: 1;
+    }
+
+    .rating-body {
+      height: 90px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 18px;
+    }
+
+    .rating-num {
+      font-size: 31px;
+      color: #a943ff;
+      font-weight: 800;
+    }
+
+    .rating-list {
+      font-size: 10px;
+      line-height: 1.6;
+      color: #d5cfdf;
+    }
+
+    .rating-list b {
+      color: #fff;
+      float: right;
+      margin-left: 12px;
+    }
+
+    .favorite {
+      grid-column: 2;
+    }
+
+    .episode {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 12px;
+      border-top: 1px solid #29213a;
+      font-size: 11px;
+    }
+
+    .episode img {
+      width: 42px;
+      height: 42px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+
+    .episode b {
+      display: block;
+      font-size: 11px;
+    }
+
+    .episode small {
+      color: #b8b1c3;
+    }
+
+    .ost {
+      grid-column: 1 / -1;
+      min-height: 118px;
+    }
+
+    .rewatch {
+      grid-column: 2;
+      padding-bottom: 8px;
+    }
+
+    .rewatch-body {
+      padding: 8px 12px;
+    }
+
+    .stars {
+      color: #a23cff;
+      font-size: 21px;
+      letter-spacing: 2px;
+    }
+
+    .toggle {
+      display: inline-block;
+      width: 38px;
+      height: 20px;
+      border-radius: 15px;
+      background: #9e35ed;
+      vertical-align: middle;
+      margin-left: 7px;
+      position: relative;
+    }
+
+    .toggle:after {
+      content: "";
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #e9ddf3;
+      position: absolute;
+      right: 2px;
+      top: 2px;
+    }
+
+    .thoughts {
+      grid-column: 1;
+      margin-top: 0;
+    }
+
+    .thoughts p {
+      padding: 0 12px 10px;
+      margin: 0;
+      font-size: 10px;
+      line-height: 1.4;
+      color: #ddd7e3;
+    }
+
+    .quotes {
+      grid-column: 1 / -1;
+    }
+
+    .quote-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .quote {
+      min-height: 83px;
+      background: #151124;
+      border: 1px solid #29203c;
+      border-radius: 7px;
+      padding: 16px;
+      color: #eee;
+      font-size: 12px;
+      position: relative;
+    }
+
+    .quote:before {
+      content: "“";
+      color: #9d38ff;
+      font-size: 30px;
+      position: absolute;
+      left: 9px;
+      top: 0;
+    }
+
+    .quote em {
+      position: absolute;
+      right: 12px;
+      bottom: 7px;
+      color: #a944ef;
+      font-style: normal;
+    }
+
+    .pagination {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 7px;
+    }
+
+    .pagination button {
+      width: 34px;
+      height: 34px;
+      background: #0f0e19;
+      color: #eee;
+      border: 1px solid #211a30;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .pagination .active {
+      background: #7321b5;
+      border-color: #a13aff;
+    }
+
+    .mobile {
+      display: none;
+    }
+
+    /* ---------------- MOBILE LAYOUT & ANIMATIONS ---------------- */
+    .mobile-page {
+      display: none;
+    }
+
+    @media(max-width:900px) {
+      .desktop-page {
+        display: none;
+      }
+
+      .mobile-page {
+        display: block;
+        min-height: 100vh;
+        background:
+          linear-gradient(180deg, rgba(6, 6, 15, .35), rgba(6, 6, 13, .94)),
+          url("./pc-bg.png") top center/cover no-repeat;
+        padding: 22px 14px 72px;
+      }
+
+      .m-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 38px;
+      }
+
+      .hamb {
+        font-size: 21px;
+        cursor: pointer;
+      }
+
+      .m-logo {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+
+      .m-logo img {
+        width: 31px;
+        height: 31px;
+        object-fit: contain;
+      }
+
+      .m-logo b {
+        font-size: 14px;
+      }
+
+      .m-logo small {
+        display: block;
+        color: #b44cff;
+        font-size: 6px;
+      }
+
+      .m-search {
+        font-size: 22px;
+        cursor: pointer;
+      }
+
+      .mobile-search-bar {
+        display: none;
+        padding: 10px 0;
+        position: relative;
+      }
+
+      .mobile-search-bar.active {
+        display: block;
+      }
+
+      .mobile-search-input-wrap {
+        display: flex;
+        align-items: center;
+        background: rgba(16, 18, 28, .88);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 6px 12px;
+      }
+
+      .mobile-search-input-wrap input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--text);
+        font-size: 13px;
+      }
+
+      .m-hero {
+        margin-top: 42px;
+      }
+
+      .m-hero h1 {
+        font-size: 23px;
+        margin: 0 0 5px;
+      }
+
+      .m-hero p {
+        font-size: 10px;
+        color: #b9b1c3;
+        margin: 0;
+      }
+
+      .m-card {
+        border: 1px solid #3b2355;
+        border-radius: 8px;
+        background: rgba(10, 9, 19, .87);
+        margin-top: 14px;
+        overflow: hidden;
+      }
+
+      .m-title {
+        font-size: 13px;
+        font-weight: 700;
+        padding: 9px 10px;
+        border-bottom: 1px solid #292039;
+      }
+
+      .m-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        padding: 4px;
+      }
+
+      .m-info div {
+        padding: 5px 6px;
+        border-bottom: 1px solid #242035;
+      }
+
+      .m-info label {
+        display: block;
+        color: #b54dff;
+        font-size: 7px;
+      }
+
+      .m-info span {
+        font-size: 8px;
+      }
+
+      .m-plot {
+        height: 110px;
+        overflow: auto;
+        padding: 7px 10px;
+        font-size: 8px;
+        line-height: 1.35;
+        color: #d7d0df;
+      }
+
+      .m-chars {
+        display: flex;
+        gap: 8px;
+        padding: 8px;
+        overflow-x: auto;
+      }
+
+      .m-char {
+        flex: 0 0 46px;
+        text-align: center;
+        font-size: 7px;
+      }
+
+      .m-char img {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        border: 1px solid #a03cff;
+        object-fit: cover;
+      }
+
+      .m-rating {
+        display: flex;
+        align-items: center;
+        padding: 8px 10px;
+        gap: 13px;
+      }
+
+      .m-rating strong {
+        font-size: 27px;
+        color: #a53fff;
+      }
+
+      .m-rating span {
+        font-size: 8px;
+        line-height: 1.5;
+      }
+
+      .m-episode {
+        display: grid;
+        grid-template-columns: 35px 1fr;
+        gap: 8px;
+        padding: 7px 10px;
+        border-top: 1px solid #282039;
+        font-size: 8px;
+        align-items: center;
+      }
+
+      .m-episode img {
+        width: 35px;
+        height: 35px;
+        border-radius: 4px;
+        object-fit: cover;
+      }
+
+      .m-episode b {
+        font-size: 8px;
+      }
+
+      .m-episode small {
+        font-size: 7px;
+        color: #a8a1b2;
+      }
+
+      .m-stars {
+        padding: 7px 10px;
+        font-size: 17px;
+        color: #a33cff;
+      }
+
+      .m-rewatch {
+        padding: 0 10px 8px;
+        font-size: 10px;
+      }
+
+      .m-toggle {
+        float: right;
+        width: 28px;
+        height: 15px;
+        background: #9e39e9;
+        border-radius: 10px;
+        position: relative;
+      }
+
+      .m-toggle:after {
+        content: "";
+        width: 11px;
+        height: 11px;
+        background: white;
+        border-radius: 50%;
+        position: absolute;
+        right: 2px;
+        top: 2px;
+      }
+
+      .m-thoughts {
+        padding: 7px 10px;
+        font-size: 8px;
+        line-height: 1.35;
+      }
+
+      .m-quote {
+        padding: 10px;
+        font-size: 8px;
+        line-height: 1.4;
+        color: #e3dce9;
+      }
+
+      .m-quote em {
+        display: block;
+        text-align: right;
+        color: #a843ed;
+      }
+
+      .bottom-nav {
+        position: fixed;
+        z-index: 5;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 58px;
+        background: rgba(7, 6, 14, .96);
+        border-top: 1px solid #332342;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+      }
+
+      .bottom-nav div {
+        text-align: center;
+        font-size: 7px;
+        color: #d0cad6;
+        cursor: pointer;
+      }
+
+      .bottom-nav b {
+        display: block;
+        color: #a83eff;
+        font-size: 19px;
+        margin-bottom: 2px;
+      }
+    }
+
+    @media(min-width:901px) and (max-width:1150px) {
+      .desktop-shell {
+        grid-template-columns: 165px minmax(0, 1fr);
+      }
+
+      .sidebar {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+
+      .side-link {
+        font-size: 11px;
+        padding-left: 8px;
+      }
+
+      .sidebar-brand {
+        margin-left: 7px;
+      }
+
+      .main {
+        padding: 22px 18px;
+      }
+
+      .search {
+        width: 180px;
+      }
+
+      .content-grid {
+        grid-template-columns: minmax(0, 1fr) 190px;
+      }
+
+      .left-grid {
+        gap: 7px;
+      }
+
+      .info span {
+        font-size: 9px;
+      }
+
+      .char {
+        width: 62px;
+        flex-basis: 62px;
+      }
+
+      .char img {
+        width: 43px;
+        height: 43px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- PRELOADER OVERLAY -->
+  <div id="preloader">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- DESKTOP VIEW -->
+  <div class="desktop-page">
+    <section class="desktop-shell">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <img src="./logo.png" alt="Logo" onerror="this.style.display='none'">
+          <div>
+            <h1 class="brand-name">ANILOG</h1>
+            <small class="brand-sub">アニメログ</small>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span
+              class="material-symbols-outlined">home</span>Home</button>
+          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';"><span
+              class="material-symbols-outlined">list_alt</span>Watchlist</button>
+          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span
+              class="material-symbols-outlined">play_circle</span>Currently Watching</button>
+          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span
+              class="material-symbols-outlined">check_circle</span>Completed</button>
+          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span
+              class="material-symbols-outlined">calendar_month</span>Seasonal</button>
+          <button class="side-link active" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span class="material-symbols-outlined"
+              >rate_review</span>Reviews</button>
+          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span>Profile</button>
+          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span class="material-symbols-outlined"
+              >leaderboard</span>Top Lists</button>
+          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span class="material-symbols-outlined"
+              >shopping_bag</span>Merch</button>
+          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span class="material-symbols-outlined"
+             >history</span>Logs</button>
+          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span class="material-symbols-outlined"
+              >target</span>Goals</button>
+          <button class="side-link" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
+        </nav>
+
+        <div class="user-card">
+          <img class="user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="Avatar">
+          <div class="user-info">
+            <h3 class="user-name">ShadowX</h3>
+            <div class="user-level">Level 27</div>
+            <div class="xp-track">
+              <div class="xp-fill"></div>
+            </div>
+            <div class="xp-text">XP 4,300 / 6,800</div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="search">
+            <input type="text" id="desktop-search-input" placeholder="Search anime...">
+            <span class="material-symbols-outlined"
+              style="position: absolute; right: 12px; color: #777184; font-size: 16px;">search</span>
+            <div class="search-results-dropdown" id="desktop-search-results"></div>
+          </div>
+
+          <div class="top-actions">
+            <div class="top-action-wrap">
+              <div class="top-action"><span class="material-symbols-outlined">notifications</span></div>
+            </div>
+            <div class="top-action-wrap">
+              <div class="top-action fire">
+                <span class="material-symbols-outlined" style="color: #ca5aff;">local_fire_department</span>
+                <span>12</span>
+              </div>
+            </div>
+            <div class="top-action-wrap">
+              <div class="top-action crown"><span class="material-symbols-outlined"
+                  style="color: #ffd33e;">workspace_premium</span></div>
+            </div>
+
+            <div class="profile-wrap">
+              <div class="profile">
+                <img class="avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="User">
+                <span class="material-symbols-outlined">expand_more</span>
+              </div>
+              <div class="dropdown-panel">
+                <div class="dropdown-panel-header">User Profile</div>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span> View
+                  Profile</button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-edit-profile.html';"><span class="material-symbols-outlined">edit</span> Edit Profile</button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item" style="color: var(--danger);"><span class="material-symbols-outlined"
+                    style="color: var(--danger);">logout</span> Log Out</button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <h1 id="review-title">Anime Review: Attack on Titan - Final Season Part 2</h1>
+
+        <div class="content-grid">
+          <div class="left-grid">
+            <!-- Basic Info -->
+            <section class="card basic">
+              <div class="card-title">Basic Info</div>
+              <div class="info-grid">
+                <div class="info"><label>Genre</label><span>Action, Drama, Fantasy, Mystery</span></div>
+                <div class="info"><label>Episodes</label><span id="review-episodes">12</span></div>
+                <div class="info"><label>Studio</label><span>MAPPA</span></div>
+                <div class="info"><label>Source</label><span>Manga</span></div>
+                <div class="info"><label>Status</label><span>Completed</span></div>
+                <div class="info"><label>My Rating</label><span>9.8/10</span></div>
+                <div class="info"><label>Age Rating</label><span>TV-MA</span></div>
+              </div>
+            </section>
+
+            <!-- Plot Summary -->
+            <section class="card plot">
+              <div class="card-title">Plot Summary</div>
+              <div class="scrolltext" id="review-synopsis">The Rumbling enters the Rumbling and takes control of the continent. He is a
+                powerful warrior who has been training for years to become the strongest warrior in the world. He is
+                also a skilled fighter, and he is determined to prove himself to the world.<br><br>Eldiar Marley is a
+                powerful warrior who has been training for years to become the strongest warrior in the world. He is
+                also a skilled fighter, and he is determined to prove himself to the world.<br><br>The Rumbling and
+                Eldiar Marley are both determined to prove themselves to the world. They are both skilled fighters, and
+                they are both determined to become the strongest warriors in the world.</div>
+            </section>
+
+            <!-- Characters -->
+            <section class="card characters">
+              <div class="card-title">Characters</div>
+              <div class="characters-row">
+                <span class="arrow">‹</span>
+                <div class="char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Eren" alt="Eren">
+                  <div>Eren</div>
+                </div>
+                <div class="char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Mikasa" alt="Mikasa">
+                  <div>Mikasa</div>
+                </div>
+                <div class="char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Armin" alt="Armin">
+                  <div>Armin</div>
+                </div>
+                <div class="char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Zeke" alt="Zeke">
+                  <div>Zeke</div>
+                </div>
+                <div class="char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Reiner" alt="Reiner">
+                  <div>Reiner</div>
+                </div>
+                <div class="char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Gabi" alt="Gabi">
+                  <div>Gabi</div>
+                </div>
+                <span class="arrow">›</span>
+              </div>
+            </section>
+
+            <!-- Overall Rating -->
+            <section class="card rating">
+              <div class="card-title">Overall Rating</div>
+              <div class="rating-body">
+                <div class="rating-num">9.8</div>
+                <div class="rating-list">Story <b>10/10</b><br>Pacing <b>9.5/10</b><br>Art <b>10/10</b><br>Sound
+                  <b>10/10</b><br>Overall <b>9.8/10</b>
+                </div>
+              </div>
+            </section>
+
+            <!-- Favorite Episodes -->
+            <section class="card favorite">
+              <div class="card-title">Favorite Episodes</div>
+              <div class="episode"><span>Ep 80</span><img id="review-anime-image" src="https://api.dicebear.com/7.x/bottts/svg?seed=Ep80"
+                  alt="Ep 80">
+                <div><b>"From You, 2,000 Years Ago"</b><small>Masterful execution</small></div>
+              </div>
+              <div class="episode"><span>Ep 81</span><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Ep81"
+                  alt="Ep 81">
+                <div><b>"Thaw"</b><small>Emotional climax</small></div>
+              </div>
+            </section>
+
+            <!-- OST -->
+            <section class="card ost">
+              <div class="card-title">OST/OP/ED</div>
+              <div class="episode"><span>OP</span>
+                <div><b>"The Rumbling"</b><small>SiM - The perfect tone setter</small></div>
+              </div>
+              <div class="episode"><span>ED</span>
+                <div><b>"Akuma no Ko"</b><small>Ai Higuchi - So haunting and beautiful</small></div>
+              </div>
+              <div class="episode"><span>Key OST</span>
+                <div><b>"Ashes on the Fire"</b></div>
+              </div>
+            </section>
+
+            <!-- Quotes -->
+            <section class="card quotes">
+              <div class="card-title">Quotes</div>
+              <div class="quote-row">
+                <div class="quote">If we kill all the enemies on the other side... will we finally be free?<em>-
+                    Eren</em></div>
+                <div class="quote">You're not a slave, nor are you a god... you're just a person.<em>- Armin</em></div>
+              </div>
+            </section>
+
+            <div class="pagination">
+              <button>‹</button><button
+                class="active">1</button><button>2</button><button>3</button><button>…</button><button>8</button><button>›</button>
+            </div>
+          </div>
+
+          <!-- Right Sidebar -->
+          <aside>
+            <section class="card rewatch">
+              <div class="card-title">Would Rewatch?</div>
+              <div class="rewatch-body">Yes <span class="toggle"></span>
+                <div class="stars">★★★★★</div>
+                <div style="font-size:10px;background:#171224;padding:8px;border-radius:5px;margin-top:6px;">Absolutely
+                  essential</div>
+              </div>
+            </section>
+            <section class="card thoughts">
+              <div class="card-title">Personal Thoughts</div>
+              <p>I am not recently personal to this anime. I am a fan of the series and I have watched it multiple
+                times. I think it is a great series and I would recommend it to anyone who is interested in anime.</p>
+            </section>
+          </aside>
+        </div>
+      </main>
+    </section>
+  </div>
+
+  <!-- MOBILE VIEW -->
+  <div class="mobile-page">
+    <main class="mobile-shell">
+      <header class="m-top">
+        <span class="material-symbols-outlined hamb">menu</span>
+        <div class="m-logo">
+          <img src="./logo.png" alt="Logo" onerror="this.style.display='none'">
+          <div><b>ANILOG</b><small>アニメログ</small></div>
+        </div>
+        <span class="material-symbols-outlined m-search" id="mobile-search-toggle">search</span>
+      </header>
+
+      <div class="mobile-search-bar" id="mobile-search-bar">
+        <div class="mobile-search-input-wrap">
+          <input type="text" id="mobile-search-input" placeholder="Search anime...">
+        </div>
+        <div class="search-results-dropdown" id="mobile-search-results"></div>
+      </div>
+
+      <div class="m-hero">
+        <h1 id="mobile-review-title">Attack on Titan<br>Final S. Pt 2</h1>
+        <p>Overall Rating: 9.8/10</p>
+      </div>
+
+      <!-- Basic Info -->
+      <section class="m-card">
+        <div class="m-title">Basic Info</div>
+        <div class="m-info">
+          <div><label>Genre</label><span>Action, Drama, Fantasy, Mystery</span></div>
+          <div><label>Episodes</label><span id="mobile-review-episodes">12</span></div>
+          <div><label>Studio</label><span>MAPPA</span></div>
+          <div><label>Source</label><span>Manga</span></div>
+          <div><label>Status</label><span>Completed</span></div>
+          <div><label>My Rating</label><span>9.8/10</span></div>
+          <div><label>Age Rating</label><span>TV-MA</span></div>
+        </div>
+      </section>
+
+      <!-- Plot Summary -->
+      <section class="m-card">
+        <div class="m-title">Plot Summary</div>
+        <div class="m-plot" id="mobile-review-synopsis">The Rumbling enters the Rumbling and takes control of the continent. He is a powerful
+          warrior who has been training for years to become the strongest warrior in the world. He is also a skilled
+          fighter, and he is determined to prove himself to the world. Eldiar Marley is a powerful warrior who has been
+          training for years to become the strongest warrior in the world.</div>
+      </section>
+
+      <!-- Characters -->
+      <section class="m-card">
+        <div class="m-title">Characters</div>
+        <div class="m-chars">
+          <div class="m-char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Eren" alt="Eren">Eren</div>
+          <div class="m-char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Mikasa" alt="Mikasa">Mikasa</div>
+          <div class="m-char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Armin" alt="Armin">Armin</div>
+          <div class="m-char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Zeke" alt="Zeke">Zeke</div>
+          <div class="m-char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Reiner" alt="Reiner">Reiner</div>
+          <div class="m-char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Gabi" alt="Gabi">Gabi</div>
+        </div>
+      </section>
+
+      <!-- Overall Rating -->
+      <section class="m-card">
+        <div class="m-title">Overall Rating</div>
+        <div class="m-rating"><strong>9.8</strong><span>Story 10/10<br>Pacing 9.5/10<br>Art 10/10<br>Sound
+            10/10<br>Overall 9.8/10</span></div>
+      </section>
+
+      <!-- Favorite Episodes -->
+      <section class="m-card">
+        <div class="m-title">Favorite Episodes</div>
+        <div class="m-episode"><span>Ep 80</span><img id="mobile-review-anime-image" src="https://api.dicebear.com/7.x/bottts/svg?seed=Ep80"
+            alt="Ep 80">
+          <div><b>"From You, 2,000 Years Ago"</b><small>Masterful execution</small></div>
+        </div>
+        <div class="m-episode"><span>Ep 81</span><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Ep81"
+            alt="Ep 81">
+          <div><b>"Thaw"</b><small>Emotional climax</small></div>
+        </div>
+      </section>
+
+      <!-- OST -->
+      <section class="m-card">
+        <div class="m-title">OST/OP/ED</div>
+        <div class="m-episode"><span>OP</span>
+          <div><b>"The Rumbling"</b><small>SiM - The perfect tone setter</small></div>
+        </div>
+        <div class="m-episode"><span>ED</span>
+          <div><b>"Akuma no Ko"</b><small>Ai Higuchi - So haunting and beautiful</small></div>
+        </div>
+        <div class="m-episode"><span>Key OST</span>
+          <div><b>"Ashes on the Fire"</b></div>
+        </div>
+      </section>
+
+      <!-- Rewatch -->
+      <section class="m-card">
+        <div class="m-title">Would Rewatch?</div>
+        <div class="m-rewatch">Yes <span class="m-toggle"></span></div>
+        <div class="m-stars">★★★★★</div>
+        <div style="padding: 0 10px 8px; font-size: 8px; color: var(--muted);">Absolutely essential</div>
+      </section>
+
+      <!-- Personal Thoughts -->
+      <section class="m-card">
+        <div class="m-title">Personal Thoughts</div>
+        <div class="m-thoughts">I am not recently personal to this anime. I am a fan of the series and I have watched it
+          multiple times. I think it is a great series and I would recommend it to anyone who is interested in anime.
+        </div>
+      </section>
+
+      <!-- Quote -->
+      <section class="m-card">
+        <div class="m-title">Quote</div>
+        <div class="m-quote">"If we kill all the enemies on the other side... will we finally be free?"<em>- Eren</em>
+        </div>
+      </section>
+
+      <nav class="bottom-nav">
+        <div onclick="window.location.href='./anilog-home.html'"><b>⌂</b>Home</div>
+        <div onclick="window.location.href='./anilog-watchlist.html'"><b>♡</b>Watchlist</div>
+        <div onclick="window.location.href='./anilog-currentlywatching.html'"><b>▷</b>Watching</div>
+        <div onclick="window.location.href='./anilog-completed.html'"><b>☑</b>Completed</div>
+        <div onclick="window.location.href='./anilog-goals-challenges-responsive.html'"><b>◎</b>Goals</div>
+      </nav>
+    </main>
+  </div>
+
+  <script>
+    async function safeFetchKitsu(endpoint) {
+      try {
+        const response = await fetch(endpoint, {
+          headers: {
+            'Accept': 'application/vnd.api+json',
+            'Content-Type': 'application/vnd.api+json'
+          }
+        });
+        if (!response.ok) throw new Error(`HTTP_${response.status}`);
+        const json = await response.json();
+        return json.data || [];
+      } catch (err) {
+        console.error('Kitsu Fetch Error:', err);
+        throw err;
+      }
+    }
+
+    window.addEventListener('load', async () => {
+      if (document.fonts) {
+        await document.fonts.ready;
+      }
+      const preloader = document.getElementById('preloader');
+      preloader.style.opacity = '0';
+      preloader.style.visibility = 'hidden';
+      document.body.classList.add('loaded');
+      await loadSelectedAnime();
+    });
+
+    async function loadSelectedAnime() {
+      const encodedAnime = new URLSearchParams(window.location.search).get('anime');
+      if (!encodedAnime) return;
+
+      let anime;
+      try {
+        anime = JSON.parse(encodedAnime);
+      } catch (err) {
+        console.error('Invalid anime data in review URL:', err);
+        return;
+      }
+
+      if (anime.id && (!anime.synopsis || !anime.episodes || !anime.image)) {
+        try {
+          const sourceAnime = await safeFetchKitsu(`https://kitsu.io/api/edge/anime/${encodeURIComponent(anime.id)}`);
+          const attr = sourceAnime.attributes || {};
+          anime = {
+            ...anime,
+            title: anime.title || attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp,
+            image: anime.image || attr.posterImage?.large || attr.posterImage?.medium || attr.posterImage?.original,
+            episodes: anime.episodes || attr.episodeCount,
+            synopsis: anime.synopsis || attr.synopsis,
+            status: anime.status || attr.status,
+            type: anime.type || attr.showType,
+            rating: anime.rating || attr.averageRating
+          };
+        } catch (err) {
+          console.error('Could not refresh selected anime:', err);
+        }
+      }
+
+      const title = anime.title || 'Untitled';
+      const titleElement = document.getElementById('review-title');
+      const mobileTitleElement = document.getElementById('mobile-review-title');
+      const episodes = anime.episodes ? String(anime.episodes) : 'Unknown';
+      const synopsis = anime.synopsis || 'No plot summary is available for this anime yet.';
+
+      titleElement.textContent = `Anime Review: ${title}`;
+      mobileTitleElement.textContent = title;
+      document.getElementById('review-episodes').textContent = episodes;
+      document.getElementById('mobile-review-episodes').textContent = episodes;
+      document.getElementById('review-synopsis').textContent = synopsis;
+      document.getElementById('mobile-review-synopsis').textContent = synopsis;
+
+      if (anime.image) {
+        document.getElementById('review-anime-image').src = anime.image;
+        document.getElementById('mobile-review-anime-image').src = anime.image;
+        document.getElementById('review-anime-image').alt = title;
+        document.getElementById('mobile-review-anime-image').alt = title;
+      }
+
+      document.title = `ANILOG - ${title} Review`;
+    }
+
+    let searchTimeout = null;
+    let currentAbortController = null;
+
+    function openAnimeReviewFromSearch(anime) {
+      const attr = anime.attributes || {};
+      const reviewData = {
+        id: anime.id,
+        title: attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled',
+        image: attr.posterImage?.large || attr.posterImage?.medium || attr.posterImage?.original || '',
+        episodes: attr.episodeCount || '',
+        status: attr.status || '',
+        type: attr.showType || '',
+        rating: attr.averageRating || '',
+        synopsis: attr.synopsis || '',
+        startDate: attr.startDate || ''
+      };
+      window.location.href = `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(JSON.stringify(reviewData))}`;
+    }
+
+    function handleSearch(query, resultsContainer) {
+      const cleanQuery = query.trim();
+
+      if (cleanQuery.length < 3) {
+        resultsContainer.classList.remove('active');
+        resultsContainer.innerHTML = '';
+        if (currentAbortController) currentAbortController.abort();
+        return;
+      }
+
+      clearTimeout(searchTimeout);
+
+      searchTimeout = setTimeout(async () => {
+        if (currentAbortController) {
+          currentAbortController.abort();
+        }
+        currentAbortController = new AbortController();
+
+        resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">Searching...</div>`;
+        resultsContainer.classList.add('active');
+
+        try {
+          const targetUrl = `https://kitsu.io/api/edge/anime?filter[text]=${encodeURIComponent(cleanQuery)}&page[limit]=6`;
+          const response = await fetch(targetUrl, {
+            signal: currentAbortController.signal,
+            headers: {
+              'Accept': 'application/vnd.api+json',
+              'Content-Type': 'application/vnd.api+json'
+            }
+          });
+
+          if (!response.ok) throw new Error(`HTTP_${response.status}`);
+          const data = await response.json();
+          const results = data.data || [];
+          resultsContainer._animeResults = results;
+
+          resultsContainer.innerHTML = '';
+
+          if (results.length === 0) {
+            resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">No anime found</div>`;
+          } else {
+            results.forEach(anime => {
+              const attr = anime.attributes || {};
+              const title = attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled';
+              const img = attr.posterImage?.tiny || attr.posterImage?.small || '';
+              const rating = attr.averageRating ? `★ ${(parseFloat(attr.averageRating) / 10).toFixed(1)}` : 'N/A';
+              const type = attr.showType ? attr.showType.toUpperCase() : 'ANIME';
+
+              const itemHTML = `
+              <div class="search-result-item" data-result-index="${results.indexOf(anime)}" role="button" tabindex="0">
+                <img src="${img}" alt="${title}">
+                <div class="search-result-info">
+                  <div class="search-result-title">${title}</div>
+                  <div class="search-result-meta">${type} • ${rating}</div>
+                </div>
+              </div>
+            `;
+              resultsContainer.insertAdjacentHTML('beforeend', itemHTML);
+            });
+          }
+        } catch (err) {
+          if (err.name === 'AbortError') return;
+          console.error('Search fetch error:', err);
+          resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--danger); text-align: center;">Search failed. Try typing again.</div>`;
+        }
+      }, 400);
+    }
+
+    const desktopInput = document.getElementById('desktop-search-input');
+    const desktopResults = document.getElementById('desktop-search-results');
+    if (desktopInput) {
+      desktopInput.addEventListener('input', (e) => handleSearch(e.target.value, desktopResults));
+    }
+
+    const mobileInput = document.getElementById('mobile-search-input');
+    const mobileResults = document.getElementById('mobile-search-results');
+    if (mobileInput) {
+      mobileInput.addEventListener('input', (e) => handleSearch(e.target.value, mobileResults));
+    }
+
+    const mobileSearchToggle = document.getElementById('mobile-search-toggle');
+    const mobileSearchBar = document.getElementById('mobile-search-bar');
+    if (mobileSearchToggle && mobileSearchBar) {
+      mobileSearchToggle.addEventListener('click', () => {
+        mobileSearchBar.classList.toggle('active');
+      });
+    }
+
+    document.addEventListener('click', (event) => {
+      const resultItem = event.target.closest('.search-result-item');
+      if (!resultItem) return;
+      const anime = resultItem.parentElement._animeResults?.[Number(resultItem.dataset.resultIndex)];
+      if (anime) openAnimeReviewFromSearch(anime);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (desktopResults && !e.target.closest('.search')) {
+        desktopResults.classList.remove('active');
+      }
+      if (mobileResults && !e.target.closest('#mobile-search-bar') && !e.target.closest('#mobile-search-toggle')) {
+        mobileResults.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+
+</html>

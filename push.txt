@@ -1,0 +1,12 @@
+backend:- uvicorn main:app --reload
+
+
+git add .
+ 
+git commit -m "Add new files"
+
+git push origin main
+
+
+
+i need you to add like a small ui pop box on top just like famous websites use to notify users abt their action i wanna add that it notifies users errors server side or network,sucessful logins, incorrect credentials or anything that isnt sensetive to nottify users 

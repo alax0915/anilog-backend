@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>ANILOG - Sub / Dub</title>
+    <link rel="icon" href="./logo.png">
+    <style>
+        :root {
+            --panel: #10121d;
+            --line: #302342;
+            --text: #f5f3f8;
+            --muted: #aaa2b4;
+            --accent: #b348ff
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(145deg, rgba(7, 8, 17, .76), rgba(7, 8, 17, .96)), url('./pc-bg.png') center/cover fixed;
+            color: var(--text);
+            font-family: Arial, sans-serif
+        }
+
+        .page {
+            width: min(900px, 100%);
+            margin: auto;
+            padding: 28px 16px
+        }
+
+        .top {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 30px
+        }
+
+        .top img {
+            width: 42px;
+            height: 42px;
+            object-fit: contain
+        }
+
+        .top h1 {
+            font-size: 24px;
+            margin: 0
+        }
+
+        .top a {
+            margin-left: auto;
+            color: var(--muted);
+            font-size: 12px
+        }
+
+        .card {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: rgba(16, 18, 29, .92);
+            padding: 20px
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 12px;
+            margin: 6px 0 22px
+        }
+
+        .anime-list {
+            max-height: 520px;
+            overflow-y: auto
+        }
+
+        .anime {
+            border-bottom: 1px solid var(--line);
+            padding: 14px 0
+        }
+
+        .anime:last-child {
+            border: 0
+        }
+
+        .anime h2 {
+            font-size: 14px;
+            margin: 0 0 10px
+        }
+
+        .table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px
+        }
+
+        .table span {
+            padding: 9px;
+            background: #171225;
+            border: 1px solid #38264d;
+            border-radius: 4px;
+            font-size: 11px
+        }
+
+        .table b {
+            color: var(--accent);
+            margin-right: 7px
+        }
+
+        .empty {
+            color: var(--muted);
+            font-size: 12px;
+            padding: 25px 0
+        }
+
+        @media(max-width:600px) {
+            .page {
+                padding: 18px 12px
+            }
+
+            .table {
+                grid-template-columns: 1fr
+            }
+
+            .top h1 {
+                font-size: 20px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="page">
+        <header class="top"><img src="./logo.png" alt="ANILOG">
+            <h1>Default Sub / Dub</h1><a href="./anilog-home.html">Back to ANILOG</a>
+        </header>
+        <section class="card">
+            <p class="subtitle">Choose the language preference for anime in your watch history.</p>
+            <div class="anime-list" id="anime-list"></div>
+        </section>
+    </main>
+    <script>
+        const watched = JSON.parse(localStorage.getItem('anilogWatchedAnime') || '[]'); const list = document.getElementById('anime-list'); if (!watched.length) { list.innerHTML = '<div class="empty">Your watched anime will appear here.</div>' } else { list.innerHTML = watched.map((item, index) => `<article class="anime"><h2>${item.title || 'Untitled anime'}</h2><div class="table"><span><b>SUB</b>${item.subAvailable === false ? 'Not available' : 'Available'}</span><span><b>DUB</b>${item.dubAvailable === false ? 'Not available' : 'Available'}</span></div></article>`).join('') }
+    </script>
+</body>
+
+</html>

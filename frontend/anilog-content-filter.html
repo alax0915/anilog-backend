@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="icon" type="image/png" href="./logo.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANILOG - Content Filter</title>
+
+  <!-- Google Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <style>
+    :root {
+      --bg: #05060c;
+      --panel: #090b13;
+      --panel2: #0d0f18;
+      --panel3: #11131d;
+      --border: #25283a;
+      --purple: #9d2cff;
+      --purple2: #c34cff;
+      --text: #f5f3f8;
+      --muted: #8f8d9d;
+      --dim: #676675;
+      --danger: #ff2d63;
+      --success: #00e676;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      background: #03040a;
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    img {
+      display: block;
+      object-fit: cover;
+    }
+
+    /* PRELOADER */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #05050b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(157, 44, 255, 0.2);
+      border-top-color: var(--purple2);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .page-wrapper {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease;
+    }
+
+    body.loaded .page-wrapper {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    /* LAYOUT STRUCTURE */
+    .page-wrapper {
+      min-height: 100vh;
+      padding: 40px 8px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .desktop-shell {
+      position: relative;
+      width: min(1510px, 100%);
+      min-height: 935px;
+      display: grid;
+      grid-template-columns: 232px 1fr;
+      background:
+        radial-gradient(circle at 73% 20%, rgba(102, 20, 173, .16), transparent 28%),
+        linear-gradient(115deg, #090a12, #060810 58%, #080711);
+      border: 1px solid #272936;
+      border-radius: 9px;
+      overflow: visible;
+      box-shadow: 0 0 0 1px #25183b, 0 25px 70px rgba(0, 0, 0, .62);
+      backdrop-filter: blur(20px);
+    }
+
+    .desktop-shell::before {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      pointer-events: none;
+      z-index: 30;
+      border: 1px solid rgba(156, 47, 244, .48);
+      clip-path: polygon(0 0, 2% 0, 2.4% 1.5%, 98% 1.5%, 100% 0, 100% 98%, 98.4% 100%, 2% 100%, 0 98%);
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      position: relative;
+      z-index: 10;
+      min-height: 933px;
+      padding: 26px 16px 16px;
+      border-right: 1px solid #252637;
+      background: linear-gradient(180deg, rgba(13, 14, 23, .97), rgba(5, 7, 13, .98));
+      border-top-left-radius: 9px;
+      border-bottom-left-radius: 9px;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 10px 31px;
+    }
+
+    .sidebar-brand img {
+      width: 39px;
+      height: 39px;
+    }
+
+    .brand-name {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.7px;
+      background: linear-gradient(135deg, #ffffff, #c65cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+
+    .brand-sub {
+      margin-top: 3px;
+      color: var(--purple2);
+      font-size: 8px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .side-link {
+      height: 41px;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      font-size: 14px;
+      text-align: left;
+      color: #efedf3;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .side-link:hover {
+      background: rgba(157, 44, 255, 0.1);
+      border-color: rgba(157, 44, 255, 0.3);
+    }
+
+    .side-link.active {
+      border-color: #a12aff;
+      background: linear-gradient(90deg, rgba(118, 22, 183, .43), rgba(67, 17, 102, .22));
+      box-shadow: inset 0 0 20px rgba(155, 34, 246, .09);
+    }
+
+    .user-card {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 46px;
+      height: 125px;
+      padding: 18px 14px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      border: 1px solid #9b31e7;
+      border-radius: 7px;
+      background: linear-gradient(145deg, rgba(14, 16, 27, .98), rgba(7, 8, 15, .98));
+      clip-path: polygon(4% 0, 96% 0, 100% 7%, 100% 93%, 96% 100%, 4% 100%, 0 93%, 0 7%);
+    }
+
+    .user-avatar {
+      width: 49px;
+      height: 49px;
+      flex: 0 0 49px;
+      border: 1px solid #a42df2;
+      border-radius: 50%;
+      padding: 3px;
+    }
+
+    .user-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .user-name {
+      margin: 0 0 4px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .user-level {
+      color: #9996a5;
+      font-size: 9px;
+      margin-bottom: 9px;
+    }
+
+    .xp-track {
+      width: 100%;
+      height: 4px;
+      background: #252633;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .xp-fill {
+      width: 63%;
+      height: 100%;
+      background: #9c2cff;
+    }
+
+    .xp-text {
+      margin-top: 7px;
+      color: #9c99a7;
+      font-size: 9px;
+    }
+
+    /* MAIN SECTION */
+    .main {
+      min-width: 0;
+      padding: 0 28px 45px;
+    }
+
+    .topbar {
+      height: 84px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(31, 34, 47, .65);
+      position: relative;
+      z-index: 100;
+      margin-bottom: 24px;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      transition: color 0.2s ease;
+      text-decoration: none;
+    }
+
+    .back-btn:hover {
+      color: var(--purple2);
+    }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* CONTENT FILTER CARD */
+    .filter-container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding-bottom: 20px;
+    }
+
+    .row h2 {
+      font-size: 16px;
+      font-weight: 700;
+      margin: 0 0 8px;
+      color: var(--text);
+    }
+
+    .row p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* TOGGLE SWITCH */
+    .switch {
+      position: relative;
+      width: 48px;
+      height: 26px;
+      flex: 0 0 auto;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      background: #252636;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .slider:before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: #efedf3;
+      transition: 0.2s ease;
+    }
+
+    .switch input:checked+.slider {
+      background: linear-gradient(135deg, var(--purple), var(--purple2));
+      border-color: var(--purple2);
+    }
+
+    .switch input:checked+.slider:before {
+      transform: translateX(22px);
+      background: #fff;
+    }
+
+    .status {
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--purple2);
+    }
+
+    /* MOBILE NAVIGATION BOTTOM BAR */
+    .mobile-bottom-nav {
+      display: none;
+    }
+
+    /* RESPONSIVE BREAKPOINTS */
+    @media (max-width: 900px) {
+      .page-wrapper {
+        padding: 0 0 74px;
+      }
+
+      .desktop-shell {
+        grid-template-columns: 1fr;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        background: transparent;
+        min-height: auto;
+      }
+
+      .desktop-shell::before {
+        display: none;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        padding: 0 16px 20px;
+      }
+
+      .topbar {
+        height: 60px;
+        margin-bottom: 16px;
+      }
+
+      .page-title {
+        font-size: 18px;
+      }
+
+      .row {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+
+      .card {
+        padding: 18px;
+      }
+
+      .mobile-bottom-nav {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 60px;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        border-top: 1px solid #242636;
+        background: rgba(7, 8, 14, .98);
+        backdrop-filter: blur(14px);
+        z-index: 1000;
+      }
+
+      .mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        color: #d5d2dc;
+        font-size: 9px;
+        cursor: pointer;
+      }
+
+      .mobile-nav-item.active {
+        color: #bd43ff;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="page-wrapper">
+    <main class="desktop-shell">
+
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
+          <div>
+            <h1 class="brand-name">ANILOG</h1>
+            <div class="brand-sub">アニログ</div>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span class="material-symbols-outlined">home</span>Home</button>
+          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';"><span class="material-symbols-outlined">list_alt</span>Watchlist</button>
+          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span class="material-symbols-outlined">play_circle</span>Currently Watching</button>
+          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span class="material-symbols-outlined">check_circle</span>Completed</button>
+          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span class="material-symbols-outlined">calendar_month</span>Seasonal</button>
+          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span class="material-symbols-outlined">rate_review</span>Reviews</button>
+          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span>Profile</button>
+          <button class="side-link" onclick="window.location.href='./anilog-favorites.html';"><span class="material-symbols-outlined">bookmark</span>Favorites</button>
+          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span class="material-symbols-outlined">leaderboard</span>Top Lists</button>
+          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span class="material-symbols-outlined">shopping_bag</span>Merch</button>
+          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span class="material-symbols-outlined">history</span>Logs</button>
+          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span class="material-symbols-outlined">target</span>Goals</button>
+          <button class="side-link active" onclick="window.location.href='./anilog-content-filter.html';"><span class="material-symbols-outlined">filter_alt</span>Content Filter</button>
+        </nav>
+
+        <div class="user-card">
+          <img class="user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="Avatar">
+          <div class="user-info">
+            <h3 class="user-name">ShadowX</h3>
+            <div class="user-level">Level 27</div>
+            <div class="xp-track">
+              <div class="xp-fill"></div>
+            </div>
+            <div class="xp-text">XP 4,250 / 6,800</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT AREA -->
+      <section class="main">
+
+        <!-- TOP NAVIGATION BAR -->
+        <header class="topbar">
+          <h1 class="page-title">
+            <span class="material-symbols-outlined" style="color:var(--purple2)">filter_alt</span> Content Filter
+          </h1>
+          <a href="./anilog-home.html" class="back-btn">
+            <span class="material-symbols-outlined">arrow_back</span> Back to ANILOG
+          </a>
+        </header>
+
+        <!-- MAIN FILTER FORM -->
+        <div class="filter-container">
+          <section class="card">
+            <div class="row">
+              <div>
+                <h2>18+ Content Filter</h2>
+                <p>When enabled, anime rated for viewers 18 and older will be filtered out and hidden across ANILOG pages.</p>
+              </div>
+              <label class="switch">
+                <input id="filter" type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="status" id="status">Checking filter status...</div>
+          </section>
+        </div>
+
+      </section>
+    </main>
+
+    <!-- MOBILE NAVIGATION BOTTOM BAR -->
+    <nav class="mobile-bottom-nav">
+      <div class="mobile-nav-item" onclick="window.location.href='./anilog-home.html';">
+        <span class="material-symbols-outlined">home</span>
+        <span>Home</span>
+      </div>
+      <div class="mobile-nav-item" onclick="window.location.href='./anilog-watchlist.html';">
+        <span class="material-symbols-outlined">list_alt</span>
+        <span>Watchlist</span>
+      </div>
+      <div class="mobile-nav-item" onclick="window.location.href='./anilog-currentlywatching.html';">
+        <span class="material-symbols-outlined">play_arrow</span>
+        <span>Watching</span>
+      </div>
+      <div class="mobile-nav-item" onclick="window.location.href='./anilog-favorites.html';">
+        <span class="material-symbols-outlined">bookmark</span>
+        <span>Favorites</span>
+      </div>
+      <div class="mobile-nav-item" onclick="window.location.href='./anilog-user-profile-responsive.html';">
+        <span class="material-symbols-outlined">account_circle</span>
+        <span>Profile</span>
+      </div>
+    </nav>
+  </div>
+
+  <script>
+    window.addEventListener('load', () => {
+      const preloader = document.getElementById('preloader');
+      if (preloader) {
+        preloader.style.opacity = '0';
+        preloader.style.visibility = 'hidden';
+      }
+      document.body.classList.add('loaded');
+    });
+
+    const profile = JSON.parse(localStorage.getItem('anilogProfile') || '{}');
+    const settings = profile.settings || {};
+    const filter = document.getElementById('filter');
+    const status = document.getElementById('status');
+
+    if (filter) {
+      filter.checked = Boolean(settings.contentFilter);
+    }
+
+    function save() {
+      const current = JSON.parse(localStorage.getItem('anilogProfile') || '{}');
+      current.settings = { ...(current.settings || {}), contentFilter: filter.checked };
+      localStorage.setItem('anilogProfile', JSON.stringify(current));
+
+      if (status) {
+        status.textContent = filter.checked ? '18+ anime are hidden.' : 'All content ratings may appear.';
+      }
+    }
+
+    if (filter) {
+      filter.addEventListener('change', save);
+      save();
+    }
+  </script>
+</body>
+
+</html>

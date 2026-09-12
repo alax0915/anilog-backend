@@ -1,0 +1,1841 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="icon" type="image/png" href="./logo.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANILOG - Yearly / Monthly Watch Log</title>
+
+  <!-- Google Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+
+  <style>
+    /* --- MERGED STYLES: base + home animations + layout --- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #05060c;
+      --panel: #090b13;
+      --panel2: #0d0f18;
+      --panel3: #11131d;
+      --border: #25283a;
+      --purple: #9d2cff;
+      --purple2: #c34cff;
+      --text: #f5f3f8;
+      --muted: #8f8d9d;
+      --dim: #676675;
+      --danger: #ff2d63;
+      --green: #82d891;
+      --gold: #e5c27c;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      background: #03040a;
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+      color: inherit;
+    }
+
+    button {
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    /* ---------------- PRELOADER ---------------- */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #05050b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(157, 44, 255, 0.2);
+      border-top-color: var(--purple2);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .desktop-page,
+    .mobile-page {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease;
+    }
+
+    body.loaded .desktop-page,
+    body.loaded .mobile-page {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ---------------- MATERIAL ICONS ---------------- */
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    /* ---------------- ANIMATIONS ---------------- */
+
+    /* Sidebar Slide-In */
+    body.loaded .sidebar {
+      animation: sidebarSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes sidebarSlideIn {
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* Nav items staggered */
+    .side-link {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+
+    body.loaded .side-link {
+      animation: navItemSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    body.loaded .side-link:nth-child(1) { animation-delay: 0.15s; }
+    body.loaded .side-link:nth-child(2) { animation-delay: 0.20s; }
+    body.loaded .side-link:nth-child(3) { animation-delay: 0.25s; }
+    body.loaded .side-link:nth-child(4) { animation-delay: 0.30s; }
+    body.loaded .side-link:nth-child(5) { animation-delay: 0.35s; }
+    body.loaded .side-link:nth-child(6) { animation-delay: 0.40s; }
+    body.loaded .side-link:nth-child(7) { animation-delay: 0.45s; }
+    body.loaded .side-link:nth-child(8) { animation-delay: 0.50s; }
+    body.loaded .side-link:nth-child(9) { animation-delay: 0.55s; }
+    body.loaded .side-link:nth-child(10) { animation-delay: 0.60s; }
+    body.loaded .side-link:nth-child(11) { animation-delay: 0.65s; }
+    body.loaded .side-link:nth-child(12) { animation-delay: 0.70s; }
+
+    @keyframes navItemSlideIn {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Search expand */
+    .search {
+      opacity: 0;
+    }
+
+    body.loaded .search {
+      animation: googleSearchExpand 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
+    }
+
+    @keyframes googleSearchExpand {
+      0% {
+        opacity: 0;
+        clip-path: circle(0px at 50% 50%);
+      }
+      10% {
+        opacity: 1;
+        clip-path: circle(12px at 50% 50%);
+      }
+      100% {
+        opacity: 1;
+        clip-path: none;
+      }
+    }
+
+    /* Top actions fade-in */
+    .top-actions {
+      opacity: 0;
+    }
+
+    body.loaded .top-actions {
+      animation: topActionsFadeIn 0.6s ease 0.5s forwards;
+    }
+
+    @keyframes topActionsFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Hero zoom */
+    .hero, .mobile-hero {
+      opacity: 0;
+    }
+
+    body.loaded .hero,
+    body.loaded .mobile-hero {
+      animation: heroZoomIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+    }
+
+    @keyframes heroZoomIn {
+      from {
+        opacity: 0;
+        transform: scale(0.92);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* User card flip */
+    .user-card {
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      opacity: 0;
+    }
+
+    body.loaded .user-card {
+      animation: userCardFlip 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s forwards;
+    }
+
+    @keyframes userCardFlip {
+      from {
+        opacity: 0;
+        transform: rotateY(-180deg);
+      }
+      to {
+        opacity: 1;
+        transform: rotateY(0deg);
+      }
+    }
+
+    /* Stat cards bounce */
+    .stat-card, .mobile-stat {
+      opacity: 0;
+    }
+
+    body.loaded .stat-card,
+    body.loaded .mobile-stat {
+      animation: statBounce 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    body.loaded .stat-card:nth-child(1),
+    body.loaded .mobile-stat:nth-child(1) { animation-delay: 0.40s; }
+    body.loaded .stat-card:nth-child(2),
+    body.loaded .mobile-stat:nth-child(2) { animation-delay: 0.48s; }
+    body.loaded .stat-card:nth-child(3),
+    body.loaded .mobile-stat:nth-child(3) { animation-delay: 0.56s; }
+    body.loaded .stat-card:nth-child(4),
+    body.loaded .mobile-stat:nth-child(4) { animation-delay: 0.64s; }
+
+    @keyframes statBounce {
+      0% {
+        opacity: 0;
+        transform: translateY(35px) scale(0.9);
+      }
+      60% {
+        opacity: 1;
+        transform: translateY(-8px) scale(1.02);
+      }
+      80% {
+        transform: translateY(3px) scale(0.99);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* ---------------- LAYOUT: DESKTOP ---------------- */
+
+    .desktop-page {
+      min-height: 100vh;
+      padding: 40px 8px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .desktop-shell {
+      position: relative;
+      width: min(1510px, 100%);
+      min-height: 935px;
+      display: grid;
+      grid-template-columns: 232px 1fr;
+      background:
+        radial-gradient(circle at 73% 20%, rgba(102, 20, 173, .16), transparent 28%),
+        linear-gradient(115deg, #090a12, #060810 58%, #080711);
+      border: 1px solid #272936;
+      border-radius: 9px;
+      overflow: visible;
+      box-shadow: 0 0 0 1px #25183b, 0 25px 70px rgba(0, 0, 0, .62);
+      backdrop-filter: blur(20px);
+    }
+
+    .desktop-shell::before {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      pointer-events: none;
+      z-index: 30;
+      border: 1px solid rgba(156, 47, 244, .48);
+      clip-path: polygon(0 0, 2% 0, 2.4% 1.5%, 98% 1.5%, 100% 0, 100% 98%, 98.4% 100%, 2% 100%, 0 98%);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: relative;
+      z-index: 10;
+      min-height: 933px;
+      padding: 26px 16px 16px;
+      border-right: 1px solid #252637;
+      background: linear-gradient(180deg, rgba(13, 14, 23, .97), rgba(5, 7, 13, .98));
+      border-top-left-radius: 9px;
+      border-bottom-left-radius: 9px;
+      perspective: 1000px;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 10px 31px;
+    }
+
+    .sidebar-brand img {
+      width: 39px;
+      height: 39px;
+    }
+
+    .brand-name {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.7px;
+      background: linear-gradient(135deg, #ffffff, #c65cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+      border-right: 2px solid #c65cff;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: typingLoop 5s steps(6, end) infinite, blinkCursor 0.75s step-end infinite;
+    }
+
+    @keyframes typingLoop {
+      0%, 100% { width: 0; }
+      30%, 70% { width: 6.2ch; }
+    }
+
+    @keyframes blinkCursor {
+      from, to { border-color: transparent; }
+      50% { border-color: #c65cff; }
+    }
+
+    .brand-sub {
+      margin-top: 3px;
+      color: var(--purple2);
+      font-size: 8px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .side-link {
+      height: 41px;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      font-size: 14px;
+      text-align: left;
+      color: #efedf3;
+      transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+    }
+
+    .side-link:hover {
+      background: rgba(157, 44, 255, 0.1);
+      border-color: rgba(157, 44, 255, 0.3);
+    }
+
+    .side-link.active {
+      border-color: #a12aff;
+      background: linear-gradient(90deg, rgba(118, 22, 183, .43), rgba(67, 17, 102, .22));
+      box-shadow: inset 0 0 20px rgba(155, 34, 246, .09);
+    }
+
+    /* User card */
+    .user-card {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 46px;
+      height: 125px;
+      padding: 18px 14px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      border: 1px solid #9b31e7;
+      border-radius: 7px;
+      background: linear-gradient(145deg, rgba(14, 16, 27, .98), rgba(7, 8, 15, .98));
+      clip-path: polygon(4% 0, 96% 0, 100% 7%, 100% 93%, 96% 100%, 4% 100%, 0 93%, 0 7%);
+    }
+
+    .user-avatar {
+      width: 49px;
+      height: 49px;
+      flex: 0 0 49px;
+      border: 1px solid #a42df2;
+      border-radius: 50%;
+      padding: 3px;
+    }
+
+    .user-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .user-name {
+      margin: 0 0 4px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .user-level {
+      color: #9996a5;
+      font-size: 9px;
+      margin-bottom: 9px;
+    }
+
+    .xp-track {
+      width: 100%;
+      height: 4px;
+      background: #252633;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .xp-fill {
+      width: 63%;
+      height: 100%;
+      background: #9c2cff;
+    }
+
+    .xp-text {
+      margin-top: 7px;
+      color: #9c99a7;
+      font-size: 9px;
+    }
+
+    /* Main */
+    .main {
+      min-width: 0;
+      padding: 0 17px 45px;
+    }
+
+    .topbar {
+      height: 84px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid rgba(31, 34, 47, .65);
+      position: relative;
+      z-index: 100;
+    }
+
+    .search {
+      position: relative;
+      width: 300px;
+      height: 41px;
+      margin-left: 180px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      border: 1px solid #272a39;
+      border-radius: 22px;
+      background: rgba(16, 18, 28, .88);
+      transition: border-color 0.2s ease;
+    }
+
+    .search:focus-within {
+      border-color: var(--purple2);
+    }
+
+    .search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: #eee;
+      font-size: 12px;
+    }
+
+    .top-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 27px;
+      padding-right: 16px;
+    }
+
+    .top-action-wrap {
+      position: relative;
+    }
+
+    .top-action {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #f2edf5;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .top-action:hover {
+      background: rgba(157, 44, 255, 0.15);
+    }
+
+    .profile-wrap {
+      position: relative;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .profile:hover {
+      background: rgba(157, 44, 255, 0.15);
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--purple2);
+    }
+
+    /* Dropdown panels */
+    .dropdown-panel {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      width: 220px;
+      background: #0d0f1a;
+      border: 1px solid var(--purple);
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s;
+      z-index: 150;
+      padding: 8px 0;
+    }
+
+    .top-action-wrap:hover .dropdown-panel,
+    .profile-wrap:hover .dropdown-panel {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-panel-header {
+      padding: 8px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--purple2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text);
+      transition: background 0.2s ease, color 0.2s ease;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: 0;
+    }
+
+    .dropdown-item:hover {
+      background: rgba(157, 44, 255, 0.2);
+      color: #ffffff;
+    }
+
+    .dropdown-item .material-symbols-outlined {
+      font-size: 18px;
+      color: var(--muted);
+    }
+
+    .dropdown-item:hover .material-symbols-outlined {
+      color: var(--purple2);
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 0;
+    }
+
+    /* Hero section */
+    .hero {
+      position: relative;
+      height: 160px;
+      margin-top: 6px;
+      overflow: hidden;
+      border-radius: 4px;
+    }
+
+    .hero-art {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(90deg, rgba(4, 6, 13, .91) 0%, rgba(4, 5, 11, .68) 34%, rgba(4, 5, 10, .02) 72%),
+        linear-gradient(0deg, rgba(4, 5, 10, .45), transparent 50%);
+    }
+
+    .hero-content {
+      position: absolute;
+      z-index: 2;
+      left: 14px;
+      top: 28px;
+    }
+
+    .hero-content .welcome {
+      margin: 0;
+      color: #d08aff;
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    .hero-content h1 {
+      margin: 4px 0 12px;
+      font-size: 30px;
+      line-height: 1;
+      letter-spacing: -1.6px;
+    }
+
+    .hero-content .jp {
+      margin: 0 0 6px;
+      color: #c44aff;
+      font-size: 13px;
+    }
+
+    .hero-content .tagline {
+      margin: 0;
+      font-size: 12px;
+    }
+
+    /* Stats */
+    .stats {
+      position: relative;
+      z-index: 5;
+      margin: -1px 13px 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+    }
+
+    .stat-card {
+      height: 91px;
+      padding: 17px 21px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      border: 1px solid #7624bb;
+      border-radius: 7px;
+      background: linear-gradient(145deg, rgba(21, 12, 34, .96), rgba(9, 10, 18, .98));
+    }
+
+    .stat-label {
+      color: #92909f;
+      font-size: 10px;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 23px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .stat-sub {
+      margin-top: 6px;
+      color: #858391;
+      font-size: 9px;
+    }
+
+    /* Dashboard grid */
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .card {
+      border: 1px solid rgba(139, 65, 189, .65);
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(18, 16, 30, .94), rgba(11, 11, 21, .9));
+      box-shadow: inset 0 0 15px rgba(109, 33, 168, .08);
+      overflow: hidden;
+    }
+
+    .card-title {
+      height: 36px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      font-size: 14px;
+      border-bottom: 1px solid rgba(128, 69, 170, .22);
+    }
+
+    .selector .year {
+      margin: 12px 10px 6px;
+      height: 52px;
+      border: 1px solid #b146ff;
+      border-radius: 7px;
+      background: linear-gradient(#8125d5, #5d19a7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      font-weight: 700;
+      color: #b858ff;
+      box-shadow: 0 0 15px rgba(159, 48, 255, .28) inset;
+    }
+
+    .selector .month-select {
+      margin: 0 10px 12px;
+      width: calc(100% - 20px);
+      height: 35px;
+      border-radius: 7px;
+      border: 1px solid #52366d;
+      background: #141220;
+      padding: 0 9px;
+      font-size: 17px;
+    }
+
+    .title-item {
+      height: 66px;
+      margin: 7px 9px 0;
+      border: 1px solid #5a3a72;
+      border-radius: 7px;
+      background: rgba(22, 19, 34, .75);
+      display: flex;
+      align-items: center;
+      padding: 7px;
+    }
+
+    .thumb {
+      width: 43px;
+      height: 51px;
+      flex: 0 0 43px;
+      border-radius: 4px;
+      background: #2a1f3a;
+    }
+
+    .title-item span {
+      font-size: 13px;
+      margin-left: 9px;
+      line-height: 1.25;
+    }
+
+    .watch-table .table-head,
+    .watch-table .table-row {
+      display: grid;
+      grid-template-columns: 1.25fr .8fr .52fr .72fr;
+    }
+
+    .watch-table .table-head {
+      height: 48px;
+      align-items: center;
+      color: #c978ff;
+      font-size: 12px;
+      background: rgba(35, 15, 53, .65);
+      border-bottom: 1px solid #4d2b66;
+      padding: 0 9px;
+    }
+
+    .watch-table .table-row {
+      min-height: 76px;
+      align-items: center;
+      border-bottom: 1px solid rgba(76, 58, 96, .35);
+      font-size: 13px;
+      color: #e7e3eb;
+      padding: 0 9px;
+    }
+
+    .watch-table .table-row:last-child {
+      border-bottom: 0;
+    }
+
+    .watch-table .cell-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .watch-table .cell-title .thumb {
+      width: 49px;
+      height: 49px;
+    }
+
+    .green {
+      color: var(--green);
+    }
+
+    .rewatched {
+      color: #d9c6ae;
+    }
+
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .episodes .big-number {
+      font-size: 29px;
+      color: #a744ff;
+      font-weight: 700;
+      padding: 7px 10px 0;
+    }
+
+    .chart {
+      height: 87px;
+      margin: 0 8px 8px;
+      display: flex;
+      align-items: end;
+      gap: 4px;
+      padding: 8px 5px 14px;
+      border-bottom: 1px solid #332740;
+    }
+
+    .bar {
+      width: 9px;
+      background: linear-gradient(#ae43ff, #6821a9);
+      border-radius: 2px 2px 0 0;
+    }
+
+    .favorite .fav-body {
+      display: flex;
+      gap: 8px;
+      padding: 9px;
+    }
+
+    .fav-img {
+      width: 61px;
+      height: 65px;
+      border-radius: 5px;
+      background: #2a1f3a;
+      flex: none;
+    }
+
+    .fav-name {
+      font-size: 15px;
+    }
+
+    .fav-desc {
+      font-size: 8px;
+      color: #a9a2af;
+      line-height: 1.2;
+      margin-top: 5px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      height: 108px;
+    }
+
+    .stat-box {
+      padding: 7px 10px;
+      border-right: 1px solid #32283d;
+    }
+
+    .stat-box:last-child {
+      border-right: 0;
+    }
+
+    .stat-label {
+      font-size: 11px;
+    }
+
+    .mini-chart {
+      height: 77px;
+      display: flex;
+      align-items: end;
+      gap: 7px;
+      padding: 4px 5px;
+    }
+
+    .mini-bar {
+      flex: 1;
+      background: linear-gradient(#8f38dd, #4f1985);
+      border-radius: 2px 2px 0 0;
+    }
+
+    .donut {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: conic-gradient(#6f21bd 0 36%, #8f39d8 36% 57%, #aa5be8 57% 76%, #c68cf0 76% 100%);
+      position: relative;
+      margin: 5px auto;
+    }
+
+    .donut:after {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      background: #171221;
+      border-radius: 50%;
+    }
+
+    .legend {
+      font-size: 8px;
+      color: #c7bfce;
+      line-height: 1.5;
+      position: absolute;
+      margin-left: 88px;
+      margin-top: -72px;
+    }
+
+    /* ========== MOBILE ========== */
+    .mobile-page {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .desktop-page {
+        display: none;
+      }
+      .mobile-page {
+        display: block;
+        min-height: 100vh;
+        background: #05060c;
+      }
+
+      .mobile-shell {
+        position: relative;
+        min-height: 100vh;
+        padding: 0 0 74px;
+        overflow: hidden;
+        background: radial-gradient(circle at 65% 13%, rgba(96, 24, 154, .16), transparent 28%), #05060c;
+      }
+
+      .mobile-topbar {
+        height: 69px;
+        padding: 17px 16px 7px;
+        display: flex;
+        align-items: center;
+        gap: 17px;
+        background: rgba(6, 7, 13, .96);
+        position: relative;
+        z-index: 100;
+      }
+
+      .mobile-brand {
+        margin: auto;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .mobile-brand img {
+        width: 31px;
+        height: 31px;
+      }
+
+      .mobile-brand .brand-name {
+        font-size: 17px;
+        background: linear-gradient(135deg, #ffffff, #c65cff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        border-right: 2px solid #c65cff;
+        padding-right: 4px;
+      }
+
+      .mobile-brand .brand-sub {
+        font-size: 6px;
+        color: var(--purple2);
+      }
+
+      .mobile-search-bar {
+        display: none;
+        padding: 10px 16px;
+        background: #090b14;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .mobile-search-bar.active {
+        display: block;
+      }
+
+      .mobile-search-input-wrap {
+        display: flex;
+        align-items: center;
+        background: rgba(16, 18, 28, .88);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 6px 12px;
+      }
+
+      .mobile-search-input-wrap input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--text);
+        font-size: 13px;
+      }
+
+      .mobile-content {
+        padding: 14px 13px 0;
+      }
+
+      .mobile-hero {
+        position: relative;
+        height: 140px;
+        overflow: hidden;
+        border: 1px solid #202334;
+        border-radius: 7px;
+      }
+
+      .mobile-hero img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .mobile-hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, rgba(7, 7, 14, .88), rgba(7, 7, 14, .23)), linear-gradient(0deg, rgba(5, 5, 10, .43), transparent);
+      }
+
+      .mobile-hero-content {
+        position: absolute;
+        z-index: 2;
+        left: 11px;
+        top: 28px;
+      }
+
+      .mobile-hero-content .welcome {
+        color: #d08aff;
+        font-size: 14px;
+      }
+      .mobile-hero-content h1 {
+        font-size: 24px;
+        margin: 2px 0 6px;
+      }
+      .mobile-hero-content .jp {
+        color: #c44aff;
+        font-size: 11px;
+      }
+      .mobile-hero-content .tagline {
+        font-size: 10px;
+      }
+
+      .mobile-stats {
+        margin-top: 13px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 5px;
+      }
+
+      .mobile-stat {
+        height: 79px;
+        padding: 10px 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #7023ae;
+        border-radius: 6px;
+        background: #0c0d16;
+      }
+
+      .mobile-stat .label {
+        font-size: 8px;
+        color: #92909f;
+        margin-top: 2px;
+      }
+      .mobile-stat .value {
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .mobile-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 16px;
+      }
+
+      .mobile-card {
+        border: 1px solid #4e2d69;
+        border-radius: 7px;
+        background: rgba(15, 13, 25, .9);
+        overflow: hidden;
+      }
+
+      .mobile-card .card-title {
+        height: 34px;
+        font-size: 12px;
+        padding: 0 8px;
+      }
+
+      .mobile-year {
+        height: 42px;
+        margin: 7px 7px 5px;
+        border: 1px solid #ad45ff;
+        border-radius: 6px;
+        background: linear-gradient(#7c26c9, #5c189f);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #bd65ff;
+        font-size: 23px;
+        font-weight: 700;
+      }
+
+      .mobile-month {
+        height: 30px;
+        margin: 0 7px 7px;
+        border: 1px solid #4d385c;
+        border-radius: 5px;
+        background: #171522;
+        padding: 0 7px;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+      }
+
+      .mobile-episodes .big-number {
+        font-size: 23px;
+        padding: 5px 7px 0;
+        color: #a744ff;
+        font-weight: 700;
+      }
+
+      .mobile-chart {
+        height: 67px;
+        margin: 0 5px 7px;
+        display: flex;
+        align-items: end;
+        gap: 3px;
+        padding: 5px;
+        border-bottom: 1px solid #332740;
+      }
+
+      .mobile-chart .bar {
+        width: 6px;
+      }
+
+      .mobile-favorites {
+        grid-column: 1/3;
+      }
+
+      .mobile-fav {
+        display: flex;
+        gap: 7px;
+        padding: 8px;
+      }
+
+      .mobile-fav .fav-img {
+        width: 57px;
+        height: 65px;
+      }
+
+      .mobile-fav .fav-name {
+        font-size: 13px;
+      }
+      .mobile-fav .fav-desc {
+        font-size: 7px;
+      }
+
+      .mobile-list {
+        grid-column: 1/3;
+      }
+
+      .mobile-list .title-item {
+        height: 62px;
+        margin: 6px;
+      }
+
+      .mobile-list .thumb {
+        width: 42px;
+        height: 48px;
+      }
+
+      .mobile-list .title-item span {
+        font-size: 11px;
+      }
+
+      .mobile-table {
+        grid-column: 1/3;
+      }
+
+      .mobile-table-head {
+        display: grid;
+        grid-template-columns: 1.2fr .65fr .45fr .65fr;
+        font-size: 8px;
+        color: #c876ff;
+        padding: 8px 6px;
+        border-bottom: 1px solid #4e2b67;
+      }
+
+      .mobile-table-row {
+        display: grid;
+        grid-template-columns: 1.2fr .65fr .45fr .65fr;
+        min-height: 61px;
+        align-items: center;
+        border-bottom: 1px solid #282332;
+        padding: 4px 6px;
+        font-size: 8px;
+      }
+
+      .mobile-table-title {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .mobile-table-title .thumb {
+        width: 35px;
+        height: 42px;
+      }
+
+      .mobile-stats {
+        grid-column: 1/3;
+      }
+
+      .mobile-stats .stats-grid {
+        height: 125px;
+      }
+
+      .mobile-stats .stat-box {
+        padding: 6px;
+      }
+
+      .mobile-stats .stat-label {
+        font-size: 8px;
+      }
+
+      .mobile-stats .mini-chart {
+        height: 65px;
+        gap: 3px;
+      }
+
+      .mobile-stats .donut {
+        width: 54px;
+        height: 54px;
+      }
+
+      .mobile-stats .donut:after {
+        inset: 15px;
+      }
+
+      .mobile-stats .legend {
+        margin-left: 63px;
+        margin-top: -61px;
+        font-size: 7px;
+      }
+
+      .mobile-bottom-nav {
+        position: fixed;
+        z-index: 50;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 72px;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        border-top: 1px solid #242636;
+        background: rgba(7, 8, 14, .98);
+        backdrop-filter: blur(14px);
+      }
+
+      .mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        color: #d5d2dc;
+        font-size: 8px;
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      .mobile-nav-item.active {
+        color: #bd43ff;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- =========================================================
+     DESKTOP PAGE
+     ========================================================= -->
+  <div class="desktop-page">
+    <main class="desktop-shell">
+
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
+          <div>
+            <h1 class="brand-name">ANILOG</h1>
+            <div class="brand-sub">アニログ</div>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span class="material-symbols-outlined">home</span>Home</button>
+          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';"><span class="material-symbols-outlined">list_alt</span>Watchlist</button>
+          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span class="material-symbols-outlined">play_circle</span>Currently Watching</button>
+          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span class="material-symbols-outlined">check_circle</span>Completed</button>
+          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span class="material-symbols-outlined">calendar_month</span>Seasonal</button>
+          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span class="material-symbols-outlined">rate_review</span>Reviews</button>
+          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span>Profile</button>
+          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span class="material-symbols-outlined">leaderboard</span>Top Lists</button>
+          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span class="material-symbols-outlined">shopping_bag</span>Merch</button>
+          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span class="material-symbols-outlined">history</span>Logs</button>
+          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span class="material-symbols-outlined">target</span>Goals</button>
+          <button class="side-link active" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
+        </nav>
+
+        <div class="user-card">
+          <img class="user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="Avatar">
+          <div class="user-info">
+            <h3 class="user-name">ShadowX</h3>
+            <div class="user-level">Level 27</div>
+            <div class="xp-track">
+              <div class="xp-fill"></div>
+            </div>
+            <div class="xp-text">XP 4,250 / 6,800</div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="main">
+
+        <header class="topbar">
+          <div class="search">
+            <input type="text" id="desktop-search-input" placeholder="Search anime...">
+            <span class="material-symbols-outlined">search</span>
+          </div>
+
+          <div class="top-actions">
+            <div class="top-action-wrap">
+              <div class="top-action"><span class="material-symbols-outlined">notifications</span></div>
+            </div>
+            <div class="top-action-wrap">
+              <div class="top-action streak">
+                <span class="material-symbols-outlined" style="color: #ff2d63;">local_fire_department</span>
+                <span>12</span>
+              </div>
+            </div>
+
+            <div class="top-action-wrap">
+              <div class="top-action">
+                <span class="material-symbols-outlined">settings</span>
+              </div>
+              <div class="dropdown-panel">
+                <div class="dropdown-panel-header">System Settings</div>
+                <button class="dropdown-item"><span class="material-symbols-outlined">dark_mode</span> App Theme</button>
+                <button class="dropdown-item"><span class="material-symbols-outlined">notifications_active</span> Notifications</button>
+                <button class="dropdown-item"><span class="material-symbols-outlined">subtitles</span> Default Sub/Dub</button>
+                <button class="dropdown-item"><span class="material-symbols-outlined">explicit</span> Content Filter</button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item"><span class="material-symbols-outlined">tune</span> Preferences</button>
+              </div>
+            </div>
+
+            <div class="profile-wrap">
+              <div class="profile">
+                <img class="avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="User">
+                <span class="material-symbols-outlined">expand_more</span>
+              </div>
+              <div class="dropdown-panel">
+                <div class="dropdown-panel-header">User Profile</div>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span> View Profile</button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-edit-profile.html';"><span class="material-symbols-outlined">edit</span> Edit Profile</button>
+                <button class="dropdown-item"><span class="material-symbols-outlined">workspace_premium</span> VIP Membership</button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item" style="color: var(--danger);"><span class="material-symbols-outlined" style="color: var(--danger);">logout</span> Log Out</button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Hero Banner -->
+        <section class="hero">
+          <img class="hero-art" src="./pc-bg.png" alt="Hero Art" onerror="this.style.display='none'">
+          <div class="hero-content">
+            <p class="welcome">Welcome back,</p>
+            <h1 data-profile-name>ShadowX</h1>
+            <p class="jp">年間・月間ウォッチログ</p>
+            <p class="tagline">Track your journey.</p>
+          </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="stats">
+          <article class="stat-card">
+            <span class="material-symbols-outlined" style="color: var(--purple2);">play_arrow</span>
+            <div>
+              <div class="stat-label">Watching</div>
+              <div class="stat-value">8</div>
+              <div class="stat-sub">Shows</div>
+            </div>
+          </article>
+          <article class="stat-card">
+            <span class="material-symbols-outlined" style="color: var(--purple2);">checklist</span>
+            <div>
+              <div class="stat-label">Completed</div>
+              <div class="stat-value">132</div>
+              <div class="stat-sub">Shows</div>
+            </div>
+          </article>
+          <article class="stat-card">
+            <span class="material-symbols-outlined" style="color: var(--purple2);">timer</span>
+            <div>
+              <div class="stat-label">Hours Watched</div>
+              <div class="stat-value">1,248</div>
+              <div class="stat-sub">Hours</div>
+            </div>
+          </article>
+          <article class="stat-card">
+            <span class="material-symbols-outlined" style="color: var(--danger);">local_fire_department</span>
+            <div>
+              <div class="stat-label">Current Streak</div>
+              <div class="stat-value">23</div>
+              <div class="stat-sub">Days</div>
+            </div>
+          </article>
+        </section>
+
+        <!-- WATCH LOG DASHBOARD -->
+        <section class="dashboard">
+          <!-- Left: Selector + Titles -->
+          <div>
+            <div class="card selector">
+              <div class="card-title">Month/Year Selector</div>
+              <div class="year">2024</div>
+              <select class="month-select">
+                <option>October</option>
+                <option>November</option>
+                <option>December</option>
+              </select>
+            </div>
+
+            <div class="card titles" style="margin-top:9px">
+              <div class="card-title">Titles Watched</div>
+              <div class="title-item">
+                <div class="thumb"></div><span>Attack on Titan</span>
+              </div>
+              <div class="title-item">
+                <div class="thumb"></div><span>Cyberpunk: Edgerunners</span>
+              </div>
+              <div class="title-item">
+                <div class="thumb"></div><span>Solo Leveling S2</span>
+              </div>
+              <div class="title-item">
+                <div class="thumb"></div><span>My Hero Academia EP 13</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Center: Watch Table -->
+          <div class="card watch-table">
+            <div class="table-head">
+              <div>Title</div>
+              <div>Genre</div>
+              <div>Episodes</div>
+              <div>Status</div>
+            </div>
+            <div class="table-row">
+              <div class="cell-title"><div class="thumb"></div><span>Attack on Titan</span></div>
+              <div>Action</div>
+              <div>27</div>
+              <div class="green">Completed</div>
+            </div>
+            <div class="table-row">
+              <div class="cell-title"><div class="thumb"></div><span>Cyberpunk: Edgerunners</span></div>
+              <div>Sci-Fi</div>
+              <div>27</div>
+              <div class="rewatched">Rewatched</div>
+            </div>
+            <div class="table-row">
+              <div class="cell-title"><div class="thumb"></div><span>Attack on Titan</span></div>
+              <div>Sci-Fi</div>
+              <div>15</div>
+              <div class="green">Completed</div>
+            </div>
+            <div class="table-row">
+              <div class="cell-title"><div class="thumb"></div><span>Jujutsu Kaisen</span></div>
+              <div>Action</div>
+              <div>19</div>
+              <div class="rewatched">Rewatched</div>
+            </div>
+            <div class="table-row">
+              <div class="cell-title"><div class="thumb"></div><span>One Piece</span></div>
+              <div>Anime</div>
+              <div>3</div>
+              <div class="rewatched">Rewatched</div>
+            </div>
+          </div>
+
+          <!-- Right: Episodes + Favorites -->
+          <div class="right-col">
+            <div class="card episodes">
+              <div class="card-title">Total Episodes</div>
+              <div class="big-number">210</div>
+              <div class="chart">
+                <i class="bar" style="height:38%"></i><i class="bar" style="height:55%"></i><i class="bar" style="height:43%"></i>
+                <i class="bar" style="height:72%"></i><i class="bar" style="height:92%"></i><i class="bar" style="height:46%"></i>
+                <i class="bar" style="height:77%"></i><i class="bar" style="height:55%"></i><i class="bar" style="height:84%"></i>
+                <i class="bar" style="height:35%"></i><i class="bar" style="height:63%"></i><i class="bar" style="height:75%"></i>
+              </div>
+            </div>
+            <div class="card favorite">
+              <div class="card-title">Favorite of the Month</div>
+              <div class="fav-body">
+                <div class="fav-img"></div>
+                <div>
+                  <div class="fav-name">Attack on Titan</div>
+                  <div class="fav-desc">Description: Action-packed monthly highlight with amazing animation and intense story arcs.</div>
+                </div>
+              </div>
+            </div>
+            <div class="card favorite">
+              <div class="card-title">Least Favorite</div>
+              <div class="fav-body">
+                <div class="fav-img"></div>
+                <div>
+                  <div class="fav-name">My Hero Academia</div>
+                  <div class="fav-desc">Note: Pacing felt slow during recent filler content.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats Summary -->
+          <div class="card stats" style="grid-column:1/4; margin-top: 4px;">
+            <div class="card-title">Stats Summary</div>
+            <div class="stats-grid">
+              <div class="stat-box">
+                <div class="stat-label">Total Episodes Watched</div>
+                <div class="mini-chart">
+                  <i class="mini-bar" style="height:18%"></i><i class="mini-bar" style="height:40%"></i>
+                  <i class="mini-bar" style="height:30%"></i><i class="mini-bar" style="height:72%"></i>
+                  <i class="mini-bar" style="height:50%"></i><i class="mini-bar" style="height:86%"></i>
+                  <i class="mini-bar" style="height:95%"></i>
+                </div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">Rewatched vs New</div>
+                <div class="mini-chart">
+                  <i class="mini-bar" style="height:8%"></i><i class="mini-bar" style="height:25%"></i>
+                  <i class="mini-bar" style="height:18%"></i><i class="mini-bar" style="height:48%"></i>
+                  <i class="mini-bar" style="height:35%"></i><i class="mini-bar" style="height:85%"></i>
+                  <i class="mini-bar" style="height:54%"></i>
+                </div>
+              </div>
+              <div class="stat-box" style="position:relative">
+                <div class="stat-label">Genre Distribution</div>
+                <div class="donut"></div>
+                <div class="legend">■ Action<br>■ Drama<br>■ Sci-Fi<br>■ Anime</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- =========================================================
+     MOBILE PAGE
+     ========================================================= -->
+  <div class="mobile-page">
+    <main class="mobile-shell">
+
+      <header class="mobile-topbar">
+        <span class="material-symbols-outlined">menu</span>
+        <div class="mobile-brand">
+          <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
+          <div>
+            <div class="brand-name">ANILOG</div>
+            <div class="brand-sub">アニログ</div>
+          </div>
+        </div>
+        <span class="material-symbols-outlined" id="mobile-search-toggle" style="cursor: pointer;">search</span>
+      </header>
+
+      <div class="mobile-search-bar" id="mobile-search-bar">
+        <div class="mobile-search-input-wrap">
+          <input type="text" id="mobile-search-input" placeholder="Search anime...">
+        </div>
+      </div>
+
+      <div class="mobile-content">
+
+        <section class="mobile-hero">
+          <img src="./pc-bg.png" alt="Banner" onerror="this.style.display='none'">
+          <div class="mobile-hero-content">
+            <div class="welcome">Welcome back,</div>
+            <h1 data-profile-name>ShadowX</h1>
+            <div class="jp">年間・月間ウォッチログ</div>
+            <div class="tagline">Track your journey.</div>
+          </div>
+        </section>
+
+        <section class="mobile-stats">
+          <article class="mobile-stat">
+            <span class="material-symbols-outlined" style="color: var(--purple2);">play_arrow</span>
+            <div class="label">Watching</div>
+            <div class="value">8</div>
+          </article>
+          <article class="mobile-stat">
+            <span class="material-symbols-outlined" style="color: var(--purple2);">checklist</span>
+            <div class="label">Completed</div>
+            <div class="value">132</div>
+          </article>
+          <article class="mobile-stat">
+            <span class="material-symbols-outlined" style="color: var(--purple2);">timer</span>
+            <div class="label">Hours</div>
+            <div class="value">1,248</div>
+          </article>
+          <article class="mobile-stat">
+            <span class="material-symbols-outlined" style="color: var(--danger);">local_fire_department</span>
+            <div class="label">Streak</div>
+            <div class="value">23</div>
+          </article>
+        </section>
+
+        <!-- MOBILE WATCH LOG GRID -->
+        <div class="mobile-grid">
+          <div class="mobile-card">
+            <div class="card-title">Month/Year</div>
+            <div class="mobile-year">2024</div>
+            <div class="mobile-month">October <span style="margin-left:auto">&#9660;</span></div>
+          </div>
+
+          <div class="mobile-card mobile-episodes">
+            <div class="card-title">Total Episodes</div>
+            <div class="big-number">210</div>
+            <div class="mobile-chart">
+              <i class="bar" style="height:38%"></i><i class="bar" style="height:55%"></i><i class="bar" style="height:43%"></i>
+              <i class="bar" style="height:72%"></i><i class="bar" style="height:92%"></i><i class="bar" style="height:46%"></i>
+              <i class="bar" style="height:77%"></i><i class="bar" style="height:55%"></i><i class="bar" style="height:84%"></i>
+            </div>
+          </div>
+
+          <div class="mobile-card mobile-favorites">
+            <div class="card-title">Favorite of the Month</div>
+            <div class="mobile-fav">
+              <div class="fav-img"></div>
+              <div>
+                <div class="fav-name">Attack on Titan</div>
+                <div class="fav-desc">Description: Action-packed monthly highlight with amazing animation...</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mobile-card mobile-favorites">
+            <div class="card-title">Least Favorite</div>
+            <div class="mobile-fav">
+              <div class="fav-img"></div>
+              <div>
+                <div class="fav-name">My Hero Academia</div>
+                <div class="fav-desc">Note: Pacing felt slow during recent filler.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mobile-card mobile-list">
+            <div class="card-title">Titles Watched</div>
+            <div class="title-item"><div class="thumb"></div><span>Attack on Titan</span></div>
+            <div class="title-item"><div class="thumb"></div><span>Cyberpunk: Edgerunners</span></div>
+            <div class="title-item"><div class="thumb"></div><span>Solo Leveling S2</span></div>
+            <div class="title-item"><div class="thumb"></div><span>My Hero Academia</span></div>
+          </div>
+
+          <div class="mobile-card mobile-table">
+            <div class="mobile-table-head">
+              <div>Title</div><div>Genre</div><div>Ep.</div><div>Status</div>
+            </div>
+            <div class="mobile-table-row">
+              <div class="mobile-table-title"><div class="thumb"></div>Attack on Titan</div>
+              <div>Action</div><div>27</div><div class="green">Completed</div>
+            </div>
+            <div class="mobile-table-row">
+              <div class="mobile-table-title"><div class="thumb"></div>Cyberpunk</div>
+              <div>Sci-Fi</div><div>27</div><div class="rewatched">Rewatched</div>
+            </div>
+            <div class="mobile-table-row">
+              <div class="mobile-table-title"><div class="thumb"></div>Attack on Titan</div>
+              <div>Sci-Fi</div><div>15</div><div class="green">Completed</div>
+            </div>
+          </div>
+
+          <div class="mobile-card mobile-stats">
+            <div class="card-title">Stats Summary</div>
+            <div class="stats-grid">
+              <div class="stat-box">
+                <div class="stat-label">Total Episodes</div>
+                <div class="mini-chart">
+                  <i class="mini-bar" style="height:25%"></i><i class="mini-bar" style="height:45%"></i>
+                  <i class="mini-bar" style="height:35%"></i><i class="mini-bar" style="height:75%"></i>
+                  <i class="mini-bar" style="height:90%"></i>
+                </div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">Rewatched vs New</div>
+                <div class="mini-chart">
+                  <i class="mini-bar" style="height:18%"></i><i class="mini-bar" style="height:50%"></i>
+                  <i class="mini-bar" style="height:34%"></i><i class="mini-bar" style="height:76%"></i>
+                  <i class="mini-bar" style="height:58%"></i>
+                </div>
+              </div>
+            </div>
+            <div style="height:100px;border-top:1px solid #292331;position:relative;padding:7px">
+              <div class="stat-label">Genre Distribution</div>
+              <div class="donut"></div>
+              <div class="legend">■ Action<br>■ Drama<br>■ Sci-Fi<br>■ Anime</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <nav class="mobile-bottom-nav">
+        <a class="mobile-nav-item" href="./anilog-home.html"><span class="material-symbols-outlined">home</span><span>Home</span></a>
+        <a class="mobile-nav-item" href="./anilog-watchlist.html"><span class="material-symbols-outlined">list_alt</span><span>Watchlist</span></a>
+        <a class="mobile-nav-item" href="./anilog-completed.html"><span class="material-symbols-outlined">check_circle</span><span>Completed</span></a>
+        <a class="mobile-nav-item" href="./anilog-currentlywatching.html"><span class="material-symbols-outlined">play_arrow</span><span>Watching</span></a>
+        <a class="mobile-nav-item active" href="./anilog-yearly-monthly-watch-log-responsive.html"><span class="material-symbols-outlined">history</span><span>Year View</span></a>
+      </nav>
+
+    </main>
+  </div>
+
+  <script>
+    // --- PRELOADER ---
+    window.addEventListener('load', () => {
+      const preloader = document.getElementById('preloader');
+      if (preloader) {
+        preloader.style.opacity = '0';
+        preloader.style.visibility = 'hidden';
+      }
+      document.body.classList.add('loaded');
+    });
+
+    // --- MOBILE SEARCH TOGGLE ---
+    const searchToggle = document.getElementById('mobile-search-toggle');
+    const searchBar = document.getElementById('mobile-search-bar');
+    if (searchToggle && searchBar) {
+      searchToggle.addEventListener('click', () => {
+        searchBar.classList.toggle('active');
+      });
+    }
+  </script>
+
+</body>
+
+</html>
