@@ -1,4 +1,6 @@
-backend:- uvicorn main:app --reload
+backend:- first start enviroment".\venv\Scripts\activate" then start server "uvicorn main:app --reload"
+
+for browser cookies it use Use HTTP-Only Cookies
 
 
 git add .
@@ -7,6 +9,12 @@ git commit -m "Add new files"
 
 git push origin main
 
+this are the things i want you to do to my frontend to my front end
 
+i need you to add like a small ui pop box on top just like famous websites use to notify users abt their action i wanna add that like  it notifies users  for errors like  server side or network or all other possible erors ,sucessful logins, incorrect credentials ,max login attempts or anything that isnt sensetive to nottify users 
 
-i need you to add like a small ui pop box on top just like famous websites use to notify users abt their action i wanna add that it notifies users errors server side or network,sucessful logins, incorrect credentials or anything that isnt sensetive to nottify users 
+i will send you my backend normally i hosted my backend using "uvicorn main:app --reload" so what i want you to do is memorize the backend and help me connect the backend to the front end for this case connect
+
+add a js code an automatic js code if it doesnt find the    login cookie or session in the browser localstorage or cookie see it on the backend and frontend it redirects to  anilog-login-register.html
+
+after finishing send full updated code

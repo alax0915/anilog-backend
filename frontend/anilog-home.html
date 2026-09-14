@@ -26,6 +26,9 @@
       --muted: #8f8d9d;
       --dim: #676675;
       --danger: #ff2d63;
+      --success: #00e676;
+      --warning: #ffb300;
+      --info: #00b0ff;
     }
 
     * {
@@ -63,6 +66,89 @@
       display: block;
       object-fit: cover;
     }
+
+    /* ---------------- TOAST NOTIFICATION CONTAINER ---------------- */
+    #toast-container {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 90%;
+      max-width: 420px;
+      pointer-events: none;
+    }
+
+    .toast {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      background: rgba(13, 15, 24, 0.95);
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.4;
+      animation: toastIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .toast.hide {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .toast-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .toast-message {
+      flex: 1;
+      word-break: break-word;
+    }
+
+    .toast-close {
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 18px;
+      transition: color 0.2s;
+    }
+
+    .toast-close:hover {
+      color: var(--text);
+    }
+
+    .toast.success { border-color: var(--success); }
+    .toast.success .toast-icon { color: var(--success); }
+
+    .toast.error { border-color: var(--danger); }
+    .toast.error .toast-icon { color: var(--danger); }
+
+    .toast.warning { border-color: var(--warning); }
+    .toast.warning .toast-icon { color: var(--warning); }
+
+    .toast.info { border-color: var(--info); }
+    .toast.info .toast-icon { color: var(--info); }
+
 
     /* ---------------- PRELOADER OVERLAY ---------------- */
     #preloader {
@@ -173,7 +259,6 @@
       perspective: 1000px;
     }
 
-    /* 1. Sidebar Slide-In & Sequenced Nav Link Items Entrance */
     body.loaded .sidebar {
       animation: sidebarSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
@@ -199,53 +284,18 @@
       animation: navItemSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    body.loaded .side-link:nth-child(1) {
-      animation-delay: 0.15s;
-    }
-
-    body.loaded .side-link:nth-child(2) {
-      animation-delay: 0.20s;
-    }
-
-    body.loaded .side-link:nth-child(3) {
-      animation-delay: 0.25s;
-    }
-
-    body.loaded .side-link:nth-child(4) {
-      animation-delay: 0.30s;
-    }
-
-    body.loaded .side-link:nth-child(5) {
-      animation-delay: 0.35s;
-    }
-
-    body.loaded .side-link:nth-child(6) {
-      animation-delay: 0.40s;
-    }
-
-    body.loaded .side-link:nth-child(7) {
-      animation-delay: 0.45s;
-    }
-
-    body.loaded .side-link:nth-child(8) {
-      animation-delay: 0.50s;
-    }
-
-    body.loaded .side-link:nth-child(9) {
-      animation-delay: 0.55s;
-    }
-
-    body.loaded .side-link:nth-child(10) {
-      animation-delay: 0.60s;
-    }
-
-    body.loaded .side-link:nth-child(11) {
-      animation-delay: 0.65s;
-    }
-
-    body.loaded .side-link:nth-child(12) {
-      animation-delay: 0.70s;
-    }
+    body.loaded .side-link:nth-child(1) { animation-delay: 0.15s; }
+    body.loaded .side-link:nth-child(2) { animation-delay: 0.20s; }
+    body.loaded .side-link:nth-child(3) { animation-delay: 0.25s; }
+    body.loaded .side-link:nth-child(4) { animation-delay: 0.30s; }
+    body.loaded .side-link:nth-child(5) { animation-delay: 0.35s; }
+    body.loaded .side-link:nth-child(6) { animation-delay: 0.40s; }
+    body.loaded .side-link:nth-child(7) { animation-delay: 0.45s; }
+    body.loaded .side-link:nth-child(8) { animation-delay: 0.50s; }
+    body.loaded .side-link:nth-child(9) { animation-delay: 0.55s; }
+    body.loaded .side-link:nth-child(10) { animation-delay: 0.60s; }
+    body.loaded .side-link:nth-child(11) { animation-delay: 0.65s; }
+    body.loaded .side-link:nth-child(12) { animation-delay: 0.70s; }
 
     @keyframes navItemSlideIn {
       to {
@@ -282,28 +332,13 @@
     }
 
     @keyframes typingLoop {
-
-      0%,
-      100% {
-        width: 0;
-      }
-
-      30%,
-      70% {
-        width: 6.2ch;
-      }
+      0%, 100% { width: 0; }
+      30%, 70% { width: 6.2ch; }
     }
 
     @keyframes blinkCursor {
-
-      from,
-      to {
-        border-color: transparent;
-      }
-
-      50% {
-        border-color: #c65cff;
-      }
+      from, to { border-color: transparent; }
+      50% { border-color: #c65cff; }
     }
 
     .brand-sub {
@@ -344,7 +379,6 @@
       box-shadow: inset 0 0 20px rgba(155, 34, 246, .09);
     }
 
-    /* 6. Flip Animation for user-card */
     .user-card {
       position: absolute;
       left: 14px;
@@ -373,7 +407,6 @@
         opacity: 0;
         transform: rotateY(-180deg);
       }
-
       to {
         opacity: 1;
         transform: rotateY(0deg);
@@ -415,9 +448,10 @@
     }
 
     .xp-fill {
-      width: 63%;
+      width: 0%;
       height: 100%;
       background: #9c2cff;
+      transition: width 0.4s ease;
     }
 
     .xp-text {
@@ -443,7 +477,6 @@
       z-index: 100;
     }
 
-    /* 2. Google-Style Expanding Circle Animation for Search Bar */
     .search {
       position: relative;
       width: 300px;
@@ -468,12 +501,10 @@
         opacity: 0;
         clip-path: circle(0px at 50% 50%);
       }
-
       10% {
         opacity: 1;
         clip-path: circle(12px at 50% 50%);
       }
-
       100% {
         opacity: 1;
         clip-path: none;
@@ -493,7 +524,6 @@
       font-size: 12px;
     }
 
-    /* Dynamic Search Results Dropdown */
     .search-results-dropdown {
       position: absolute;
       top: 48px;
@@ -559,7 +589,6 @@
       color: var(--muted);
     }
 
-    /* 3. Top Actions Fade-In Animation */
     .top-actions {
       margin-left: auto;
       display: flex;
@@ -574,13 +603,8 @@
     }
 
     @keyframes topActionsFadeIn {
-      from {
-        opacity: 0;
-      }
-
-      to {
-        opacity: 1;
-      }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     .top-action-wrap {
@@ -628,7 +652,6 @@
       border: 1px solid var(--purple2);
     }
 
-    /* Slide Dropdown Panels */
     .dropdown-panel {
       position: absolute;
       top: 100%;
@@ -697,7 +720,6 @@
       margin: 4px 0;
     }
 
-    /* 4. Zooming Animation for Hero Section */
     .hero {
       position: relative;
       height: 290px;
@@ -716,7 +738,6 @@
         opacity: 0;
         transform: scale(0.92);
       }
-
       to {
         opacity: 1;
         transform: scale(1);
@@ -774,7 +795,6 @@
       font-size: 14px;
     }
 
-    /* 5. Bounce Animation for Stats Cards */
     .stats {
       position: relative;
       z-index: 5;
@@ -800,37 +820,23 @@
       animation: statBounce 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
 
-    body.loaded .stat-card:nth-child(1) {
-      animation-delay: 0.40s;
-    }
-
-    body.loaded .stat-card:nth-child(2) {
-      animation-delay: 0.48s;
-    }
-
-    body.loaded .stat-card:nth-child(3) {
-      animation-delay: 0.56s;
-    }
-
-    body.loaded .stat-card:nth-child(4) {
-      animation-delay: 0.64s;
-    }
+    body.loaded .stat-card:nth-child(1) { animation-delay: 0.40s; }
+    body.loaded .stat-card:nth-child(2) { animation-delay: 0.48s; }
+    body.loaded .stat-card:nth-child(3) { animation-delay: 0.56s; }
+    body.loaded .stat-card:nth-child(4) { animation-delay: 0.64s; }
 
     @keyframes statBounce {
       0% {
         opacity: 0;
         transform: translateY(35px) scale(0.9);
       }
-
       60% {
         opacity: 1;
         transform: translateY(-8px) scale(1.02);
       }
-
       80% {
         transform: translateY(3px) scale(0.99);
       }
-
       100% {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -876,7 +882,6 @@
       font-size: 19px;
     }
 
-    /* UNLIMITED HORIZONTAL SCROLL CONTAINERS */
     .anime-scroll-row {
       display: flex;
       gap: 12px;
@@ -1044,7 +1049,6 @@
     }
 
     @media (max-width: 900px) {
-
       .desktop-page {
         display: none;
       }
@@ -1094,7 +1098,6 @@
         font-size: 6px;
       }
 
-      /* Mobile Search Bar Toggle */
       .mobile-search-bar {
         display: none;
         padding: 10px 16px;
@@ -1187,21 +1190,10 @@
         animation: statBounce 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
       }
 
-      body.loaded .mobile-stat:nth-child(1) {
-        animation-delay: 0.40s;
-      }
-
-      body.loaded .mobile-stat:nth-child(2) {
-        animation-delay: 0.48s;
-      }
-
-      body.loaded .mobile-stat:nth-child(3) {
-        animation-delay: 0.56s;
-      }
-
-      body.loaded .mobile-stat:nth-child(4) {
-        animation-delay: 0.64s;
-      }
+      body.loaded .mobile-stat:nth-child(1) { animation-delay: 0.40s; }
+      body.loaded .mobile-stat:nth-child(2) { animation-delay: 0.48s; }
+      body.loaded .mobile-stat:nth-child(3) { animation-delay: 0.56s; }
+      body.loaded .mobile-stat:nth-child(4) { animation-delay: 0.64s; }
 
       .mobile-section {
         margin-top: 26px;
@@ -1280,6 +1272,9 @@
 
 <body>
 
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container"></div>
+
   <!-- PRELOADER OVERLAY -->
   <div id="preloader">
     <div class="spinner"></div>
@@ -1317,14 +1312,14 @@
         </nav>
 
         <div class="user-card">
-          <img class="user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="Avatar">
+          <img class="user-avatar" id="desktop-user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Shadow" alt="Avatar">
           <div class="user-info">
-            <h3 class="user-name">ShadowX</h3>
-            <div class="user-level">Level 27</div>
+            <h3 class="user-name" id="desktop-user-name">Loading...</h3>
+            <div class="user-level" id="desktop-user-level">Level 1</div>
             <div class="xp-track">
-              <div class="xp-fill"></div>
+              <div class="xp-fill" id="desktop-xp-fill"></div>
             </div>
-            <div class="xp-text">XP 4,250 / 6,800</div>
+            <div class="xp-text" id="desktop-xp-text">XP 0 / 1,000</div>
           </div>
         </div>
       </aside>
@@ -1348,7 +1343,7 @@
             <div class="top-action-wrap">
               <div class="top-action streak">
                 <span class="material-symbols-outlined" style="color: #ff2d63;">local_fire_department</span>
-                <span>12</span>
+                <span id="desktop-streak-count">1</span>
               </div>
             </div>
 
@@ -1381,7 +1376,7 @@
             <!-- PROFILE HOVER DROPDOWN -->
             <div class="profile-wrap">
               <div class="profile">
-                <img class="avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="User">
+                <img class="avatar" id="desktop-topbar-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Shadow" alt="User">
                 <span class="material-symbols-outlined">expand_more</span>
               </div>
               <div class="dropdown-panel">
@@ -1396,7 +1391,7 @@
                   <span class="material-symbols-outlined">workspace_premium</span> VIP Membership
                 </button>
                 <div class="dropdown-divider"></div>
-                <button class="dropdown-item" style="color: var(--danger);">
+                <button class="dropdown-item" id="logout-btn" style="color: var(--danger);">
                   <span class="material-symbols-outlined" style="color: var(--danger);">logout</span> Log Out
                 </button>
               </div>
@@ -1409,7 +1404,7 @@
           <img class="hero-art" src="./pc-bg.png" alt="Hero Art" onerror="this.style.display='none'">
           <div class="hero-content">
             <p class="welcome">Welcome back,</p>
-            <h1 data-profile-name>ShadowX</h1>
+            <h1 data-profile-name id="hero-profile-name">User</h1>
             <p class="jp">アニメの旅を続けよう</p>
             <p class="tagline">Track. Watch. Relive.</p>
           </div>
@@ -1447,21 +1442,19 @@
             <span class="material-symbols-outlined" style="color: var(--danger);">local_fire_department</span>
             <div>
               <div class="stat-label">Current Streak</div>
-              <div class="stat-value">23</div>
+              <div class="stat-value" id="stat-streak-value">1</div>
               <div class="stat-sub">Days</div>
             </div>
           </article>
         </section>
 
-        <!-- DYNAMIC LIVE NEW RELEASES SECTION (UNLIMITED SCROLL) -->
+        <!-- DYNAMIC LIVE NEW RELEASES SECTION -->
         <section class="content-section">
           <h2 class="section-title">
             New Releases <span class="arrow">›</span>
           </h2>
 
-          <div class="anime-scroll-row" id="desktop-new-releases">
-            <!-- Dynamic API Cards Append Here -->
-          </div>
+          <div class="anime-scroll-row" id="desktop-new-releases"></div>
         </section>
 
         <!-- DYNAMIC UPCOMING EPISODES SECTION -->
@@ -1470,9 +1463,7 @@
             Upcoming Episodes <span class="arrow">›</span>
           </h2>
 
-          <div class="upcoming-grid" id="desktop-upcoming-episodes">
-            <!-- Dynamic API Cards Append Here -->
-          </div>
+          <div class="upcoming-grid" id="desktop-upcoming-episodes"></div>
         </section>
 
       </section>
@@ -1511,7 +1502,7 @@
           <img src="./pc-bg.png" alt="Banner" onerror="this.style.display='none'">
           <div class="mobile-hero-content">
             <div class="welcome">Welcome back,</div>
-            <h1 data-profile-name>ShadowX</h1>
+            <h1 data-profile-name id="mobile-profile-name">User</h1>
             <div class="jp">アニメの旅を続けよう</div>
             <div class="tagline">Track. Watch. Relive.</div>
           </div>
@@ -1536,7 +1527,7 @@
           <article class="mobile-stat">
             <span class="material-symbols-outlined" style="color: var(--danger);">local_fire_department</span>
             <div class="label">Streak</div>
-            <div class="value">0</div>
+            <div class="value" id="mobile-stat-streak">1</div>
           </article>
         </section>
 
@@ -1547,9 +1538,7 @@
             <span class="see-all">See All</span>
           </div>
 
-          <div class="anime-scroll-row" id="mobile-new-releases">
-            <!-- Dynamic API Cards Append Here -->
-          </div>
+          <div class="anime-scroll-row" id="mobile-new-releases"></div>
         </section>
 
         <!-- DYNAMIC MOBILE UPCOMING EPISODES SECTION -->
@@ -1559,9 +1548,7 @@
             <span class="see-all">See All</span>
           </div>
 
-          <div class="mobile-episode-list" id="mobile-upcoming-episodes">
-            <!-- Dynamic API Cards Append Here -->
-          </div>
+          <div class="mobile-episode-list" id="mobile-upcoming-episodes"></div>
         </section>
 
       </div>
@@ -1593,7 +1580,214 @@
   </div>
 
   <script>
-    // Helper to fetch directly from Kitsu API
+    // ==========================================
+    // 1. CONFIG & BACKEND CONNECTION
+    // ==========================================
+    const API_BASE_URL = 'http://127.0.0.1:8000';
+    const LOGIN_PAGE = './anilog-login-register.html';
+
+    // Helper: Toast UI Box Popup System
+    function showToast(message, type = 'info', duration = 4000) {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+
+      const iconMap = {
+        success: 'check_circle',
+        error: 'error',
+        warning: 'warning',
+        info: 'info'
+      };
+
+      toast.innerHTML = `
+        <span class="material-symbols-outlined toast-icon">${iconMap[type] || 'info'}</span>
+        <div class="toast-message">${escapeHTML(message)}</div>
+        <span class="material-symbols-outlined toast-close">close</span>
+      `;
+
+      container.appendChild(toast);
+
+      const closeBtn = toast.querySelector('.toast-close');
+      const dismiss = () => {
+        toast.classList.add('hide');
+        setTimeout(() => toast.remove(), 300);
+      };
+
+      closeBtn.addEventListener('click', dismiss);
+      if (duration > 0) {
+        setTimeout(dismiss, duration);
+      }
+    }
+
+    // ==========================================
+    // 2. AUTHENTICATION & FRONTEND-BACKEND SYNC
+    // ==========================================
+    function getAuthToken() {
+      return localStorage.getItem('access_token') || getCookie('access_token');
+    }
+
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return null;
+    }
+
+    function logoutUser(message = 'Logged out successfully.') {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('user_data');
+      document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      if (message) showToast(message, 'info');
+      setTimeout(() => {
+        window.location.href = LOGIN_PAGE;
+      }, 800);
+    }
+
+    async function checkAuthAndLoadProfile() {
+      const token = getAuthToken();
+
+      if (!token) {
+        showToast('Please login to access your account.', 'warning');
+        setTimeout(() => {
+          window.location.href = LOGIN_PAGE;
+        }, 1200);
+        return null;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.status === 401) {
+          showToast('Session expired. Please log in again.', 'error');
+          logoutUser(null);
+          return null;
+        }
+
+        if (!response.ok) {
+          throw new Error(`Server returned status: ${response.status}`);
+        }
+
+        const userData = await response.json();
+        localStorage.setItem('user_data', JSON.stringify(userData));
+        updateUserUI(userData);
+        return userData;
+
+      } catch (err) {
+        console.error('Authentication Error:', err);
+        showToast('Unable to connect to server. Check your network connection.', 'error');
+
+        // Fallback to local cached data if API server is temporarily unreachable
+        const cachedUser = localStorage.getItem('user_data');
+        if (cachedUser) {
+          updateUserUI(JSON.parse(cachedUser));
+        } else {
+          setTimeout(() => { window.location.href = LOGIN_PAGE; }, 2000);
+        }
+      }
+    }
+
+    function updateUserUI(user) {
+      if (!user) return;
+
+      // 1. Update Username & Display Profile Names
+      document.querySelectorAll('[data-profile-name]').forEach(el => {
+        el.textContent = user.username || 'User';
+      });
+
+      // 2. Update User Avatars across layout
+      const avatarUrl = user.avatar_seed || `https://api.dicebear.com/7.x/bottts/svg?seed=${user.username}`;
+      const desktopAvatar = document.getElementById('desktop-user-avatar');
+      const topbarAvatar = document.getElementById('desktop-topbar-avatar');
+      const sideUserName = document.getElementById('desktop-user-name');
+      
+      if (desktopAvatar) desktopAvatar.src = avatarUrl;
+      if (topbarAvatar) topbarAvatar.src = avatarUrl;
+      if (sideUserName) sideUserName.textContent = user.username || 'User';
+
+      // 3. Update Level & Level Progress Bar (xp_points & level)
+      const userLevel = user.level || 1;
+      const userXP = user.xp_points || 0;
+      const targetXP = userLevel * 1000;
+      const xpPercentage = Math.min(100, Math.max(0, (userXP / targetXP) * 100));
+
+      const levelEl = document.getElementById('desktop-user-level');
+      const xpFill = document.getElementById('desktop-xp-fill');
+      const xpText = document.getElementById('desktop-xp-text');
+
+      if (levelEl) levelEl.textContent = `Level ${userLevel}`;
+      if (xpFill) xpFill.style.width = `${xpPercentage}%`;
+      if (xpText) xpText.textContent = `XP ${userXP.toLocaleString()} / ${targetXP.toLocaleString()}`;
+
+      // 4. Update Dynamic Streak Counts Across Desktop and Mobile
+      const liveStreak = user.streak_count ?? 1;
+      const desktopStreak = document.getElementById('desktop-streak-count');
+      const statStreak = document.getElementById('stat-streak-value');
+      const mobileStreak = document.getElementById('mobile-stat-streak');
+
+      if (desktopStreak) desktopStreak.textContent = liveStreak;
+      if (statStreak) statStreak.textContent = liveStreak;
+      if (mobileStreak) mobileStreak.textContent = liveStreak;
+
+      // 5. Update Dynamic Notification Badge Count
+      const notifBadgeCount = user.notifications || 0;
+      const notifIcon = document.querySelector('.top-action .material-symbols-outlined');
+      if (notifIcon && notifIcon.textContent.trim() === 'notifications') {
+        const notifContainer = notifIcon.parentElement;
+        let badge = notifContainer.querySelector('.notif-badge');
+        if (notifBadgeCount > 0) {
+          if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'notif-badge';
+            badge.style.cssText = 'position:absolute; top:2px; right:2px; background:var(--danger); color:#fff; font-size:9px; font-weight:bold; border-radius:50%; padding:2px 5px; line-height:1;';
+            notifContainer.style.position = 'relative';
+            notifContainer.appendChild(badge);
+          }
+          badge.textContent = notifBadgeCount > 99 ? '99+' : notifBadgeCount;
+        } else if (badge) {
+          badge.remove();
+        }
+      }
+
+      // 6. Connect Backend Watch Stats Container (.stats & .mobile-stats)
+      const watchStats = user.daily_watch_activities || {};
+      const currentlyWatchingCount = watchStats.currently_watching ?? 8;
+      const completedCount = watchStats.completed_shows ?? 132;
+      const hoursWatchedCount = watchStats.hours_watched ?? 1248;
+
+      const statCards = document.querySelectorAll('.stats .stat-card');
+      if (statCards.length >= 3) {
+        const watchingVal = statCards[0].querySelector('.stat-value');
+        const completedVal = statCards[1].querySelector('.stat-value');
+        const hoursVal = statCards[2].querySelector('.stat-value');
+
+        if (watchingVal) watchingVal.textContent = currentlyWatchingCount;
+        if (completedVal) completedVal.textContent = completedCount;
+        if (hoursVal) hoursVal.textContent = hoursWatchedCount;
+      }
+
+      const mobileStatCards = document.querySelectorAll('.mobile-stats .mobile-stat');
+      if (mobileStatCards.length >= 3) {
+        const mWatchingVal = mobileStatCards[0].querySelector('.value');
+        const mCompletedVal = mobileStatCards[1].querySelector('.value');
+        const mHoursVal = mobileStatCards[2].querySelector('.value');
+
+        if (mWatchingVal) mWatchingVal.textContent = currentlyWatchingCount;
+        if (mCompletedVal) mCompletedVal.textContent = completedCount;
+        if (mHoursVal) mHoursVal.textContent = hoursWatchedCount;
+      }
+    }
+
+    // ==========================================
+    // 3. ANIME API & UI CONTROLLERS
+    // ==========================================
     async function safeFetchKitsu(endpoint) {
       try {
         const response = await fetch(endpoint, {
@@ -1607,23 +1801,37 @@
         return json.data || [];
       } catch (err) {
         console.error('Kitsu Fetch Error:', err);
+        showToast('Failed to fetch anime updates.', 'error');
         throw err;
       }
     }
 
     window.addEventListener('load', async () => {
+      // 1. Validate Session & Synchronize User Data with Backend API
+      await checkAuthAndLoadProfile();
+
+      // 2. Clear Preloader Overlay
       if (document.fonts) {
         await document.fonts.ready;
       }
       const preloader = document.getElementById('preloader');
-      preloader.style.opacity = '0';
-      preloader.style.visibility = 'hidden';
+      if (preloader) {
+        preloader.style.opacity = '0';
+        preloader.style.visibility = 'hidden';
+      }
       document.body.classList.add('loaded');
 
+      // 3. Fetch Dynamic Releases & Content
       await fetchNewReleases();
       setTimeout(() => {
         fetchUpcomingEpisodes();
       }, 500);
+
+      // 4. Attach Event Handlers
+      const logoutBtn = document.getElementById('logout-btn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => logoutUser('Successfully logged out.'));
+      }
     });
 
     async function fetchNewReleases() {
@@ -1634,8 +1842,8 @@
         const desktopContainer = document.getElementById('desktop-new-releases');
         const mobileContainer = document.getElementById('mobile-new-releases');
 
-        desktopContainer.innerHTML = '';
-        mobileContainer.innerHTML = '';
+        if (desktopContainer) desktopContainer.innerHTML = '';
+        if (mobileContainer) mobileContainer.innerHTML = '';
 
         animeList.forEach(anime => {
           const attr = anime.attributes || {};
@@ -1647,19 +1855,19 @@
           const cardHTML = `
           <article class="anime-card">
             <div class="poster">
-              <img src="${image}" alt="${title}">
+              <img src="${image}" alt="${escapeHTML(title)}">
               <span class="poster-menu" data-favorite-id="${escapeHTML(anime.id)}" role="button" tabindex="0" title="Save to favorites">
                 <span class="material-symbols-outlined">bookmark</span>
               </span>
             </div>
-            <div class="anime-name">${title}</div>
+            <div class="anime-name">${escapeHTML(title)}</div>
             <div class="episode">${currentEp} • ${rating}</div>
             <div class="progress"><span style="width: 100%;"></span></div>
           </article>
         `;
 
-          desktopContainer.insertAdjacentHTML('beforeend', cardHTML);
-          mobileContainer.insertAdjacentHTML('beforeend', cardHTML);
+          if (desktopContainer) desktopContainer.insertAdjacentHTML('beforeend', cardHTML);
+          if (mobileContainer) mobileContainer.insertAdjacentHTML('beforeend', cardHTML);
         });
         refreshFavoriteButtons();
       } catch (err) {
@@ -1703,6 +1911,8 @@
       button.title = added ? 'Remove from favorites' : 'Save to favorites';
       const icon = button.querySelector('.material-symbols-outlined');
       if (icon) icon.textContent = added ? 'bookmark_added' : 'bookmark';
+
+      showToast(added ? 'Added to favorites!' : 'Removed from favorites.', added ? 'success' : 'info');
     }
 
     document.addEventListener('click', handleFavoriteClick);
@@ -1719,8 +1929,8 @@
         const desktopContainer = document.getElementById('desktop-upcoming-episodes');
         const mobileContainer = document.getElementById('mobile-upcoming-episodes');
 
-        desktopContainer.innerHTML = '';
-        mobileContainer.innerHTML = '';
+        if (desktopContainer) desktopContainer.innerHTML = '';
+        if (mobileContainer) mobileContainer.innerHTML = '';
 
         upcomingList.forEach(anime => {
           const attr = anime.attributes || {};
@@ -1730,9 +1940,9 @@
 
           const desktopCard = `
           <article class="episode-card">
-            <div class="episode-poster"><img src="${image}" alt="${title}"></div>
+            <div class="episode-poster"><img src="${image}" alt="${escapeHTML(title)}"></div>
             <div class="episode-info">
-              <h3 class="episode-title">${title}</h3>
+              <h3 class="episode-title">${escapeHTML(title)}</h3>
               <div class="episode-number">Upcoming Season</div>
               <div class="episode-time">${releaseDate}</div>
             </div>
@@ -1742,9 +1952,9 @@
 
           const mobileCard = `
           <article class="mobile-episode">
-            <div class="episode-poster"><img src="${image}" alt="${title}"></div>
+            <div class="episode-poster"><img src="${image}" alt="${escapeHTML(title)}"></div>
             <div class="episode-info">
-              <h3 class="episode-title">${title}</h3>
+              <h3 class="episode-title">${escapeHTML(title)}</h3>
               <div class="episode-number">Upcoming</div>
               <div class="episode-time">${releaseDate}</div>
             </div>
@@ -1752,8 +1962,8 @@
           </article>
         `;
 
-          desktopContainer.insertAdjacentHTML('beforeend', desktopCard);
-          mobileContainer.insertAdjacentHTML('beforeend', mobileCard);
+          if (desktopContainer) desktopContainer.insertAdjacentHTML('beforeend', desktopCard);
+          if (mobileContainer) mobileContainer.insertAdjacentHTML('beforeend', mobileCard);
         });
       } catch (err) {
         console.error('Failed to load upcoming episodes:', err);
@@ -1787,7 +1997,7 @@
       window.location.href = `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(JSON.stringify(reviewData))}`;
     }
 
-    // OPTIMIZED DEBOUNCED SEARCH WITH ABORT CONTROLLER (KITSU API)
+    // SEARCH WITH ABORT CONTROLLER
     let searchTimeout = null;
     let currentAbortController = null;
 
@@ -1855,7 +2065,8 @@
           if (err.name === 'AbortError') return;
 
           console.error('Search fetch error:', err);
-          resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--danger); text-align: center;">Search failed. Try typing again.</div>`;
+          showToast('Search error. Try again.', 'error');
+          resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--danger); text-align: center;">Search failed.</div>`;
         }
       }, 400);
     }
@@ -1863,17 +2074,23 @@
     // Attach Listeners
     const desktopInput = document.getElementById('desktop-search-input');
     const desktopResults = document.getElementById('desktop-search-results');
-    desktopInput.addEventListener('input', (e) => handleSearch(e.target.value, desktopResults));
+    if (desktopInput && desktopResults) {
+      desktopInput.addEventListener('input', (e) => handleSearch(e.target.value, desktopResults));
+    }
 
     const mobileInput = document.getElementById('mobile-search-input');
     const mobileResults = document.getElementById('mobile-search-results');
-    mobileInput.addEventListener('input', (e) => handleSearch(e.target.value, mobileResults));
+    if (mobileInput && mobileResults) {
+      mobileInput.addEventListener('input', (e) => handleSearch(e.target.value, mobileResults));
+    }
 
     const mobileSearchToggle = document.getElementById('mobile-search-toggle');
     const mobileSearchBar = document.getElementById('mobile-search-bar');
-    mobileSearchToggle.addEventListener('click', () => {
-      mobileSearchBar.classList.toggle('active');
-    });
+    if (mobileSearchToggle && mobileSearchBar) {
+      mobileSearchToggle.addEventListener('click', () => {
+        mobileSearchBar.classList.toggle('active');
+      });
+    }
 
     function selectSearchResult(event) {
       const resultItem = event.target.closest('.search-result-item');
@@ -1884,14 +2101,14 @@
       if (anime) openAnimeReview(anime);
     }
 
-    desktopResults.addEventListener('click', selectSearchResult);
-    mobileResults.addEventListener('click', selectSearchResult);
+    if (desktopResults) desktopResults.addEventListener('click', selectSearchResult);
+    if (mobileResults) mobileResults.addEventListener('click', selectSearchResult);
 
     document.addEventListener('click', (e) => {
-      if (!e.target.closest('.search')) {
+      if (desktopResults && !e.target.closest('.search')) {
         desktopResults.classList.remove('active');
       }
-      if (!e.target.closest('#mobile-search-bar') && !e.target.closest('#mobile-search-toggle')) {
+      if (mobileResults && !e.target.closest('#mobile-search-bar') && !e.target.closest('#mobile-search-toggle')) {
         mobileResults.classList.remove('active');
       }
     });

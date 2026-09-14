@@ -27,6 +27,70 @@
             --muted-2: #666673;
             --input: #11131c;
             --input-border: #292b38;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        /* ---------------- UTILITY CLASSES ---------------- */
+        .hidden {
+            display: none !important;
+        }
+
+        /* ---------------- TOAST NOTIFICATION CONTAINER ---------------- */
+        #toast-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 360px;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .toast {
+            pointer-events: auto;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: toastSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .toast.success {
+            background: rgba(16, 185, 129, 0.9);
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+
+        .toast.error {
+            background: rgba(239, 68, 68, 0.9);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        .toast.info {
+            background: rgba(139, 36, 232, 0.9);
+            border-color: rgba(184, 76, 255, 0.5);
+        }
+
+        @keyframes toastSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100%) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
         }
 
         /* ---------------- PRELOADER OVERLAY ---------------- */
@@ -50,6 +114,16 @@
             border-top-color: #b84cff;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
+        }
+
+        .btn-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
         }
 
         @keyframes spin {
@@ -131,7 +205,6 @@
                 #05050c;
         }
 
-        /* Background image transition animation */
         .desktop-art {
             position: absolute;
             inset: 0;
@@ -178,7 +251,6 @@
             gap: 14px;
         }
 
-        /* Logo scale & opacity animation */
         .brand-logo-fallback {
             width: 48px;
             height: 48px;
@@ -209,7 +281,6 @@
             line-height: 1;
         }
 
-        /* ANILOG typing text effect */
         .brand-name {
             margin: 0;
             font-size: 32px;
@@ -318,7 +389,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* ---------------- AUTH CARD & TAG-BY-TAG REBUILD ANIMATION ---------------- */
+        /* ---------------- AUTH CARD & ANIMATIONS ---------------- */
 
         .auth-card {
             position: absolute;
@@ -350,7 +421,6 @@
             }
         }
 
-        /* Tag-by-tag sequential reveal styling for all child tags inside auth-card */
         .auth-card * {
             opacity: 0;
             animation: buildTag 0.3s ease-out forwards;
@@ -368,7 +438,6 @@
             }
         }
 
-        /* Sequential build order delays from parents to deep children */
         .auth-panel {
             animation-delay: 1.35s;
         }
@@ -393,88 +462,16 @@
             animation-delay: 1.72s;
         }
 
-        .form-group:nth-child(1) .form-label {
-            animation-delay: 1.76s;
-        }
-
-        .form-group:nth-child(1) .form-label .material-symbols-outlined {
-            animation-delay: 1.80s;
-        }
-
-        .form-group:nth-child(1) .input {
-            animation-delay: 1.84s;
-        }
-
         .form-group:nth-child(2) {
             animation-delay: 1.88s;
-        }
-
-        .form-group:nth-child(2) .form-label {
-            animation-delay: 1.92s;
-        }
-
-        .form-group:nth-child(2) .form-label .material-symbols-outlined {
-            animation-delay: 1.96s;
-        }
-
-        .form-group:nth-child(2) .input-wrap {
-            animation-delay: 2.00s;
-        }
-
-        .form-group:nth-child(2) .input-wrap .input {
-            animation-delay: 2.04s;
-        }
-
-        .form-group:nth-child(2) .input-wrap .eye-icon {
-            animation-delay: 2.08s;
         }
 
         .form-group:nth-child(3) {
             animation-delay: 2.12s;
         }
 
-        .form-group:nth-child(3) .form-label {
-            animation-delay: 2.16s;
-        }
-
-        .form-group:nth-child(3) .form-label .material-symbols-outlined {
-            animation-delay: 2.20s;
-        }
-
-        .form-group:nth-child(3) .input-wrap {
-            animation-delay: 2.24s;
-        }
-
-        .form-group:nth-child(3) .input-wrap .input {
-            animation-delay: 2.28s;
-        }
-
-        .form-group:nth-child(3) .input-wrap .eye-icon {
-            animation-delay: 2.32s;
-        }
-
         .form-group:nth-child(4) {
             animation-delay: 2.36s;
-        }
-
-        .form-group:nth-child(4) .form-label {
-            animation-delay: 2.40s;
-        }
-
-        .form-group:nth-child(4) .form-label .material-symbols-outlined {
-            animation-delay: 2.44s;
-        }
-
-        .form-group:nth-child(4) .input-wrap {
-            animation-delay: 2.48s;
-        }
-
-        .form-group:nth-child(4) .input-wrap .input {
-            animation-delay: 2.52s;
-        }
-
-        .form-group:nth-child(4) .input-wrap .eye-icon {
-            animation-delay: 2.56s;
         }
 
         .forgot {
@@ -485,40 +482,12 @@
             animation-delay: 2.60s;
         }
 
-        .terms input {
-            animation-delay: 2.64s;
-        }
-
-        .terms span {
-            animation-delay: 2.68s;
-        }
-
-        .terms a {
-            animation-delay: 2.72s;
-        }
-
         .primary-btn {
             animation-delay: 2.18s;
         }
 
-        .primary-btn .material-symbols-outlined {
-            animation-delay: 2.22s;
-        }
-
-        .primary-btn span:last-child {
-            animation-delay: 2.26s;
-        }
-
         .register-panel .primary-btn {
             animation-delay: 2.76s;
-        }
-
-        .register-panel .primary-btn .material-symbols-outlined {
-            animation-delay: 2.80s;
-        }
-
-        .register-panel .primary-btn span:last-child {
-            animation-delay: 2.84s;
         }
 
         .divider {
@@ -529,36 +498,12 @@
             animation-delay: 2.36s;
         }
 
-        .social-btn:nth-child(1) {
-            animation-delay: 2.40s;
-        }
-
-        .social-btn:nth-child(1) svg {
-            animation-delay: 2.44s;
-        }
-
-        .social-btn:nth-child(2) {
-            animation-delay: 2.48s;
-        }
-
-        .social-btn:nth-child(2) svg {
-            animation-delay: 2.52s;
-        }
-
         .guest-btn {
             animation-delay: 2.56s;
         }
 
-        .guest-btn .material-symbols-outlined {
-            animation-delay: 2.60s;
-        }
-
         .switch-text {
             animation-delay: 2.64s;
-        }
-
-        .switch-text a {
-            animation-delay: 2.68s;
         }
 
         .auth-panel {
@@ -685,10 +630,6 @@
             color: #c047ff;
         }
 
-        .eye-icon.hidden {
-            display: none !important;
-        }
-
         .forgot {
             display: block;
             margin: -2px 0 14px;
@@ -729,8 +670,10 @@
             box-shadow: 0 6px 20px rgba(123, 32, 213, 0.4);
         }
 
-        .primary-btn:active {
-            transform: translateY(0);
+        .primary-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .divider {
@@ -809,7 +752,6 @@
             text-decoration: underline;
         }
 
-        /* Terms */
         .terms {
             display: flex;
             align-items: flex-start;
@@ -857,11 +799,7 @@
             text-decoration: none;
         }
 
-        .terms a:hover {
-            text-decoration: underline;
-        }
-
-        /* ---------------- DESKTOP BOTTOM NAV & SEQUENTIAL HORIZONTAL SWING ANIMATION ---------------- */
+        /* ---------------- DESKTOP BOTTOM NAV ---------------- */
 
         .desktop-nav {
             position: absolute;
@@ -910,7 +848,6 @@
             }
         }
 
-        /* Nav items sequential delay */
         .nav-item:nth-child(1) {
             animation-delay: 1.30s;
         }
@@ -1048,7 +985,6 @@
         }
 
         @media (max-width: 600px) {
-
             .desktop-view {
                 padding-top: 100px;
                 padding-bottom: 82px;
@@ -1096,26 +1032,13 @@
                 font-size: 8px;
             }
         }
-
-        @media (max-height: 700px) and (max-width: 900px) {
-            .desktop-view {
-                padding-top: 95px;
-                padding-bottom: 78px;
-            }
-
-            .brand {
-                top: 14px;
-            }
-
-            .auth-card {
-                margin-top: 10px;
-            }
-        }
-
     </style>
 </head>
 
 <body>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container"></div>
 
     <!-- PRELOADER OVERLAY -->
     <div id="preloader">
@@ -1168,13 +1091,13 @@
                     <div class="tab" onclick="showForm('register')">REGISTER</div>
                 </div>
 
-                <form onsubmit="event.preventDefault();">
+                <form id="login-form">
                     <div class="form-group">
                         <label class="form-label">
                             <span class="material-symbols-outlined">email</span>
                             EMAIL
                         </label>
-                        <input class="input" type="email" placeholder="Enter your email" required />
+                        <input id="login-email" class="input" type="email" placeholder="Enter your email" required />
                     </div>
 
                     <div class="form-group">
@@ -1183,7 +1106,8 @@
                             PASSWORD
                         </label>
                         <div class="input-wrap">
-                            <input class="input password" type="password" placeholder="Enter your password" required />
+                            <input id="login-password" class="input password" type="password"
+                                placeholder="Enter your password" required />
                             <span class="material-symbols-outlined eye-icon eye-open" onclick="togglePassword(this)"
                                 role="button" aria-label="Toggle password visibility">visibility</span>
                             <span class="material-symbols-outlined eye-icon eye-closed hidden"
@@ -1194,9 +1118,10 @@
 
                     <a class="forgot" href="#">Forgot password?</a>
 
-                    <button type="submit" class="primary-btn">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">login</span>
-                        <span>LOGIN</span>
+                    <button type="submit" id="login-btn" class="primary-btn">
+                        <span class="material-symbols-outlined" style="font-size: 18px;" id="login-icon">login</span>
+                        <span class="btn-spinner hidden" id="login-spinner"></span>
+                        <span id="login-btn-text">LOGIN</span>
                     </button>
                 </form>
 
@@ -1244,13 +1169,13 @@
                     <div class="tab active" onclick="showForm('register')">REGISTER</div>
                 </div>
 
-                <form onsubmit="event.preventDefault();">
+                <form id="register-form">
                     <div class="form-group">
                         <label class="form-label">
                             <span class="material-symbols-outlined">badge</span>
                             USERNAME
                         </label>
-                        <input class="input" type="text" placeholder="Choose a username" required />
+                        <input id="reg-username" class="input" type="text" placeholder="Choose a username" required />
                     </div>
 
                     <div class="form-group">
@@ -1258,7 +1183,7 @@
                             <span class="material-symbols-outlined">email</span>
                             EMAIL
                         </label>
-                        <input class="input" type="email" placeholder="Enter your email" required />
+                        <input id="reg-email" class="input" type="email" placeholder="Enter your email" required />
                     </div>
 
                     <div class="form-group">
@@ -1267,7 +1192,8 @@
                             PASSWORD
                         </label>
                         <div class="input-wrap">
-                            <input class="input password" type="password" placeholder="Create a password" required />
+                            <input id="reg-password" class="input password" type="password"
+                                placeholder="Create a password" required />
                             <span class="material-symbols-outlined eye-icon eye-open" onclick="togglePassword(this)"
                                 role="button" aria-label="Toggle password visibility">visibility</span>
                             <span class="material-symbols-outlined eye-icon eye-closed hidden"
@@ -1282,8 +1208,8 @@
                             CONFIRM PASSWORD
                         </label>
                         <div class="input-wrap">
-                            <input class="input password" type="password" placeholder="Confirm your password"
-                                required />
+                            <input id="reg-confirm-password" class="input password" type="password"
+                                placeholder="Confirm your password" required />
                             <span class="material-symbols-outlined eye-icon eye-open" onclick="togglePassword(this)"
                                 role="button" aria-label="Toggle password visibility">visibility</span>
                             <span class="material-symbols-outlined eye-icon eye-closed hidden"
@@ -1299,9 +1225,10 @@
                         </span>
                     </label>
 
-                    <button type="submit" class="primary-btn">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">person_add</span>
-                        <span>CREATE ACCOUNT</span>
+                    <button type="submit" id="reg-btn" class="primary-btn">
+                        <span class="material-symbols-outlined" style="font-size: 18px;" id="reg-icon">person_add</span>
+                        <span class="btn-spinner hidden" id="reg-spinner"></span>
+                        <span id="reg-btn-text">CREATE ACCOUNT</span>
                     </button>
                 </form>
 
@@ -1360,20 +1287,64 @@
     </section>
 
     <script>
-        // Wait until everything (Images, CSS, Icon Fonts) is fully downloaded
+        const API_BASE_URL = "http://127.0.0.1:8000";
+
+        // DOM Loaded event binding
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('login-form');
+            if (loginForm) {
+                loginForm.addEventListener('submit', handleLogin);
+            }
+
+            const registerForm = document.getElementById('register-form');
+            if (registerForm) {
+                registerForm.addEventListener('submit', handleRegister);
+            }
+        });
+
+        // Window Load handling
         window.addEventListener('load', async () => {
             if (document.fonts) {
                 await document.fonts.ready;
             }
 
             const preloader = document.getElementById('preloader');
-
-            preloader.style.opacity = '0';
-            preloader.style.visibility = 'hidden';
+            if (preloader) {
+                preloader.style.opacity = '0';
+                preloader.style.visibility = 'hidden';
+            }
 
             document.body.classList.add('loaded');
+
+            // Perform auto-redirect check if user is already authenticated
+            checkExistingSession();
         });
 
+        // --- TOAST NOTIFICATION SYSTEM ---
+        function showToast(message, type = "info") {
+            const container = document.getElementById("toast-container");
+            if (!container) return;
+
+            const toast = document.createElement("div");
+            toast.className = `toast ${type}`;
+
+            const iconName = type === 'success' ? 'check_circle' : type === 'error' ? 'error' : 'info';
+            toast.innerHTML = `
+                <span class="material-symbols-outlined" style="font-size: 18px;">${iconName}</span>
+                <span>${message}</span>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transform = "translateX(100%)";
+                toast.style.transition = "all 0.3s ease";
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // --- TAB SWITCHER ---
         function showForm(formType) {
             const loginPanel = document.querySelector('.login-panel');
             const registerPanel = document.querySelector('.register-panel');
@@ -1387,6 +1358,7 @@
             }
         }
 
+        // --- PASSWORD VISIBILITY TOGGLE ---
         function togglePassword(element) {
             const wrap = element.closest('.input-wrap');
             const input = wrap.querySelector('.input');
@@ -1401,6 +1373,146 @@
                 input.type = 'password';
                 eyeOpen.classList.remove('hidden');
                 eyeClosed.classList.add('hidden');
+            }
+        }
+
+        // --- AUTO-REDIRECT SESSION GUARD ---
+        async function checkExistingSession() {
+            const token = localStorage.getItem("access_token");
+            if (!token) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    },
+                    credentials: "include"
+                });
+
+                if (response.ok) {
+                    const userData = await response.json();
+                    localStorage.setItem("user", JSON.stringify(userData));
+
+                    showToast("Active session detected! Redirecting to Home Page", "info");
+                    setTimeout(() => {
+                        window.location.href = "anilog-home.html";
+                    }, 1000);
+                }
+            } catch (err) {
+                console.log("Session verification pending or invalid.");
+            }
+        }
+
+        // --- LOGIN REQUEST HANDLER ---
+        // --- REPLACE YOUR handleLogin FUNCTION WITH THIS ---
+        async function handleLogin(e) {
+            e.preventDefault();
+            console.log("Submitting login form...");
+
+            const email = document.getElementById("login-email").value.trim();
+            const password = document.getElementById("login-password").value;
+
+            const btn = document.getElementById("login-btn");
+            const icon = document.getElementById("login-icon");
+            const spinner = document.getElementById("login-spinner");
+            const btnText = document.getElementById("login-btn-text");
+
+            // UI Loading state
+            btn.disabled = true;
+            if (icon) icon.classList.add("hidden");
+            if (spinner) spinner.classList.remove("hidden");
+            if (btnText) btnText.innerText = "VERIFYING...";
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    // Throw the error detail returned from FastAPI
+                    throw new Error(data.detail || "Invalid login credentials.");
+                }
+
+                // SAVE TO LOCALSTORAGE & COOKIES
+                localStorage.setItem("access_token", data.access_token);
+                document.cookie = `access_token=${data.access_token}; path=/; SameSite=Lax`;
+
+                console.log("Saved to LocalStorage:", localStorage.getItem("user")); // Debug check
+
+                showToast("Login successful! Welcome back.", "success");
+
+                setTimeout(() => {
+                    window.location.href = "anilog-home.html";
+                }, 1200);
+
+            } catch (err) {
+                console.error("Login Exception:", err);
+                showToast(err.message || "Failed to connect to backend server.", "error");
+            } finally {
+                btn.disabled = false;
+                if (icon) icon.classList.remove("hidden");
+                if (spinner) spinner.classList.add("hidden");
+                if (btnText) btnText.innerText = "LOGIN";
+            }
+        }
+        // --- REGISTER REQUEST HANDLER ---
+        async function handleRegister(e) {
+            e.preventDefault();
+            console.log("Submitting register form...");
+
+            const username = document.getElementById("reg-username").value.trim();
+            const email = document.getElementById("reg-email").value.trim();
+            const password = document.getElementById("reg-password").value;
+            const confirmPassword = document.getElementById("reg-confirm-password").value;
+
+            if (password !== confirmPassword) {
+                showToast("Passwords do not match!", "error");
+                return;
+            }
+
+            const btn = document.getElementById("reg-btn");
+            const icon = document.getElementById("reg-icon");
+            const spinner = document.getElementById("reg-spinner");
+            const btnText = document.getElementById("reg-btn-text");
+
+            btn.disabled = true;
+            if (icon) icon.classList.add("hidden");
+            if (spinner) spinner.classList.remove("hidden");
+            if (btnText) btnText.innerText = "CREATING...";
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, email, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || "Registration failed.");
+                }
+
+                showToast("Account created! Please log in.", "success");
+
+                // Clear registration form & switch to login view
+                document.getElementById("register-form").reset();
+                showForm("login");
+
+            } catch (err) {
+                console.error("Register Exception:", err);
+                showToast(err.message || "Unable to register account.", "error");
+            } finally {
+                btn.disabled = false;
+                if (icon) icon.classList.remove("hidden");
+                if (spinner) spinner.classList.add("hidden");
+                if (btnText) btnText.innerText = "CREATE ACCOUNT";
             }
         }
     </script>
