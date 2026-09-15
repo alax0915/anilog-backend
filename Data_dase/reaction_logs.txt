@@ -1,0 +1,10 @@
+CREATE TABLE "reaction_logs" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+	"user_id" uuid NOT NULL,
+	"anime_id" varchar(100) NOT NULL,
+	"episode_number" integer NOT NULL,
+	"reaction_emoji" varchar(50),
+	"note" text,
+	"created_at" timestamp with time zone DEFAULT now()
+);
+CREATE UNIQUE INDEX "reaction_logs_pkey" ON "reaction_logs" ("id");

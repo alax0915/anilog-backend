@@ -1,0 +1,10 @@
+CREATE TABLE "user_settings" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+	"user_id" uuid NOT NULL CONSTRAINT "user_settings_user_id_key" UNIQUE,
+	"theme" app_theme DEFAULT 'dark',
+	"push_notifications" boolean DEFAULT true,
+	"email_notifications" boolean DEFAULT true,
+	"content_filter" boolean DEFAULT false
+);
+CREATE UNIQUE INDEX "user_settings_pkey" ON "user_settings" ("id");
+CREATE UNIQUE INDEX "user_settings_user_id_key" ON "user_settings" ("user_id");

@@ -1,0 +1,18 @@
+CREATE TABLE "user_anime_list" (
+	"id" varchar(50) PRIMARY KEY,
+	"user_id" integer NOT NULL,
+	"anime_id" varchar(50) NOT NULL,
+	"status" varchar(50) NOT NULL,
+	"episodes_watched" integer NOT NULL,
+	"score" integer,
+	"is_favorite" boolean NOT NULL,
+	"priority" varchar(20) NOT NULL,
+	"notes" text,
+	"added_at" timestamp with time zone NOT NULL,
+	"started_at" timestamp with time zone,
+	"completed_at" timestamp with time zone,
+	"updated_at" timestamp with time zone NOT NULL
+);
+CREATE UNIQUE INDEX "user_anime_list_pkey" ON "user_anime_list" ("id");
+ALTER TABLE "user_anime_list" ADD CONSTRAINT "user_anime_list_anime_id_fkey" FOREIGN KEY ("anime_id") REFERENCES "anime"("id");
+ALTER TABLE "user_anime_list" ADD CONSTRAINT "user_anime_list_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id");

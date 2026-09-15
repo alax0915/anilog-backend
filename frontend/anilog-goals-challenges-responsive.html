@@ -209,6 +209,8 @@
     body.loaded .side-link:nth-child(10) { animation-delay: 0.60s; }
     body.loaded .side-link:nth-child(11) { animation-delay: 0.65s; }
     body.loaded .side-link:nth-child(12) { animation-delay: 0.70s; }
+    body.loaded .side-link:nth-child(13) { animation-delay: 0.75s; }
+    body.loaded .side-link:nth-child(14) { animation-delay: 0.80s; }
 
     @keyframes navItemSlideIn {
       to {
@@ -778,7 +780,7 @@
       opacity: .8;
     }
     .note { font-size: 12px; font-style: italic; color: #eee; line-height: 17px; border-bottom: 1px solid rgba(185, 169, 196, .25); padding: 6px 0; }
-    .note:before { content: "â€¢"; color: #a03ce8; font-size: 20px; margin-right: 8px; }
+    .note:before { content: "•"; color: #a03ce8; font-size: 20px; margin-right: 8px; }
     .pen { position: absolute; right: 10px; bottom: 8px; width: 48px; height: 48px; background: url("./pc-bg.png") center/contain no-repeat; opacity: .5; }
 
     /* ---------------- MOBILE LAYOUT ---------------- */
@@ -1006,7 +1008,7 @@
           <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
           <div>
             <h1 class="brand-name">ANILOG</h1>
-            <div class="brand-sub">ã‚¢ãƒ‹ãƒ­ã‚°</div>
+            <div class="brand-sub">アニログ</div>
           </div>
         </div>
 
@@ -1016,13 +1018,14 @@
           <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span class="material-symbols-outlined">play_circle</span>Currently Watching</button>
           <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span class="material-symbols-outlined">check_circle</span>Completed</button>
           <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span class="material-symbols-outlined">calendar_month</span>Seasonal</button>
-          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span class="material-symbols-outlined"  >rate_review</span>Reviews</button>
+          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span class="material-symbols-outlined">rate_review</span>Reviews</button>
           <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span>Profile</button>
-          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';" ><span class="material-symbols-outlined" >leaderboard</span>Top Lists</button>
-          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span class="material-symbols-outlined"  >shopping_bag</span>Merch</button>
-          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span class="material-symbols-outlined"  >history</span>Logs</button>
-          <button class="side-link active" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span class="material-symbols-outlined"  >target</span>Goals</button>
-          <button class="side-link " onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
+          <button class="side-link" onclick="window.location.href='./anilog-favorites.html';"><span class="material-symbols-outlined">bookmark</span>Favorites</button>
+          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span class="material-symbols-outlined">leaderboard</span>Top Lists</button>
+          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span class="material-symbols-outlined">shopping_bag</span>Merch</button>
+          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span class="material-symbols-outlined">history</span>Logs</button>
+          <button class="side-link active" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span class="material-symbols-outlined">target</span>Goals</button>
+          <button class="side-link" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
         </nav>
 
 
@@ -1092,7 +1095,7 @@
           <!-- LEFT COLUMN -->
           <div class="col">
             <section class="panel yearly">
-              <div class="panel-title"><span>Yearly Goals</span><span class="right">2024 âŒ„</span></div>
+              <div class="panel-title"><span>Yearly Goals</span><span class="right">2024 ⌄</span></div>
               <div class="goal-list">
                 <div class="goal">
                   <div class="goal-line"><span class="material-symbols-outlined">play_circle</span><span>Watch 100 new series</span></div>
@@ -1101,7 +1104,7 @@
                 <div class="goal">
                   <div class="goal-line"><span class="material-symbols-outlined">star</span><span>Complete 10 highly-rated classics</span></div>
                   <div class="progress-bar-custom"><span style="width:76%"></span></div>
-                  <div class="checks"><b>âœ“</b>Completed new series<br><b>âœ“</b>Completed 10+ eps</div>
+                  <div class="checks"><b>✓</b>Completed new series<br><b>✓</b>Completed 10+ eps</div>
                 </div>
                 <div class="goal">
                   <div class="goal-line"><span class="material-symbols-outlined">event</span><span>Attend an Anime Convention</span></div>
@@ -1137,7 +1140,7 @@
           <!-- MIDDLE COLUMN -->
           <div class="col">
             <section class="panel monthly-top">
-              <div class="panel-title"><span>Monthly Challenges</span><span class="right">October âŒ„</span></div>
+              <div class="panel-title"><span>Monthly Challenges</span><span class="right">October ⌄</span></div>
               <div class="challenge-grid">
                 <div class="challenge">
                   <span class="material-symbols-outlined">task_alt</span>
@@ -1217,7 +1220,7 @@
 
             <section class="panel month-challenges">
               <div class="panel-title">
-                <span>Monthly Challenges</span><span class="right">â—· 00:20:21</span>
+                <span>Monthly Challenges</span><span class="right">⭷ 00:20:21</span>
               </div>
               <div class="challenge-stack">
                 <div class="side-challenge">
@@ -1225,7 +1228,7 @@
                   <div class="bar"><i style="width:77%"></i></div>
                 </div>
                 <div class="side-challenge" style="min-height:94px">
-                  <strong>Write a detailed review for 3 anime</strong><span class="chevron">âŒƒ</span>
+                  <strong>Write a detailed review for 3 anime</strong><span class="chevron">⌃</span>
                   <ul><li>Write a detailed review for 3 anime</li><li>Write a detailed review 1 anime</li><li style="list-style-type:square;color:#aaa">Rewatch a show from a different decade</li></ul>
                 </div>
                 <div class="side-challenge">
@@ -1233,7 +1236,7 @@
                   <div class="bar"><i style="width:58%"></i></div>
                 </div>
                 <div class="side-challenge">
-                  <strong>Rewatch a show from a different decade</strong><span class="chevron">âŒ„</span>
+                  <strong>Rewatch a show from a different decade</strong><span class="chevron">⌄</span>
                 </div>
               </div>
             </section>
@@ -1269,7 +1272,7 @@
           <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
           <div>
             <div class="brand-name">ANILOG</div>
-            <div class="brand-sub">ã‚¢ãƒ‹ãƒ­ã‚°</div>
+            <div class="brand-sub">アニログ</div>
           </div>
         </div>
         <span class="material-symbols-outlined" id="mobile-search-toggle" style="cursor: pointer;">search</span>
@@ -1290,7 +1293,7 @@
 
         <!-- Yearly Goals -->
         <div class="m-panel">
-          <div class="m-panel-title"><span>Yearly Goals</span><span class="right">2024 âŒ„</span></div>
+          <div class="m-panel-title"><span>Yearly Goals</span><span class="right">2024 ⌄</span></div>
           <div class="m-goal-list">
             <div class="m-goal">
               <div class="m-goal-line"><span class="material-symbols-outlined">play_circle</span><span>Watch 100 new series</span></div>
@@ -1299,7 +1302,7 @@
             <div class="m-goal">
               <div class="m-goal-line"><span class="material-symbols-outlined">star</span><span>Complete 10 highly-rated classics</span></div>
               <div class="m-progress"><span style="width:76%"></span></div>
-              <div class="checks" style="margin-left:28px;font-size:10px;"><b>âœ“</b>Completed new series<br><b>âœ“</b>Completed 10+ eps</div>
+              <div class="checks" style="margin-left:28px;font-size:10px;"><b>✓</b>Completed new series<br><b>✓</b>Completed 10+ eps</div>
             </div>
             <div class="m-goal">
               <div class="m-goal-line"><span class="material-symbols-outlined">event</span><span>Attend an Anime Convention</span></div>
@@ -1310,7 +1313,7 @@
 
         <!-- Monthly Challenges -->
         <div class="m-panel">
-          <div class="m-panel-title"><span>Monthly Challenges</span><span class="right">October âŒ„</span></div>
+          <div class="m-panel-title"><span>Monthly Challenges</span><span class="right">October ⌄</span></div>
           <div class="m-challenge-grid">
             <div class="m-challenge">
               <span class="material-symbols-outlined">task_alt</span>
@@ -1356,10 +1359,10 @@
         <div class="m-panel">
           <div class="m-panel-title"><span>Goal Notes</span></div>
           <div style="padding:10px 12px;font-size:11px;color:var(--muted);line-height:1.8;">
-            <div>â€¢ Must pick a favorite classic for November</div>
-            <div>â€¢ Check review guidelines</div>
-            <div>â€¢ Check your recommendations</div>
-            <div>â€¢ Review notes</div>
+            <div>• Must pick a favorite classic for November</div>
+            <div>• Check review guidelines</div>
+            <div>• Check your recommendations</div>
+            <div>• Review notes</div>
           </div>
         </div>
       </div>
@@ -1374,14 +1377,14 @@
           <span>Watchlist</span>
         </div>
         <div class="mobile-nav-item" onclick="window.location.href='./anilog-currentlywatching.html';">
-          <span class="material-symbols-outlined">play_arrow</span>
+          <span class="material-symbols-outlined">play_circle</span>
           <span>Watching</span>
         </div>
         <div class="mobile-nav-item" onclick="window.location.href='./anilog-completed.html';">
           <span class="material-symbols-outlined">check_circle</span>
           <span>Completed</span>
         </div>
-        <div class="mobile-nav-item active">
+        <div class="mobile-nav-item active" onclick="window.location.href='./anilog-goals-challenges-responsive.html';">
           <span class="material-symbols-outlined">target</span>
           <span>Goals</span>
         </div>
@@ -1465,7 +1468,7 @@
               const attr = anime.attributes || {};
               const title = attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled';
               const img = attr.posterImage?.tiny || attr.posterImage?.small || '';
-              const rating = attr.averageRating ? `â˜… ${(parseFloat(attr.averageRating) / 10).toFixed(1)}` : 'N/A';
+              const rating = attr.averageRating ? `★ ${(parseFloat(attr.averageRating) / 10).toFixed(1)}` : 'N/A';
               const type = attr.showType ? attr.showType.toUpperCase() : 'ANIME';
 
               const itemHTML = `
@@ -1473,7 +1476,7 @@
                 <img src="${img}" alt="${title}">
                 <div class="search-result-info">
                   <div class="search-result-title">${title}</div>
-                  <div class="search-result-meta">${type} â€¢ ${rating}</div>
+                  <div class="search-result-meta">${type} • ${rating}</div>
                 </div>
               </div>
             `;
@@ -1527,4 +1530,3 @@
 </body>
 
 </html>
-

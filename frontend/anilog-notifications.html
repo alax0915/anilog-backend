@@ -134,8 +134,7 @@
       position: relative;
       width: min(1510px, 100%);
       min-height: 935px;
-      display: grid;
-      grid-template-columns: 232px 1fr;
+      display: block; /* Updated since sidebar is removed */
       background:
         radial-gradient(circle at 73% 20%, rgba(102, 20, 173, .16), transparent 28%),
         linear-gradient(115deg, #090a12, #060810 58%, #080711);
@@ -156,139 +155,27 @@
       clip-path: polygon(0 0, 2% 0, 2.4% 1.5%, 98% 1.5%, 100% 0, 100% 98%, 98.4% 100%, 2% 100%, 0 98%);
     }
 
-    /* SIDEBAR */
-    .sidebar {
-      position: relative;
-      z-index: 10;
-      min-height: 933px;
-      padding: 26px 16px 16px;
-      border-right: 1px solid #252637;
-      background: linear-gradient(180deg, rgba(13, 14, 23, .97), rgba(5, 7, 13, .98));
-      border-top-left-radius: 9px;
-      border-bottom-left-radius: 9px;
+    /* BACK BUTTON CONTAINER */
+    .back-btn-container {
+      padding: 24px 24px 0 24px;
     }
 
-    .sidebar-brand {
-      display: flex;
+    .back-btn {
+      display: inline-flex;
       align-items: center;
-      gap: 10px;
-      margin: 0 10px 31px;
-    }
-
-    .sidebar-brand img {
-      width: 39px;
-      height: 39px;
-    }
-
-    .brand-name {
-      margin: 0;
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -.7px;
-      background: linear-gradient(135deg, #ffffff, #c65cff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: inline-block;
-    }
-
-    .brand-sub {
-      margin-top: 3px;
-      color: var(--purple2);
-      font-size: 8px;
-    }
-
-    .sidebar-nav {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .side-link {
-      height: 41px;
-      padding: 0 18px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      border: 1px solid transparent;
+      gap: 8px;
+      padding: 8px 16px;
       border-radius: 6px;
-      background: transparent;
+      background: var(--panel2);
+      border: 1px solid var(--border);
       font-size: 14px;
-      text-align: left;
-      color: #efedf3;
-      transition: background 0.2s ease, border-color 0.2s ease;
+      color: var(--text);
+      transition: all 0.2s ease;
     }
 
-    .side-link:hover {
-      background: rgba(157, 44, 255, 0.1);
-      border-color: rgba(157, 44, 255, 0.3);
-    }
-
-    .side-link.active {
-      border-color: #a12aff;
-      background: linear-gradient(90deg, rgba(118, 22, 183, .43), rgba(67, 17, 102, .22));
-      box-shadow: inset 0 0 20px rgba(155, 34, 246, .09);
-    }
-
-    .user-card {
-      position: absolute;
-      left: 14px;
-      right: 14px;
-      bottom: 46px;
-      height: 125px;
-      padding: 18px 14px;
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      border: 1px solid #9b31e7;
-      border-radius: 7px;
-      background: linear-gradient(145deg, rgba(14, 16, 27, .98), rgba(7, 8, 15, .98));
-      clip-path: polygon(4% 0, 96% 0, 100% 7%, 100% 93%, 96% 100%, 4% 100%, 0 93%, 0 7%);
-    }
-
-    .user-avatar {
-      width: 49px;
-      height: 49px;
-      flex: 0 0 49px;
-      border: 1px solid #a42df2;
-      border-radius: 50%;
-      padding: 3px;
-    }
-
-    .user-info {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .user-name {
-      margin: 0 0 4px;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .user-level {
-      color: #9996a5;
-      font-size: 9px;
-      margin-bottom: 9px;
-    }
-
-    .xp-track {
-      width: 100%;
-      height: 4px;
-      background: #252633;
-      border-radius: 5px;
-      overflow: hidden;
-    }
-
-    .xp-fill {
-      width: 63%;
-      height: 100%;
-      background: #9c2cff;
-    }
-
-    .xp-text {
-      margin-top: 7px;
-      color: #9c99a7;
-      font-size: 9px;
+    .back-btn:hover {
+      border-color: var(--purple2);
+      background: rgba(157, 44, 255, 0.15);
     }
 
     /* MAIN CONTENT */
@@ -467,15 +354,13 @@
       }
 
       .desktop-shell {
-        grid-template-columns: 1fr;
         border: none;
         border-radius: 0;
         box-shadow: none;
         background: transparent;
       }
 
-      .desktop-shell::before,
-      .sidebar {
+      .desktop-shell::before {
         display: none;
       }
 
@@ -496,44 +381,12 @@
   <div class="page-wrapper">
     <main class="desktop-shell">
 
-      <!-- SIDEBAR -->
-      <aside class="sidebar">
-        <div class="sidebar-brand">
-          <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
-          <div>
-            <h1 class="brand-name">ANILOG</h1>
-            <div class="brand-sub">アニログ</div>
-          </div>
-        </div>
-
-        <nav class="sidebar-nav">
-          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span class="material-symbols-outlined">home</span>Home</button>
-          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';"><span class="material-symbols-outlined">list_alt</span>Watchlist</button>
-          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span class="material-symbols-outlined">play_circle</span>Currently Watching</button>
-          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span class="material-symbols-outlined">check_circle</span>Completed</button>
-          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span class="material-symbols-outlined">calendar_month</span>Seasonal</button>
-          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span class="material-symbols-outlined">rate_review</span>Reviews</button>
-          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span>Profile</button>
-          <button class="side-link" onclick="window.location.href='./anilog-favorites.html';"><span class="material-symbols-outlined">bookmark</span>Favorites</button>
-          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span class="material-symbols-outlined">leaderboard</span>Top Lists</button>
-          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span class="material-symbols-outlined">shopping_bag</span>Merch</button>
-          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span class="material-symbols-outlined">history</span>Logs</button>
-          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span class="material-symbols-outlined">target</span>Goals</button>
-          <button class="side-link" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
-        </nav>
-
-        <div class="user-card">
-          <img class="user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="Avatar">
-          <div class="user-info">
-            <h3 class="user-name">ShadowX</h3>
-            <div class="user-level">Level 27</div>
-            <div class="xp-track">
-              <div class="xp-fill"></div>
-            </div>
-            <div class="xp-text">XP 4,250 / 6,800</div>
-          </div>
-        </div>
-      </aside>
+      <!-- BACK BUTTON -->
+      <div class="back-btn-container">
+        <button class="back-btn" onclick="window.history.back();">
+          <span class="material-symbols-outlined">arrow_back</span> Back
+        </button>
+      </div>
 
       <!-- MAIN CONTENT -->
       <section class="main">

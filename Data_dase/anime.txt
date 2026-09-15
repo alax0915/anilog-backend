@@ -1,0 +1,11 @@
+CREATE TABLE "anime" (
+	"id" varchar(50) PRIMARY KEY,
+	"title_english" varchar(255) NOT NULL,
+	"title_japanese" varchar(255),
+	"cover_image" text,
+	"genre" varchar(100),
+	"total_episodes" integer NOT NULL,
+	"score" integer,
+	"is_new_release" boolean NOT NULL
+);
+CREATE UNIQUE INDEX "anime_pkey" ON "anime" ("id");

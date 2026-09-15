@@ -31,6 +31,58 @@
       --info: #00b0ff;
     }
 
+    body.light-theme {
+      --bg: #f4f5fa;
+      --panel: #ffffff;
+      --panel2: #f0f1f7;
+      --panel3: #e5e7f0;
+      --border: #d1d5e4;
+      --purple: #8200e6;
+      --purple2: #a12aff;
+      --text: #1a1b26;
+      --muted: #5a5c6e;
+      --dim: #888a9e;
+      background: #f0f2f8 !important;
+      color: var(--text) !important;
+    }
+
+    body.light-theme .desktop-shell {
+      background: linear-gradient(115deg, #f9f9fc, #eceef5 58%, #f2f3f9) !important;
+      border-color: #d1d5e4 !important;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    body.light-theme .sidebar {
+      background: linear-gradient(180deg, #ffffff, #f2f3f8) !important;
+      border-right-color: #d1d5e4 !important;
+    }
+
+    body.light-theme .side-link {
+      color: #2b2d42 !important;
+    }
+
+    body.light-theme .side-link:hover {
+      background: rgba(157, 44, 255, 0.08) !important;
+    }
+
+    body.light-theme .user-card,
+    body.light-theme .stat-card,
+    body.light-theme .anime-card,
+    body.light-theme .episode-card,
+    body.light-theme .mobile-episode,
+    body.light-theme .dropdown-panel {
+      background: #ffffff !important;
+      border-color: #d1d5e4 !important;
+    }
+
+    body.light-theme .dropdown-item {
+      color: #1a1b26 !important;
+    }
+
+    body.light-theme .dropdown-item:hover {
+      background: rgba(157, 44, 255, 0.1) !important;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -912,6 +964,7 @@
       border-radius: 7px;
       background: #0d0f18;
       transition: transform 0.2s ease, border-color 0.2s ease;
+      cursor: pointer;
     }
 
     .anime-card:hover {
@@ -995,6 +1048,12 @@
       border: 1px solid #1e2130;
       border-radius: 7px;
       background: #0b0d16;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+    }
+
+    .episode-card:hover {
+      border-color: var(--purple2);
     }
 
     .episode-poster {
@@ -1231,6 +1290,7 @@
         border: 1px solid #1d2030;
         border-radius: 6px;
         background: #0b0d15;
+        cursor: pointer;
       }
 
       .mobile-episode .episode-poster {
@@ -1261,6 +1321,7 @@
         gap: 4px;
         color: #d5d2dc;
         font-size: 8px;
+        cursor: pointer;
       }
 
       .mobile-nav-item.active {
@@ -1311,7 +1372,7 @@
           <button class="side-link" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
         </nav>
 
-        <div class="user-card">
+        <div class="user-card" onclick="window.location.href='./anilog-user-profile-responsive.html';" style="cursor: pointer;">
           <img class="user-avatar" id="desktop-user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Shadow" alt="Avatar">
           <div class="user-info">
             <h3 class="user-name" id="desktop-user-name">Loading...</h3>
@@ -1337,11 +1398,13 @@
 
           <div class="top-actions">
             <div class="top-action-wrap">
-              <div class="top-action"><span class="material-symbols-outlined">notifications</span></div>
+              <div class="top-action" onclick="window.location.href='./anilog-notifications.html';">
+                <span class="material-symbols-outlined">notifications</span>
+              </div>
             </div>
 
             <div class="top-action-wrap">
-              <div class="top-action streak">
+              <div class="top-action streak" onclick="window.location.href='./anilog-streak.html';">
                 <span class="material-symbols-outlined" style="color: #ff2d63;">local_fire_department</span>
                 <span id="desktop-streak-count">1</span>
               </div>
@@ -1354,20 +1417,20 @@
               </div>
               <div class="dropdown-panel">
                 <div class="dropdown-panel-header">System Settings</div>
-                <button class="dropdown-item">
+                <button class="dropdown-item" id="theme-toggle-btn">
                   <span class="material-symbols-outlined">dark_mode</span> App Theme
                 </button>
-                <button class="dropdown-item">
+                <button class="dropdown-item" onclick="window.location.href='./anilog-notifications.html';">
                   <span class="material-symbols-outlined">notifications_active</span> Notifications
                 </button>
-                <button class="dropdown-item">
+                <button class="dropdown-item" onclick="window.location.href='./anilog-sub-dub-settings.html';">
                   <span class="material-symbols-outlined">subtitles</span> Default Sub/Dub
                 </button>
-                <button class="dropdown-item">
+                <button class="dropdown-item" onclick="window.location.href='./anilog-content-filter.html';">
                   <span class="material-symbols-outlined">explicit</span> Content Filter
                 </button>
                 <div class="dropdown-divider"></div>
-                <button class="dropdown-item">
+                <button class="dropdown-item" onclick="window.location.href='./anilog-preferences.html';">
                   <span class="material-symbols-outlined">tune</span> Preferences
                 </button>
               </div>
@@ -1387,7 +1450,7 @@
                 <button class="dropdown-item" onclick="window.location.href='./anilog-edit-profile.html';">
                   <span class="material-symbols-outlined">edit</span> Edit Profile
                 </button>
-                <button class="dropdown-item">
+                <button class="dropdown-item" onclick="window.location.href='./anilog-vip-membership.html';">
                   <span class="material-symbols-outlined">workspace_premium</span> VIP Membership
                 </button>
                 <div class="dropdown-divider"></div>
@@ -1411,34 +1474,34 @@
         </section>
 
         <section class="stats">
-          <article class="stat-card">
+          <article class="stat-card" onclick="window.location.href='./anilog-currentlywatching.html';" style="cursor: pointer;">
             <span class="material-symbols-outlined" style="color: var(--purple2);">play_arrow</span>
             <div>
               <div class="stat-label">Watching</div>
-              <div class="stat-value">8</div>
+              <div class="stat-value" id="stat-watching-value">0</div>
               <div class="stat-sub">Shows</div>
             </div>
           </article>
 
-          <article class="stat-card">
+          <article class="stat-card" onclick="window.location.href='./anilog-completed.html';" style="cursor: pointer;">
             <span class="material-symbols-outlined" style="color: var(--purple2);">checklist</span>
             <div>
               <div class="stat-label">Completed</div>
-              <div class="stat-value">132</div>
+              <div class="stat-value" id="stat-completed-value">0</div>
               <div class="stat-sub">Shows</div>
             </div>
           </article>
 
-          <article class="stat-card">
-            <span class="material-symbols-outlined" style="color: var(--purple2);">timer</span>
+          <article class="stat-card" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';" style="cursor: pointer;">
+            <span class="material-symbols-outlined" style="color: var(--purple2);">favorite</span>
             <div>
-              <div class="stat-label">Hours Watched</div>
-              <div class="stat-value">1,248</div>
-              <div class="stat-sub">Hours</div>
+              <div class="stat-label">Favorite's</div>
+              <div class="stat-value" id="stat-favorites-value">0</div>
+              <div class="stat-sub">shows</div>
             </div>
           </article>
 
-          <article class="stat-card">
+          <article class="stat-card" onclick="window.location.href='./anilog-streak.html';" style="cursor: pointer;">
             <span class="material-symbols-outlined" style="color: var(--danger);">local_fire_department</span>
             <div>
               <div class="stat-label">Current Streak</div>
@@ -1477,7 +1540,7 @@
     <main class="mobile-shell">
 
       <header class="mobile-topbar">
-        <span class="material-symbols-outlined">menu</span>
+        <span class="material-symbols-outlined" onclick="window.location.href='./anilog-user-profile-responsive.html';">menu</span>
         <div class="mobile-brand">
           <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
           <div>
@@ -1509,22 +1572,22 @@
         </section>
 
         <section class="mobile-stats">
-          <article class="mobile-stat">
+          <article class="mobile-stat" onclick="window.location.href='./anilog-currentlywatching.html';">
             <span class="material-symbols-outlined" style="color: var(--purple2);">play_arrow</span>
             <div class="label">Watching</div>
-            <div class="value">0</div>
+            <div class="value" id="mobile-stat-watching">0</div>
           </article>
-          <article class="mobile-stat">
+          <article class="mobile-stat" onclick="window.location.href='./anilog-completed.html';">
             <span class="material-symbols-outlined" style="color: var(--purple2);">checklist</span>
             <div class="label">Completed</div>
-            <div class="value">132</div>
+            <div class="value" id="mobile-stat-completed">0</div>
           </article>
-          <article class="mobile-stat">
-            <span class="material-symbols-outlined" style="color: var(--purple2);">timer</span>
-            <div class="label">Hours</div>
-            <div class="value">0</div>
+          <article class="mobile-stat" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';">
+            <span class="material-symbols-outlined" style="color: var(--purple2);">favorite</span>
+            <div class="label">Favorites</div>
+            <div class="value" id="mobile-stat-favorites">0</div>
           </article>
-          <article class="mobile-stat">
+          <article class="mobile-stat" onclick="window.location.href='./anilog-streak.html';">
             <span class="material-symbols-outlined" style="color: var(--danger);">local_fire_department</span>
             <div class="label">Streak</div>
             <div class="value" id="mobile-stat-streak">1</div>
@@ -1535,7 +1598,7 @@
         <section class="mobile-section">
           <div class="mobile-section-header">
             <h2>New Releases</h2>
-            <span class="see-all">See All</span>
+            <span class="see-all" onclick="window.location.href='./anilog-seasonal-all.html';">See All</span>
           </div>
 
           <div class="anime-scroll-row" id="mobile-new-releases"></div>
@@ -1545,7 +1608,7 @@
         <section class="mobile-section mobile-upcoming">
           <div class="mobile-section-header">
             <h2>Upcoming Episodes</h2>
-            <span class="see-all">See All</span>
+            <span class="see-all" onclick="window.location.href='./anilog-seasonal-all.html';">See All</span>
           </div>
 
           <div class="mobile-episode-list" id="mobile-upcoming-episodes"></div>
@@ -1554,23 +1617,23 @@
       </div>
 
       <nav class="mobile-bottom-nav">
-        <div class="mobile-nav-item active">
+        <div class="mobile-nav-item active" onclick="window.location.href='./anilog-home.html';">
           <span class="material-symbols-outlined">home</span>
           <span>Home</span>
         </div>
-        <div class="mobile-nav-item">
+        <div class="mobile-nav-item" onclick="window.location.href='./anilog-watchlist.html';">
           <span class="material-symbols-outlined">list_alt</span>
           <span>Watchlist</span>
         </div>
-        <div class="mobile-nav-item">
+        <div class="mobile-nav-item" onclick="window.location.href='./anilog-currentlywatching.html';">
           <span class="material-symbols-outlined">play_arrow</span>
           <span>Watching</span>
         </div>
-        <div class="mobile-nav-item">
+        <div class="mobile-nav-item" onclick="window.location.href='./anilog-completed.html';">
           <span class="material-symbols-outlined">check_circle</span>
           <span>Completed</span>
         </div>
-        <div class="mobile-nav-item">
+        <div class="mobile-nav-item" onclick="window.location.href='./anilog-user-profile-responsive.html';">
           <span class="material-symbols-outlined">more_vert</span>
           <span>More</span>
         </div>
@@ -1585,6 +1648,7 @@
     // ==========================================
     const API_BASE_URL = 'http://127.0.0.1:8000';
     const LOGIN_PAGE = './anilog-login-register.html';
+    let animeSourceUrl = null; // Dynamically fetched from backend
 
     // Helper: Toast UI Box Popup System
     function showToast(message, type = 'info', duration = 4000) {
@@ -1694,6 +1758,34 @@
       }
     }
 
+    // Fetches protected anime link from backend after authentication
+    async function fetchAnimeSourceUrl() {
+      const token = getAuthToken();
+      if (!token) return null;
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/anime/source-url`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve source link. Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        animeSourceUrl = data.source_url;
+        return animeSourceUrl;
+      } catch (err) {
+        console.error('Failed to get backend anime source link:', err);
+        showToast('Unable to fetch secure source link.', 'error');
+        return null;
+      }
+    }
+
     function updateUserUI(user) {
       if (!user) return;
 
@@ -1756,41 +1848,37 @@
         }
       }
 
-      // 6. Connect Backend Watch Stats Container (.stats & .mobile-stats)
-      const watchStats = user.daily_watch_activities || {};
-      const currentlyWatchingCount = watchStats.currently_watching ?? 8;
-      const completedCount = watchStats.completed_shows ?? 132;
-      const hoursWatchedCount = watchStats.hours_watched ?? 1248;
+      // 6. Bind User Stats directly from backend User model (watching_count, completed_count, favorites_count)
+      const watchingVal = document.getElementById('stat-watching-value');
+      const completedVal = document.getElementById('stat-completed-value');
+      const favoritesVal = document.getElementById('stat-favorites-value');
 
-      const statCards = document.querySelectorAll('.stats .stat-card');
-      if (statCards.length >= 3) {
-        const watchingVal = statCards[0].querySelector('.stat-value');
-        const completedVal = statCards[1].querySelector('.stat-value');
-        const hoursVal = statCards[2].querySelector('.stat-value');
+      if (watchingVal) watchingVal.textContent = user.watching_count ?? 0;
+      if (completedVal) completedVal.textContent = user.completed_count ?? 0;
+      if (favoritesVal) favoritesVal.textContent = user.favorites_count ?? 0;
 
-        if (watchingVal) watchingVal.textContent = currentlyWatchingCount;
-        if (completedVal) completedVal.textContent = completedCount;
-        if (hoursVal) hoursVal.textContent = hoursWatchedCount;
-      }
+      const mWatchingVal = document.getElementById('mobile-stat-watching');
+      const mCompletedVal = document.getElementById('mobile-stat-completed');
+      const mFavoritesVal = document.getElementById('mobile-stat-favorites');
 
-      const mobileStatCards = document.querySelectorAll('.mobile-stats .mobile-stat');
-      if (mobileStatCards.length >= 3) {
-        const mWatchingVal = mobileStatCards[0].querySelector('.value');
-        const mCompletedVal = mobileStatCards[1].querySelector('.value');
-        const mHoursVal = mobileStatCards[2].querySelector('.value');
-
-        if (mWatchingVal) mWatchingVal.textContent = currentlyWatchingCount;
-        if (mCompletedVal) mCompletedVal.textContent = completedCount;
-        if (mHoursVal) mHoursVal.textContent = hoursWatchedCount;
-      }
+      if (mWatchingVal) mWatchingVal.textContent = user.watching_count ?? 0;
+      if (mCompletedVal) mCompletedVal.textContent = user.completed_count ?? 0;
+      if (mFavoritesVal) mFavoritesVal.textContent = user.favorites_count ?? 0;
     }
 
     // ==========================================
     // 3. ANIME API & UI CONTROLLERS
     // ==========================================
-    async function safeFetchKitsu(endpoint) {
+    async function safeFetchAnime(path) {
+      if (!animeSourceUrl) {
+        await fetchAnimeSourceUrl();
+      }
+      if (!animeSourceUrl) {
+        throw new Error('Anime source URL is unavailable.');
+      }
+
       try {
-        const response = await fetch(endpoint, {
+        const response = await fetch(`${animeSourceUrl}${path}`, {
           headers: {
             'Accept': 'application/vnd.api+json',
             'Content-Type': 'application/vnd.api+json'
@@ -1800,7 +1888,7 @@
         const json = await response.json();
         return json.data || [];
       } catch (err) {
-        console.error('Kitsu Fetch Error:', err);
+        console.error('Anime Fetch Error:', err);
         showToast('Failed to fetch anime updates.', 'error');
         throw err;
       }
@@ -1808,9 +1896,13 @@
 
     window.addEventListener('load', async () => {
       // 1. Validate Session & Synchronize User Data with Backend API
-      await checkAuthAndLoadProfile();
+      const user = await checkAuthAndLoadProfile();
+      if (!user) return;
 
-      // 2. Clear Preloader Overlay
+      // 2. Fetch sensitive link from backend
+      await fetchAnimeSourceUrl();
+
+      // 3. Clear Preloader Overlay
       if (document.fonts) {
         await document.fonts.ready;
       }
@@ -1821,22 +1913,31 @@
       }
       document.body.classList.add('loaded');
 
-      // 3. Fetch Dynamic Releases & Content
+      // 4. Fetch Dynamic Releases & Content using retrieved link
       await fetchNewReleases();
       setTimeout(() => {
         fetchUpcomingEpisodes();
       }, 500);
 
-      // 4. Attach Event Handlers
+      // 5. Attach Event Handlers & Theme Toggle
       const logoutBtn = document.getElementById('logout-btn');
       if (logoutBtn) {
         logoutBtn.addEventListener('click', () => logoutUser('Successfully logged out.'));
+      }
+
+      const themeBtn = document.getElementById('theme-toggle-btn');
+      if (themeBtn) {
+        themeBtn.addEventListener('click', () => {
+          document.body.classList.toggle('light-theme');
+          const isLight = document.body.classList.contains('light-theme');
+          showToast(`Switched to ${isLight ? 'Light' : 'Dark'} Mode`, 'info');
+        });
       }
     });
 
     async function fetchNewReleases() {
       try {
-        const animeList = (await safeFetchKitsu('https://kitsu.io/api/edge/anime?filter[status]=current&sort=-userCount&page[limit]=15')).filter(anime => window.anilogContentFilter?.allows(anime) !== false);
+        const animeList = (await safeFetchAnime('/anime?filter[status]=current&sort=-userCount&page[limit]=15')).filter(anime => window.anilogContentFilter?.allows(anime) !== false);
         window.anilogReleaseAnime = Object.fromEntries(animeList.map(anime => [String(anime.id), anime]));
 
         const desktopContainer = document.getElementById('desktop-new-releases');
@@ -1853,7 +1954,7 @@
           const rating = attr.averageRating ? `★ ${(parseFloat(attr.averageRating) / 10).toFixed(1)}` : 'NEW';
 
           const cardHTML = `
-          <article class="anime-card">
+          <article class="anime-card" data-anime-id="${escapeHTML(anime.id)}">
             <div class="poster">
               <img src="${image}" alt="${escapeHTML(title)}">
               <span class="poster-menu" data-favorite-id="${escapeHTML(anime.id)}" role="button" tabindex="0" title="Save to favorites">
@@ -1869,6 +1970,19 @@
           if (desktopContainer) desktopContainer.insertAdjacentHTML('beforeend', cardHTML);
           if (mobileContainer) mobileContainer.insertAdjacentHTML('beforeend', cardHTML);
         });
+
+        // Add Click Redirect Event to Anime Cards
+        document.querySelectorAll('.anime-card').forEach(card => {
+          card.addEventListener('click', (e) => {
+            if (e.target.closest('[data-favorite-id]')) return;
+            const animeId = card.dataset.animeId;
+            const animeObj = window.anilogReleaseAnime?.[animeId];
+            if (animeObj) {
+              openAnimeReview(animeObj);
+            }
+          });
+        });
+
         refreshFavoriteButtons();
       } catch (err) {
         console.error('Failed to load new releases:', err);
@@ -1924,7 +2038,8 @@
 
     async function fetchUpcomingEpisodes() {
       try {
-        const upcomingList = (await safeFetchKitsu('https://kitsu.io/api/edge/anime?filter[status]=upcoming&sort=-userCount&page[limit]=10')).filter(anime => window.anilogContentFilter?.allows(anime) !== false);
+        const upcomingList = (await safeFetchAnime('/anime?filter[status]=upcoming&sort=-userCount&page[limit]=10')).filter(anime => window.anilogContentFilter?.allows(anime) !== false);
+        window.anilogUpcomingAnime = Object.fromEntries(upcomingList.map(anime => [String(anime.id), anime]));
 
         const desktopContainer = document.getElementById('desktop-upcoming-episodes');
         const mobileContainer = document.getElementById('mobile-upcoming-episodes');
@@ -1939,32 +2054,45 @@
           const releaseDate = attr.startDate || 'TBA';
 
           const desktopCard = `
-          <article class="episode-card">
+          <article class="episode-card" data-upcoming-id="${escapeHTML(anime.id)}">
             <div class="episode-poster"><img src="${image}" alt="${escapeHTML(title)}"></div>
             <div class="episode-info">
               <h3 class="episode-title">${escapeHTML(title)}</h3>
               <div class="episode-number">Upcoming Season</div>
               <div class="episode-time">${releaseDate}</div>
             </div>
-            <button class="notify"><span class="material-symbols-outlined">notifications</span></button>
+            <button class="notify" onclick="event.stopPropagation(); showToast('Notifications enabled for this episode!', 'success');"><span class="material-symbols-outlined">notifications</span></button>
           </article>
         `;
 
           const mobileCard = `
-          <article class="mobile-episode">
+          <article class="mobile-episode" data-upcoming-id="${escapeHTML(anime.id)}">
             <div class="episode-poster"><img src="${image}" alt="${escapeHTML(title)}"></div>
             <div class="episode-info">
               <h3 class="episode-title">${escapeHTML(title)}</h3>
               <div class="episode-number">Upcoming</div>
               <div class="episode-time">${releaseDate}</div>
             </div>
-            <button class="notify"><span class="material-symbols-outlined">notifications</span></button>
+            <button class="notify" onclick="event.stopPropagation(); showToast('Notifications enabled for this episode!', 'success');"><span class="material-symbols-outlined">notifications</span></button>
           </article>
         `;
 
           if (desktopContainer) desktopContainer.insertAdjacentHTML('beforeend', desktopCard);
           if (mobileContainer) mobileContainer.insertAdjacentHTML('beforeend', mobileCard);
         });
+
+        // Add Redirect Event Listener to Upcoming Episodes Cards
+        document.querySelectorAll('.episode-card, .mobile-episode').forEach(card => {
+          card.addEventListener('click', (e) => {
+            if (e.target.closest('.notify')) return;
+            const animeId = card.dataset.upcomingId;
+            const animeObj = window.anilogUpcomingAnime?.[animeId];
+            if (animeObj) {
+              openAnimeReview(animeObj);
+            }
+          });
+        });
+
       } catch (err) {
         console.error('Failed to load upcoming episodes:', err);
       }
@@ -2023,7 +2151,11 @@
         resultsContainer.classList.add('active');
 
         try {
-          const targetUrl = `https://kitsu.io/api/edge/anime?filter[text]=${encodeURIComponent(cleanQuery)}&page[limit]=6`;
+          if (!animeSourceUrl) {
+            await fetchAnimeSourceUrl();
+          }
+
+          const targetUrl = `${animeSourceUrl}/anime?filter[text]=${encodeURIComponent(cleanQuery)}&page[limit]=6`;
           const response = await fetch(targetUrl, {
             signal: currentAbortController.signal,
             headers: {

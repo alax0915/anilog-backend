@@ -1,0 +1,32 @@
+CREATE TABLE "users" (
+	"id" serial PRIMARY KEY,
+	"username" varchar(50) NOT NULL,
+	"email" varchar(255) NOT NULL,
+	"password_hash" varchar(255) NOT NULL,
+	"role" varchar(20) NOT NULL,
+	"avatar_seed" varchar(255),
+	"bio" varchar(255),
+	"streak_count" integer NOT NULL,
+	"last_active_at" timestamp with time zone NOT NULL,
+	"xp_points" integer NOT NULL,
+	"level" integer NOT NULL,
+	"created_at" timestamp with time zone NOT NULL,
+	"updated_at" timestamp with time zone NOT NULL,
+	"daily_watch_activities" json,
+	"notifications" integer NOT NULL,
+	"reaction_logs" json,
+	"refresh_tokens" integer NOT NULL,
+	"user_anime_lists" json,
+	"user_settings" json,
+	"hashed_refresh_token" varchar(255),
+	"failed_login_attempts" integer DEFAULT 0 NOT NULL,
+	"locked_until" timestamp with time zone,
+	"login_audit_logs" json,
+	"watching_count" integer DEFAULT 0,
+	"completed_count" integer DEFAULT 0,
+	"favorites_count" text DEFAULT 0
+);
+CREATE UNIQUE INDEX "ix_users_email" ON "users" ("email");
+CREATE INDEX "ix_users_id" ON "users" ("id");
+CREATE UNIQUE INDEX "ix_users_username" ON "users" ("username");
+CREATE UNIQUE INDEX "users_pkey" ON "users" ("id");

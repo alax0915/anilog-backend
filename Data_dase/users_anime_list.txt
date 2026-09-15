@@ -1,0 +1,22 @@
+CREATE TABLE "users_anime_list" (
+	"id" serial PRIMARY KEY,
+	"user_id" integer NOT NULL,
+	"anime_id" varchar(100) NOT NULL,
+	"title_english" varchar(255) NOT NULL,
+	"title_japanese" varchar(255),
+	"cover_image" varchar(500),
+	"genre" varchar(100) NOT NULL,
+	"status" varchar(50) NOT NULL,
+	"priority" varchar(20) NOT NULL,
+	"episodes" integer NOT NULL,
+	"episodes_watched" integer NOT NULL,
+	"score" integer,
+	"is_favorite" boolean NOT NULL,
+	"is_new_release" boolean NOT NULL,
+	"notes" varchar(500),
+	"added_at" timestamp with time zone NOT NULL,
+	"updated_at" timestamp with time zone NOT NULL
+);
+CREATE INDEX "ix_users_anime_list_id" ON "users_anime_list" ("id");
+CREATE INDEX "ix_users_anime_list_user_id" ON "users_anime_list" ("user_id");
+CREATE UNIQUE INDEX "users_anime_list_pkey" ON "users_anime_list" ("id");

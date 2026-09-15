@@ -1,0 +1,9 @@
+CREATE TABLE "refresh_tokens" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+	"user_id" uuid NOT NULL,
+	"token" varchar(500) NOT NULL CONSTRAINT "refresh_tokens_token_key" UNIQUE,
+	"expires_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now()
+);
+CREATE UNIQUE INDEX "refresh_tokens_pkey" ON "refresh_tokens" ("id");
+CREATE UNIQUE INDEX "refresh_tokens_token_key" ON "refresh_tokens" ("token");

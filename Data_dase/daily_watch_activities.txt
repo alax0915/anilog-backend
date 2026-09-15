@@ -1,0 +1,10 @@
+CREATE TABLE "daily_watch_activities" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+	"user_id" uuid NOT NULL,
+	"anime_id" varchar(100) NOT NULL,
+	"primary_genre" varchar(50) NOT NULL,
+	"episodes_count" integer DEFAULT 1,
+	"watch_time_mins" integer DEFAULT 24,
+	"activity_date" date DEFAULT CURRENT_DATE
+);
+CREATE UNIQUE INDEX "daily_watch_activities_pkey" ON "daily_watch_activities" ("id");

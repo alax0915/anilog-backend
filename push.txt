@@ -9,12 +9,47 @@ git commit -m "Add new files"
 
 git push origin main
 
+
+
+
+
+
 this are the things i want you to do to my frontend to my front end
 
 i need you to add like a small ui pop box on top just like famous websites use to notify users abt their action i wanna add that like  it notifies users  for errors like  server side or network or all other possible erors ,sucessful logins, incorrect credentials ,max login attempts or anything that isnt sensetive to nottify users 
 
-i will send you my backend normally i hosted my backend using "uvicorn main:app --reload" so what i want you to do is memorize the backend and help me connect the backend to the front end for this case connect
+i will send you my backend normally i hosted my backend using "uvicorn main:app --reload" so what i want you to do is memorize the backend and help me connect the backend to the front end for this case connect http://127.0.0.1:8000
 
 add a js code an automatic js code if it doesnt find the    login cookie or session in the browser localstorage or cookie see it on the backend and frontend it redirects to  anilog-login-register.html
+
+
+
+i wanna change somethings on my front end  like on my frontend it loads anime news from certain anime website i wanna mark that as a sensitive link so instead of changing all html structure lets make it like this the front end when it loads after user authentication .... it goes to loading anime on a list see on the html file i sent u so it grabs the link that is stored in the html file and grabs what ever anime thing it want but i wanna change the location of link to the backend main.py the one i sent u so if the frontend needs to grab a anime data it asks the backend for link the backend checks if the user is logged in if the credentials saved on the user device  then it gives the link to the front end then the frontend uses the link now send me the updated code for the  frontend
+
+ there is 1 mistake idk if to call it mistke like  before the updated current cide  the orginal code was not integrated with the backend but after integrating it there are 2 problems fix them  
+
+
+1, on the top navigation bar there are streak,setting,profile when u hover over then they show lists their own lists but when u click on one of the btns listed it doesnt do anything before if they have their own page they redirect you now nothings like on setting hoer on notification btn when u click it it redirects you to "anilog-notifications.html",dub/sub redirects to "anilog-sub-dub-settings.html",content filter redirets to "anilog-content-filter.html" , the app then is likt a toogle btn when clicked like true or false but for this case light mode and darkmode no redirecting or their other actions alert i dint only say redirect they may be doing other things 
+2,on the  any section section that  it loads list of animes when u click it it redirects to other html page specifically designreed to show you anime data but when u click anime on the h tml  page it doesnt redirect you fix those 2 problems and resend full updated code
+
+below on the left side there is a profile box like "<div class="user-info">"name of the box let it load the actual live data of the user from backend see on the backend and you will understand 
+
+
+i want you to update navigation bar on the html code i sent you like the html structure html tag class may not be same but their ui are same so i dont want you to touch the original html tag and class of the thml code in the html file i sent u but add the missing nav bar parts to it bbecause it is different from the homepage below i will send you the nav code html of the home page
+<nav class="sidebar-nav">
+          <button class="side-link active" onclick="window.location.href='./anilog-home.html';"><span class="material-symbols-outlined">home</span>Home</button>
+          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';"><span class="material-symbols-outlined">list_alt</span>Watchlist</button>
+          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span class="material-symbols-outlined">play_circle</span>Currently Watching</button>
+          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span class="material-symbols-outlined">check_circle</span>Completed</button>
+          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span class="material-symbols-outlined">calendar_month</span>Seasonal</button>
+          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span class="material-symbols-outlined">rate_review</span>Reviews</button>
+          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span>Profile</button>
+          <button class="side-link" onclick="window.location.href='./anilog-favorites.html';"><span class="material-symbols-outlined">bookmark</span>Favorites</button>
+          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span class="material-symbols-outlined">leaderboard</span>Top Lists</button>
+          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span class="material-symbols-outlined">shopping_bag</span>Merch</button>
+          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span class="material-symbols-outlined">history</span>Logs</button>
+          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span class="material-symbols-outlined">target</span>Goals</button>
+          <button class="side-link" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
+        </nav>
 
 after finishing send full updated code
