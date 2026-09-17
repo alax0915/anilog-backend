@@ -1648,7 +1648,6 @@
     // ==========================================
     const API_BASE_URL = 'http://127.0.0.1:8000';
     const LOGIN_PAGE = './anilog-login-register.html';
-    let animeSourceUrl = null; // Dynamically fetched from backend
 
     // Helper: Toast UI Box Popup System
     function showToast(message, type = 'info', duration = 4000) {
@@ -1748,7 +1747,6 @@
         console.error('Authentication Error:', err);
         showToast('Unable to connect to server. Check your network connection.', 'error');
 
-        // Fallback to local cached data if API server is temporarily unreachable
         const cachedUser = localStorage.getItem('user_data');
         if (cachedUser) {
           updateUserUI(JSON.parse(cachedUser));
@@ -1758,43 +1756,13 @@
       }
     }
 
-    // Fetches protected anime link from backend after authentication
-    async function fetchAnimeSourceUrl() {
-      const token = getAuthToken();
-      if (!token) return null;
-
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/anime/source-url`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error(`Failed to retrieve source link. Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        animeSourceUrl = data.source_url;
-        return animeSourceUrl;
-      } catch (err) {
-        console.error('Failed to get backend anime source link:', err);
-        showToast('Unable to fetch secure source link.', 'error');
-        return null;
-      }
-    }
-
     function updateUserUI(user) {
       if (!user) return;
 
-      // 1. Update Username & Display Profile Names
       document.querySelectorAll('[data-profile-name]').forEach(el => {
         el.textContent = user.username || 'User';
       });
 
-      // 2. Update User Avatars across layout
       const avatarUrl = user.avatar_seed || `https://api.dicebear.com/7.x/bottts/svg?seed=${user.username}`;
       const desktopAvatar = document.getElementById('desktop-user-avatar');
       const topbarAvatar = document.getElementById('desktop-topbar-avatar');
@@ -1804,7 +1772,6 @@
       if (topbarAvatar) topbarAvatar.src = avatarUrl;
       if (sideUserName) sideUserName.textContent = user.username || 'User';
 
-      // 3. Update Level & Level Progress Bar (xp_points & level)
       const userLevel = user.level || 1;
       const userXP = user.xp_points || 0;
       const targetXP = userLevel * 1000;
@@ -1818,7 +1785,6 @@
       if (xpFill) xpFill.style.width = `${xpPercentage}%`;
       if (xpText) xpText.textContent = `XP ${userXP.toLocaleString()} / ${targetXP.toLocaleString()}`;
 
-      // 4. Update Dynamic Streak Counts Across Desktop and Mobile
       const liveStreak = user.streak_count ?? 1;
       const desktopStreak = document.getElementById('desktop-streak-count');
       const statStreak = document.getElementById('stat-streak-value');
@@ -1828,7 +1794,6 @@
       if (statStreak) statStreak.textContent = liveStreak;
       if (mobileStreak) mobileStreak.textContent = liveStreak;
 
-      // 5. Update Dynamic Notification Badge Count
       const notifBadgeCount = user.notifications || 0;
       const notifIcon = document.querySelector('.top-action .material-symbols-outlined');
       if (notifIcon && notifIcon.textContent.trim() === 'notifications') {
@@ -1848,7 +1813,6 @@
         }
       }
 
-      // 6. Bind User Stats directly from backend User model (watching_count, completed_count, favorites_count)
       const watchingVal = document.getElementById('stat-watching-value');
       const completedVal = document.getElementById('stat-completed-value');
       const favoritesVal = document.getElementById('stat-favorites-value');
@@ -1867,42 +1831,12 @@
     }
 
     // ==========================================
-    // 3. ANIME API & UI CONTROLLERS
+    // 3. ANIME API & UI CONTROLLERS (SECURED VIA BACKEND)
     // ==========================================
-    async function safeFetchAnime(path) {
-      if (!animeSourceUrl) {
-        await fetchAnimeSourceUrl();
-      }
-      if (!animeSourceUrl) {
-        throw new Error('Anime source URL is unavailable.');
-      }
-
-      try {
-        const response = await fetch(`${animeSourceUrl}${path}`, {
-          headers: {
-            'Accept': 'application/vnd.api+json',
-            'Content-Type': 'application/vnd.api+json'
-          }
-        });
-        if (!response.ok) throw new Error(`HTTP_${response.status}`);
-        const json = await response.json();
-        return json.data || [];
-      } catch (err) {
-        console.error('Anime Fetch Error:', err);
-        showToast('Failed to fetch anime updates.', 'error');
-        throw err;
-      }
-    }
-
     window.addEventListener('load', async () => {
-      // 1. Validate Session & Synchronize User Data with Backend API
       const user = await checkAuthAndLoadProfile();
       if (!user) return;
 
-      // 2. Fetch sensitive link from backend
-      await fetchAnimeSourceUrl();
-
-      // 3. Clear Preloader Overlay
       if (document.fonts) {
         await document.fonts.ready;
       }
@@ -1913,13 +1847,11 @@
       }
       document.body.classList.add('loaded');
 
-      // 4. Fetch Dynamic Releases & Content using retrieved link
       await fetchNewReleases();
       setTimeout(() => {
         fetchUpcomingEpisodes();
       }, 500);
 
-      // 5. Attach Event Handlers & Theme Toggle
       const logoutBtn = document.getElementById('logout-btn');
       if (logoutBtn) {
         logoutBtn.addEventListener('click', () => logoutUser('Successfully logged out.'));
@@ -1937,7 +1869,16 @@
 
     async function fetchNewReleases() {
       try {
-        const animeList = (await safeFetchAnime('/anime?filter[status]=current&sort=-userCount&page[limit]=15')).filter(anime => window.anilogContentFilter?.allows(anime) !== false);
+        const token = getAuthToken();
+        const response = await fetch(`${API_BASE_URL}/api/anime/new-releases`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if (!response.ok) throw new Error(`HTTP_${response.status}`);
+        const json = await response.json();
+        const animeList = (json.data || []).filter(anime => window.anilogContentFilter?.allows(anime) !== false);
         window.anilogReleaseAnime = Object.fromEntries(animeList.map(anime => [String(anime.id), anime]));
 
         const desktopContainer = document.getElementById('desktop-new-releases');
@@ -1971,7 +1912,6 @@
           if (mobileContainer) mobileContainer.insertAdjacentHTML('beforeend', cardHTML);
         });
 
-        // Add Click Redirect Event to Anime Cards
         document.querySelectorAll('.anime-card').forEach(card => {
           card.addEventListener('click', (e) => {
             if (e.target.closest('[data-favorite-id]')) return;
@@ -2038,7 +1978,16 @@
 
     async function fetchUpcomingEpisodes() {
       try {
-        const upcomingList = (await safeFetchAnime('/anime?filter[status]=upcoming&sort=-userCount&page[limit]=10')).filter(anime => window.anilogContentFilter?.allows(anime) !== false);
+        const token = getAuthToken();
+        const response = await fetch(`${API_BASE_URL}/api/anime/upcoming`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if (!response.ok) throw new Error(`HTTP_${response.status}`);
+        const json = await response.json();
+        const upcomingList = (json.data || []).filter(anime => window.anilogContentFilter?.allows(anime) !== false);
         window.anilogUpcomingAnime = Object.fromEntries(upcomingList.map(anime => [String(anime.id), anime]));
 
         const desktopContainer = document.getElementById('desktop-upcoming-episodes');
@@ -2081,7 +2030,6 @@
           if (mobileContainer) mobileContainer.insertAdjacentHTML('beforeend', mobileCard);
         });
 
-        // Add Redirect Event Listener to Upcoming Episodes Cards
         document.querySelectorAll('.episode-card, .mobile-episode').forEach(card => {
           card.addEventListener('click', (e) => {
             if (e.target.closest('.notify')) return;
@@ -2151,16 +2099,13 @@
         resultsContainer.classList.add('active');
 
         try {
-          if (!animeSourceUrl) {
-            await fetchAnimeSourceUrl();
-          }
-
-          const targetUrl = `${animeSourceUrl}/anime?filter[text]=${encodeURIComponent(cleanQuery)}&page[limit]=6`;
+          const token = getAuthToken();
+          const targetUrl = `${API_BASE_URL}/api/anime/kitsu-search?q=${encodeURIComponent(cleanQuery)}`;
           const response = await fetch(targetUrl, {
             signal: currentAbortController.signal,
             headers: {
-              'Accept': 'application/vnd.api+json',
-              'Content-Type': 'application/vnd.api+json'
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
             }
           });
 
@@ -2203,7 +2148,6 @@
       }, 400);
     }
 
-    // Attach Listeners
     const desktopInput = document.getElementById('desktop-search-input');
     const desktopResults = document.getElementById('desktop-search-results');
     if (desktopInput && desktopResults) {

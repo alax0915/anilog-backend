@@ -11,7 +11,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, EmailStr
-from sqlalchemy import String, DateTime, Integer, JSON, func, Boolean
+from sqlalchemy import String, DateTime, Integer, JSON, func, Boolean, Text, ForeignKey
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -19,7 +19,6 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.future import select
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-
 
 # ==================================================
 # 1. ENVIRONMENT CONFIGURATION
@@ -46,9 +45,7 @@ raw_origins = os.getenv(
 )
 
 ALLOWED_ORIGINS = [
-    origin.strip()
-    for origin in raw_origins.split(",")
-    if origin.strip()
+    origin.strip() for origin in raw_origins.split(",") if origin.strip()
 ]
 
 # ==================================================
@@ -97,7 +94,12 @@ DEFAULT_AVATARS = [
 # 3. DATABASE SETUP
 # ==================================================
 
-engine = create_async_engine(DATABASE_URL, echo=True)
+engine = create_async_engine(
+    DATABASE_URL,
+    echo=True,
+    pool_pre_ping=True,  # Automatically tests connections before using them
+    pool_recycle=300,    # Recycle connections every 5 minutes to prevent stale timeouts
+)
 
 AsyncSessionLocal = async_sessionmaker(
     engine,
@@ -110,16 +112,72 @@ class Base(DeclarativeBase):
     pass
 
 
+class Anime(Base):
+    __tablename__ = "anime"
+
+    id: Mapped[str] = mapped_column(String(50), primary_key=True)
+    title_english: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    title_japanese: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    type: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    subtype: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    age_rating: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    user_count: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    start_date: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    synopsis: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    poster_image: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    episode_count: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    score: Mapped[Optional[float]] = mapped_column(nullable=True)
+
+
+class UserAnimeList(Base):
+    __tablename__ = "user_anime_list"
+
+    id: Mapped[str] = mapped_column(String(50), primary_key=True)
+    user_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("users.id"), nullable=False
+    )
+    anime_id: Mapped[str] = mapped_column(
+        String(50), ForeignKey("anime.id"), nullable=False
+    )
+    status: Mapped[str] = mapped_column(String(50), nullable=False)
+    episodes_watched: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    is_favorite: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    priority: Mapped[str] = mapped_column(String(20), default="medium", nullable=False)
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    added_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+    started_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    completed_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
+
+
 class User(Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    username: Mapped[str] = mapped_column(String(50), unique=True, index=True, nullable=False)
-    email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
+    username: Mapped[str] = mapped_column(
+        String(50), unique=True, index=True, nullable=False
+    )
+    email: Mapped[str] = mapped_column(
+        String(255), unique=True, index=True, nullable=False
+    )
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[str] = mapped_column(String(20), default="client", nullable=False)
     avatar_seed: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    bio: Mapped[Optional[str]] = mapped_column(String(255), default="I love anime", nullable=True)
+    bio: Mapped[Optional[str]] = mapped_column(
+        String(255), default="I love anime", nullable=True
+    )
     streak_count: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     watching_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     completed_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
@@ -137,17 +195,26 @@ class User(Base):
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
     )
-    daily_watch_activities: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
+    daily_watch_activities: Mapped[Optional[Dict[str, Any]]] = mapped_column(
+        JSON, nullable=True
+    )
     notifications: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     reaction_logs: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
-    
-    # Enhanced security & token management fields
-    hashed_refresh_token: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    failed_login_attempts: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
-    locked_until: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
-    login_audit_logs: Mapped[Optional[List[Dict[str, Any]]]] = mapped_column(JSON, default=list, nullable=True)
 
-    user_anime_lists: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
+    # Enhanced security & token management fields
+    hashed_refresh_token: Mapped[Optional[str]] = mapped_column(
+        String(255), nullable=True
+    )
+    failed_login_attempts: Mapped[int] = mapped_column(
+        Integer, default=0, nullable=False
+    )
+    locked_until: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    login_audit_logs: Mapped[Optional[List[Dict[str, Any]]]] = mapped_column(
+        JSON, default=list, nullable=True
+    )
+
     user_settings: Mapped[Optional[Dict[str, Any]]] = mapped_column(
         JSON,
         default=lambda: {"app_theme": "dark", "content_filter": True},
@@ -162,6 +229,7 @@ async def get_db():
 # ==================================================
 # 4. PYDANTIC SCHEMAS
 # ==================================================
+
 
 class UserRegister(BaseModel):
     username: str
@@ -232,6 +300,7 @@ app.add_middleware(
 # 6. AUTH DEPENDENCIES
 # ==================================================
 
+
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: AsyncSession = Depends(get_db),
@@ -265,6 +334,7 @@ async def get_current_user(
 # 7. STARTUP
 # ==================================================
 
+
 @app.on_event("startup")
 async def startup():
     async with engine.begin() as conn:
@@ -274,6 +344,7 @@ async def startup():
 # ==================================================
 # 8. ROUTES
 # ==================================================
+
 
 @app.get("/")
 def home():
@@ -303,9 +374,7 @@ async def register(
             detail="Username already registered",
         )
 
-    existing_email = await db.execute(
-        select(User).where(User.email == user_data.email)
-    )
+    existing_email = await db.execute(select(User).where(User.email == user_data.email))
     if existing_email.scalars().first():
         raise HTTPException(
             status_code=400,
@@ -355,9 +424,7 @@ async def login(
     response: Response,
     db: AsyncSession = Depends(get_db),
 ):
-    result = await db.execute(
-        select(User).where(User.email == credentials.email)
-    )
+    result = await db.execute(select(User).where(User.email == credentials.email))
     user = result.scalars().first()
 
     if not user:
@@ -381,7 +448,7 @@ async def login(
         if user.failed_login_attempts >= MAX_FAILED_ATTEMPTS:
             user.locked_until = now + timedelta(minutes=LOCKOUT_MINUTES)
             user.failed_login_attempts = 0
-        
+
         await db.commit()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -406,13 +473,13 @@ async def login(
     # Audit Logging
     client_ip = request.client.host if request.client else "unknown"
     user_agent = request.headers.get("user-agent", "unknown")
-    
+
     audit_entry = {
         "timestamp": now.isoformat(),
         "ip_address": client_ip,
         "user_agent": user_agent,
     }
-    
+
     logs = list(user.login_audit_logs or [])
     logs.append(audit_entry)
     user.login_audit_logs = logs[-10:]  # Keep last 10 logins
@@ -450,8 +517,10 @@ async def refresh_token_endpoint(
     request: Request = None,
     db: AsyncSession = Depends(get_db),
 ):
-    token = (body.refresh_token if body else None) or request.cookies.get("refresh_token")
-    
+    token = (body.refresh_token if body else None) or request.cookies.get(
+        "refresh_token"
+    )
+
     if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -513,7 +582,12 @@ async def search_anime(
 ):
     async with httpx.AsyncClient() as client:
         response = await client.get(
-            f"https://api.jikan.moe/v4/anime?q={q}&limit=5"
+            f"{ANIME_SOURCE_URL}/anime",
+            params={"filter[text]": q, "page[limit]": "5"},
+            headers={
+                "Accept": "application/vnd.api+json",
+                "Content-Type": "application/vnd.api+json",
+            },
         )
 
     if response.status_code != 200:
@@ -521,15 +595,241 @@ async def search_anime(
 
     data = response.json().get("data", [])
 
-    results = [
-        {
-            "id": anime["mal_id"],
-            "title": anime["title"],
-            "episodes": anime["episodes"],
-            "score": anime["score"],
-            "image": anime["images"]["jpg"]["image_url"],
-        }
-        for anime in data
-    ]
- 
+    results = []
+    for anime in data:
+        anime_id = anime.get("id")
+        attrs = anime.get("attributes", {})
+        titles = attrs.get("titles", {})
+        title = attrs.get("canonicalTitle") or titles.get("en") or titles.get("en_jp") or "Unknown"
+        poster_img = attrs.get("posterImage")
+        image_url = poster_img.get("original") or poster_img.get("large") or poster_img.get("medium") if poster_img else None
+        
+        avg_rating = attrs.get("averageRating")
+        score_val = float(avg_rating) / 10.0 if avg_rating else None
+
+        results.append(
+            {
+                "id": anime_id,
+                "title": title,
+                "episodes": attrs.get("episodeCount"),
+                "score": score_val,
+                "image": image_url,
+            }
+        )
+
     return {"results": results}
+
+
+@app.get("/api/user/watchlist")
+async def get_user_watchlist(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    # Query the user's watchlist joined with the anime details from the database
+    result = await db.execute(
+        select(UserAnimeList, Anime)
+        .join(Anime, UserAnimeList.anime_id == Anime.id)
+        .where(UserAnimeList.user_id == current_user.id)
+    )
+    rows = result.all()
+
+    watchlist_items = []
+    for watch, anime in rows:
+        watchlist_items.append(
+            {
+                "id": watch.id,
+                "anime_id": anime.id,
+                "title": anime.title,
+                "poster_image": anime.poster_image,
+                "episodes": anime.episode_count,
+                "episodes_watched": watch.episodes_watched,
+                "status": watch.status,
+                "priority": watch.priority,
+                "score": watch.score,
+                "notes": watch.notes,
+            }
+        )
+
+    return {"watchlist": watchlist_items}
+
+
+class WatchlistAddRequest(BaseModel):
+    anime_id: str
+    status: str = "Watching"
+    episodes_watched: int = 0
+    score: Optional[int] = None
+    priority: str = "Medium"
+    notes: Optional[str] = None
+
+
+@app.post("/api/user/addwatchlist", status_code=status.HTTP_201_CREATED)
+async def add_to_watchlist(
+    payload: WatchlistAddRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    anime_id_str = str(payload.anime_id)
+
+    # 1. Check if anime exists in local database, if not fetch & cache it from Kitsu
+    result = await db.execute(select(Anime).where(Anime.id == anime_id_str))
+    anime = result.scalars().first()
+
+    if not anime:
+        async with httpx.AsyncClient() as client:
+            res = await client.get(
+                f"{ANIME_SOURCE_URL}/anime/{anime_id_str}",
+                headers={
+                    "Accept": "application/vnd.api+json",
+                    "Content-Type": "application/vnd.api+json",
+                },
+            )
+        if res.status_code != 200:
+            raise HTTPException(
+                status_code=404, detail="Anime not found on external provider"
+            )
+
+        anime_json = res.json().get("data", {})
+        attrs = anime_json.get("attributes", {})
+        titles = attrs.get("titles", {})
+        
+        poster_img = attrs.get("posterImage")
+        poster_url = poster_img.get("original") or poster_img.get("large") or poster_img.get("medium") if poster_img else None
+
+        avg_rating = attrs.get("averageRating")
+        score_val = float(avg_rating) / 10.0 if avg_rating else None
+
+        anime = Anime(
+            id=str(anime_json.get("id")),
+            title=attrs.get("canonicalTitle") or titles.get("en") or titles.get("en_jp") or "Unknown Title",
+            title_english=titles.get("en") or titles.get("en_us"),
+            title_japanese=titles.get("ja_jp") or titles.get("en_jp"),
+            type=attrs.get("kind"),
+            subtype=attrs.get("subtype"),
+            age_rating=attrs.get("ageRating"),
+            user_count=attrs.get("userCount"),
+            start_date=attrs.get("startDate"),
+            synopsis=attrs.get("synopsis"),
+            poster_image=poster_url,
+            episode_count=attrs.get("episodeCount"),
+            score=score_val
+        )
+        db.add(anime)
+        await db.commit()
+
+    # 2. Check if already in user's watchlist
+    existing_entry = await db.execute(
+        select(UserAnimeList).where(
+            UserAnimeList.user_id == current_user.id,
+            UserAnimeList.anime_id == anime_id_str,
+        )
+    )
+    if existing_entry.scalars().first():
+        raise HTTPException(
+            status_code=400, detail="Anime already exists in your watchlist"
+        )
+
+    # 3. Create watchlist entry
+    watchlist_id = f"item_{random.randint(10000, 99999)}"
+    now = datetime.now(timezone.utc)
+
+    new_watchlist_item = UserAnimeList(
+        id=watchlist_id,
+        user_id=current_user.id,
+        anime_id=anime_id_str,
+        status=payload.status,
+        episodes_watched=payload.episodes_watched,
+        score=payload.score,
+        is_favorite=False,
+        priority=payload.priority,
+        notes=payload.notes,
+        added_at=now,
+        updated_at=now,
+    )
+
+    db.add(new_watchlist_item)
+    await db.commit()
+
+    return {"message": "Anime added to watchlist successfully", "id": watchlist_id}
+
+
+@app.get("/api/anime/new-releases")
+async def get_new_releases(current_user: User = Depends(get_current_user)):
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.get(
+                f"{ANIME_SOURCE_URL}/anime",
+                params={
+                    "filter[status]": "current",
+                    "sort": "-userCount",
+                    "page[limit]": "15",
+                },
+                headers={
+                    "Accept": "application/vnd.api+json",
+                    "Content-Type": "application/vnd.api+json",
+                },
+            )
+            if response.status_code != 200:
+                raise HTTPException(
+                    status_code=response.status_code,
+                    detail="Failed to fetch new releases from provider",
+                )
+            return response.json()
+        except httpx.RequestError:
+            raise HTTPException(
+                status_code=502, detail="Error connecting to anime data provider"
+            )
+
+
+@app.get("/api/anime/upcoming")
+async def get_upcoming_anime(current_user: User = Depends(get_current_user)):
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.get(
+                f"{ANIME_SOURCE_URL}/anime",
+                params={
+                    "filter[status]": "upcoming",
+                    "sort": "-userCount",
+                    "page[limit]": "10",
+                },
+                headers={
+                    "Accept": "application/vnd.api+json",
+                    "Content-Type": "application/vnd.api+json",
+                },
+            )
+            if response.status_code != 200:
+                raise HTTPException(
+                    status_code=response.status_code,
+                    detail="Failed to fetch upcoming anime from provider",
+                )
+            return response.json()
+        except httpx.RequestError:
+            raise HTTPException(
+                status_code=502, detail="Error connecting to anime data provider"
+            )
+
+
+@app.get("/api/anime/kitsu-search")
+async def kitsu_search_anime(
+    q: str = Query(..., min_length=1), current_user: User = Depends(get_current_user)
+):
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.get(
+                f"{ANIME_SOURCE_URL}/anime",
+                params={"filter[text]": q, "page[limit]": "6"},
+                headers={
+                    "Accept": "application/vnd.api+json",
+                    "Content-Type": "application/vnd.api+json",
+                },
+            )
+            if response.status_code != 200:
+                raise HTTPException(
+                    status_code=response.status_code,
+                    detail="Failed to search anime from provider",
+                )
+            return response.json()
+        except httpx.RequestError:
+            raise HTTPException(
+                status_code=502, detail="Error connecting to anime data provider"
+            )
+            

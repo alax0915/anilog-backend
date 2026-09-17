@@ -59,7 +59,9 @@
     }
 
     button,
-    input {
+    input,
+    select,
+    textarea {
       font: inherit;
     }
 
@@ -783,7 +785,6 @@
       font-size: 11px;
       vertical-align: middle;
       text-align: center;
-      cursor: pointer;
     }
 
     .watch-table tr:hover td {
@@ -873,6 +874,159 @@
       max-width: 180px;
     }
 
+    /* ---------------- ADD ANIME MODAL STYLES ---------------- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(3, 4, 10, 0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(500px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--purple);
+      border-radius: 12px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      animation: modalPopup 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalPopup {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .modal-close {
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    .modal-close:hover {
+      color: var(--text);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+    }
+
+    .form-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--purple2);
+      text-transform: uppercase;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: var(--purple2);
+    }
+
+    .modal-search-results {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--panel);
+      border: 1px solid var(--purple);
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+      max-height: 220px;
+      overflow-y: auto;
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+    }
+
+    .modal-search-results.active {
+      display: flex;
+    }
+
+    .selected-anime-preview {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    .selected-anime-preview img {
+      width: 45px;
+      height: 60px;
+      border-radius: 4px;
+    }
+
+    .modal-submit-btn {
+      height: 42px;
+      background: linear-gradient(90deg, #711ac0, #5c18a2);
+      border: 1px solid #a52cff;
+      border-radius: 6px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .modal-submit-btn:hover {
+      opacity: 0.9;
+    }
+
     /* ---------------- MOBILE NAVIGATION ---------------- */
     .mobile-bottom-nav {
       position: fixed;
@@ -941,6 +1095,78 @@
   <!-- TOAST NOTIFICATION CONTAINER -->
   <div id="toast-container"></div>
 
+  <!-- ADD ANIME MODAL POPUP -->
+  <div class="modal-overlay" id="add-anime-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Add Anime to Watchlist</h3>
+        <span class="material-symbols-outlined modal-close" id="close-modal-btn">close</span>
+      </div>
+
+      <!-- Step 1: Search Anime -->
+      <div class="form-group" style="position: relative;">
+        <label class="form-label">Search Anime</label>
+        <input type="text" id="modal-search-input" class="form-input"
+          placeholder="Type anime name (e.g., Naruto, Bleach)..." autocomplete="off">
+        <div class="modal-search-results" id="modal-search-results"></div>
+      </div>
+
+      <!-- Selected Anime Preview Container -->
+      <div id="selected-anime-container" style="display: none;">
+        <label class="form-label" style="margin-bottom: 6px;">Selected Anime</label>
+        <div class="selected-anime-preview">
+          <img id="preview-img" src="" alt="Cover">
+          <div>
+            <div id="preview-title" style="font-weight: 700; font-size: 13px; color: var(--text);"></div>
+            <div id="preview-meta" style="font-size: 10px; color: var(--muted); margin-top: 3px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Tracker Parameters (Db Form Questions) -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select id="form-status" class="form-select">
+            <option value="Watching">Watching</option>
+            <option value="Plan to Watch">Plan to Watch</option>
+            <option value="Completed">Completed</option>
+            <option value="On-Hold">On-Hold</option>
+            <option value="Dropped">Dropped</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Priority</label>
+          <select id="form-priority" class="form-select">
+            <option value="High">High</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="Low">Low</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div class="form-group">
+          <label class="form-label">Episodes Watched</label>
+          <input type="number" id="form-episodes-watched" class="form-input" value="0" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Score (1-10)</label>
+          <input type="number" id="form-score" class="form-input" value="9" min="1" max="10" step="0.5">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea id="form-notes" class="form-textarea" placeholder="Add personal notes or sub/dub preference..."
+          rows="2"></textarea>
+      </div>
+
+      <!-- Step 3: Submit Button -->
+      <button class="modal-submit-btn" id="submit-watchlist-btn">Save to Watchlist</button>
+    </div>
+  </div>
+
   <div class="app-viewport">
     <main class="app-shell">
 
@@ -955,19 +1181,34 @@
         </div>
 
         <nav class="sidebar-nav">
-          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span class="material-symbols-outlined">home</span>Home</button>
-          <button class="side-link active" onclick="window.location.href='./anilog-watchlist.html';"><span class="material-symbols-outlined">list_alt</span>Watchlist</button>
-          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span class="material-symbols-outlined">play_circle</span>Currently Watching</button>
-          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span class="material-symbols-outlined">check_circle</span>Completed</button>
-          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span class="material-symbols-outlined">calendar_month</span>Seasonal</button>
-          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span class="material-symbols-outlined">rate_review</span>Reviews</button>
-          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span>Profile</button>
-          <button class="side-link" onclick="window.location.href='./anilog-favorites.html';"><span class="material-symbols-outlined">bookmark</span>Favorites</button>
-          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span class="material-symbols-outlined">leaderboard</span>Top Lists</button>
-          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span class="material-symbols-outlined">shopping_bag</span>Merch</button>
-          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span class="material-symbols-outlined">history</span>Logs</button>
-          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span class="material-symbols-outlined">target</span>Goals</button>
-          <button class="side-link" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
+          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span
+              class="material-symbols-outlined">home</span>Home</button>
+          <button class="side-link active" onclick="window.location.href='./anilog-watchlist.html';"><span
+              class="material-symbols-outlined">list_alt</span>Watchlist</button>
+          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span
+              class="material-symbols-outlined">play_circle</span>Currently Watching</button>
+          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span
+              class="material-symbols-outlined">check_circle</span>Completed</button>
+          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span
+              class="material-symbols-outlined">calendar_month</span>Seasonal</button>
+          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span
+              class="material-symbols-outlined">rate_review</span>Reviews</button>
+          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span
+              class="material-symbols-outlined">account_circle</span>Profile</button>
+          <button class="side-link" onclick="window.location.href='./anilog-favorites.html';"><span
+              class="material-symbols-outlined">bookmark</span>Favorites</button>
+          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span
+              class="material-symbols-outlined">leaderboard</span>Top Lists</button>
+          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span
+              class="material-symbols-outlined">shopping_bag</span>Merch</button>
+          <button class="side-link"
+            onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span
+              class="material-symbols-outlined">history</span>Logs</button>
+          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span
+              class="material-symbols-outlined">target</span>Goals</button>
+          <button class="side-link"
+            onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span
+              class="material-symbols-outlined">history</span>Year view</button>
         </nav>
 
         <div class="user-card">
@@ -987,11 +1228,12 @@
       <!-- MAIN SECTION -->
       <section class="main">
 
-        <header class="topbar" >
-          <div class="search" >
-            <input type="text" id="search-input" placeholder="Search anime...">
+        <header class="topbar">
+          <!-- HOMEPAGE SPECIFICATION DESKTOP SEARCH COMPONENT -->
+          <div class="search">
+            <input type="text" id="desktop-search-input" placeholder="Search anime...">
             <span class="material-symbols-outlined">search</span>
-            <div class="search-results-dropdown" id="search-results"></div>
+            <div class="search-results-dropdown" id="desktop-search-results"></div>
           </div>
 
           <div class="top-actions">
@@ -1065,10 +1307,10 @@
         </section>
 
         <div class="stats">
-          <div class="stat-box">Total: 42</div>
-          <div class="stat-box">Watching: 12</div>
-          <div class="stat-box">Completed: 128</div>
-          <div class="stat-box">Planned: 18</div>
+          <div class="stat-box">Total: <span id="stat-total">0</span></div>
+          <div class="stat-box">Watching: <span id="stat-watching">0</span></div>
+          <div class="stat-box">Completed: <span id="stat-completed">0</span></div>
+          <div class="stat-box">Planned: <span id="stat-planned">0</span></div>
         </div>
 
         <div class="toolbar">
@@ -1080,7 +1322,7 @@
             <button class="filter">Plan to Watch</button>
           </div>
 
-          <button class="add-button" onclick="showToast('Add anime modal opened', 'info')">
+          <button class="add-button" id="open-add-modal-btn">
             <span class="material-symbols-outlined" style="font-size: 16px;">add</span>
             Add Anime
           </button>
@@ -1091,8 +1333,8 @@
             <thead>
               <tr>
                 <th>TITLE</th>
-                <th>GENRE</th>
                 <th>EPISODES</th>
+                <th>WATCHED</th>
                 <th>PRIORITY</th>
                 <th>STATUS</th>
                 <th>NOTES</th>
@@ -1190,6 +1432,8 @@
     window.showToast = showToast;
 
     /* ---------------- INITIALIZATION & BACKEND INTEGRATION ---------------- */
+    let selectedAnimeData = null;
+
     window.addEventListener('load', async () => {
       const token = checkAuthAndRedirect();
       if (!token) return;
@@ -1201,10 +1445,10 @@
       }
       document.body.classList.add('loaded');
 
-      // Fetch user profile and backend anime source URL securely
       await fetchUserData(token);
-      await fetchDynamicAnimeSourceAndData(token);
+      await fetchUserWatchlist(token);
       setupEventListeners();
+      setupModalListeners(token);
     });
 
     async function fetchUserData(token) {
@@ -1215,28 +1459,16 @@
         if (!response.ok) throw new Error('Session expired');
         const user = await response.json();
 
-        // Populate backend user profile fields into the sidebar profile box
-        if (document.getElementById('sidebar-username')) {
-          document.getElementById('sidebar-username').textContent = user.username;
-        }
-        if (document.getElementById('sidebar-level')) {
-          document.getElementById('sidebar-level').textContent = `Level ${user.level}`;
-        }
-        if (document.getElementById('streak-count-badge')) {
-          document.getElementById('streak-count-badge').textContent = user.streak_count;
-        }
+        if (document.getElementById('sidebar-username')) document.getElementById('sidebar-username').textContent = user.username;
+        if (document.getElementById('sidebar-level')) document.getElementById('sidebar-level').textContent = `Level ${user.level}`;
+        if (document.getElementById('streak-count-badge')) document.getElementById('streak-count-badge').textContent = user.streak_count;
 
-        // Dynamically compute XP progress (e.g., Level threshold calculation: 1000 * level)
         const currentXP = user.xp_points || 0;
         const nextLevelXP = user.level * 1000;
         const xpPercentage = Math.min(Math.round((currentXP / nextLevelXP) * 100), 100);
 
-        if (document.getElementById('sidebar-xp-fill')) {
-          document.getElementById('sidebar-xp-fill').style.width = `${xpPercentage}%`;
-        }
-        if (document.getElementById('sidebar-xp-text')) {
-          document.getElementById('sidebar-xp-text').textContent = `XP ${currentXP.toLocaleString()} / ${nextLevelXP.toLocaleString()}`;
-        }
+        if (document.getElementById('sidebar-xp-fill')) document.getElementById('sidebar-xp-fill').style.width = `${xpPercentage}%`;
+        if (document.getElementById('sidebar-xp-text')) document.getElementById('sidebar-xp-text').textContent = `XP ${currentXP.toLocaleString()} / ${nextLevelXP.toLocaleString()}`;
 
         if (user.avatar_seed) {
           if (document.getElementById('sidebar-user-avatar')) document.getElementById('sidebar-user-avatar').src = user.avatar_seed;
@@ -1249,140 +1481,337 @@
       }
     }
 
-    async function fetchDynamicAnimeSourceAndData(token) {
+    async function fetchUserWatchlist(token) {
       try {
-        // Ask backend for sensitive anime source URL
-        const sourceRes = await fetch('http://127.0.0.1:8000/api/anime/source-url', {
-          headers: { 'Authorization': `Bearer ${token.replace('Bearer ', '')}` }
+        const response = await fetch('http://127.0.0.1:8000/api/user/watchlist', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token.replace('Bearer ', '')}`,
+            'Content-Type': 'application/json'
+          }
         });
-        if (!sourceRes.ok) throw new Error('Failed to retrieve anime source URL from backend');
-        const sourceData = await sourceRes.json();
-        const animeApiBase = sourceData.source_url; // e.g. https://kitsu.io/api/edge
 
-        // Fetch sample watchlist/anime list using the verified source
-        const response = await fetch(`${animeApiBase}/anime?page[limit]=10`, {
-          headers: { 'Accept': 'application/vnd.api+json' }
-        });
-        if (!response.ok) throw new Error('Failed to fetch anime list from source');
+        if (!response.ok) throw new Error('Failed to fetch watchlist from server');
         const data = await response.json();
-        renderWatchlistFromAPI(data.data || []);
+        renderWatchlistTable(data.watchlist || []);
       } catch (err) {
-        console.error('Failed to load anime data:', err);
-        showToast('Failed to load anime data from backend source.', 'error', 5000);
-        // Render fallback mockup list if API fails
-        renderWatchlistFromAPI([]);
+        console.error('Failed to load watchlist:', err);
+        showToast('Failed to load watchlist data from server.', 'error', 5000);
+        renderWatchlistTable([]);
       }
     }
 
-    function renderWatchlistFromAPI(animeList) {
+    function renderWatchlistTable(watchlistItems) {
       const body = document.getElementById('watchlist-body');
       if (!body) return;
 
-      if (animeList.length === 0) {
-        body.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 20px; color: var(--muted);">No watchlist items available.</td></tr>`;
+      let total = watchlistItems.length;
+      let watching = watchlistItems.filter(item => item.status.toLowerCase() === 'watching').length;
+      let completed = watchlistItems.filter(item => item.status.toLowerCase() === 'completed').length;
+      let planned = watchlistItems.filter(item => item.status.toLowerCase() === 'plan_to_watch' || item.status.toLowerCase() === 'planned').length;
+
+      if (document.getElementById('stat-total')) document.getElementById('stat-total').textContent = total;
+      if (document.getElementById('stat-watching')) document.getElementById('stat-watching').textContent = watching;
+      if (document.getElementById('stat-completed')) document.getElementById('stat-completed').textContent = completed;
+      if (document.getElementById('stat-planned')) document.getElementById('stat-planned').textContent = planned;
+
+      if (watchlistItems.length === 0) {
+        body.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 20px; color: var(--muted);">No watchlist items available. Add some anime to get started!</td></tr>`;
         return;
       }
 
-      body.innerHTML = animeList.map(anime => {
-        const attr = anime.attributes || {};
-        const title = attr.canonicalTitle || attr.titles?.en || 'Untitled Anime';
-        const jpTitle = attr.titles?.en_jp || '';
-        const cover = attr.posterImage?.small || attr.posterImage?.tiny || './logo.png';
-        const episodes = attr.episodeCount || '??';
-        const rating = attr.averageRating ? `★ ${(parseFloat(attr.averageRating) / 10).toFixed(1)}` : 'N/A';
-        const status = attr.status === 'finished' ? 'Completed' : 'Watching';
-
-        const animeDetailPayload = encodeURIComponent(JSON.stringify({
-          id: anime.id,
-          title: title,
-          image: attr.posterImage?.large || cover,
-          episodes: episodes,
-          status: status,
-          rating: rating,
-          synopsis: attr.synopsis || ''
-        }));
+      body.innerHTML = watchlistItems.map(item => {
+        const title = item.title || 'Untitled Anime';
+        const cover = item.poster_image || './logo.png';
+        const episodes = item.episodes || '??';
+        const watched = item.episodes_watched || 0;
+        const priorityClass = item.priority ? item.priority.toLowerCase() : 'medium';
+        const status = item.status || 'Watching';
 
         return `
-          <tr onclick="window.location.href='./anilog-anime-review-responsive.html?anime=${animeDetailPayload}'">
+          <tr>
             <td>
               <div class="title-cell">
                 <img src="${cover}" alt="${title}">
                 <div>
                   <div class="title-main">${title}</div>
-                  <div class="title-sub">${jpTitle}</div>
+                  <div class="title-sub">Score: ${item.score || 'N/A'}</div>
                 </div>
               </div>
             </td>
-            <td>${attr.showType || 'TV'}</td>
             <td>${episodes}</td>
-            <td><span class="priority high">High</span></td>
+            <td>${watched}</td>
+            <td><span class="priority ${priorityClass}">${item.priority || 'Medium'}</span></td>
             <td>
               <span class="status">
                 <span class="status-dot"></span>
                 ${status}
               </span>
             </td>
-            <td class="notes">${attr.synopsis ? attr.synopsis.substring(0, 40) + '...' : 'No notes'}</td>
+            <td class="notes">${item.notes ? item.notes : 'No notes'}</td>
             <td><span class="material-symbols-outlined" style="color:var(--muted);">chevron_right</span></td>
           </tr>
         `;
       }).join('');
     }
 
-    /* ---------------- SEARCH FUNCTIONALITY ---------------- */
-    let searchTimeout = null;
-    const searchInput = document.getElementById('search-input');
-    const searchResults = document.getElementById('search-results');
+    /* ---------------- MODAL & ADD ANIME WORKFLOW ---------------- */
+    function setupModalListeners(token) {
+      const modal = document.getElementById('add-anime-modal');
+      const openBtn = document.getElementById('open-add-modal-btn');
+      const closeBtn = document.getElementById('close-modal-btn');
+      const searchInputModal = document.getElementById('modal-search-input');
+      const searchResultsModal = document.getElementById('modal-search-results');
+      const selectedContainer = document.getElementById('selected-anime-container');
+      const submitBtn = document.getElementById('submit-watchlist-btn');
 
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
+      if (openBtn) {
+        openBtn.addEventListener('click', () => {
+          modal.classList.add('active');
+        });
+      }
+
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          modal.classList.remove('active');
+        });
+      }
+
+      // Modal Anime Search Execution (Using identical mechanism to the top search engine)
+      let modalSearchAbortController = null;
+      let modalSearchDebounceTimer = null;
+
+      if (searchInputModal && searchResultsModal) {
+        searchInputModal.addEventListener('input', (e) => {
+          const query = e.target.value.trim();
+
+          // FIX: Clear the old selected anime so it doesn't mismatch
+          selectedAnimeData = null;
+          document.getElementById('selected-anime-container').style.display = 'none';
+
+          if (modalSearchAbortController) {
+            modalSearchAbortController.abort();
+          }
+
+          if (query.length < 2) {
+            searchResultsModal.classList.remove('active');
+            searchResultsModal.innerHTML = '';
+            return;
+          }
+
+          clearTimeout(modalSearchDebounceTimer);
+          modalSearchDebounceTimer = setTimeout(async () => {
+            modalSearchAbortController = new AbortController();
+            searchResultsModal.innerHTML = `<div style="padding:12px; font-size:12px; color:var(--muted); text-align:center;">Searching external database...</div>`;
+            searchResultsModal.classList.add('active');
+
+            try {
+              const currentAuthToken = localStorage.getItem('access_token') || getCookie('access_token');
+              const res = await fetch(`http://127.0.0.1:8000/api/anime/kitsu-search?q=${encodeURIComponent(query)}`, {
+                headers: {
+                  'Authorization': `Bearer ${currentAuthToken ? currentAuthToken.replace('Bearer ', '') : ''}`,
+                  'Content-Type': 'application/vnd.api+json'
+                },
+                signal: modalSearchAbortController.signal
+              });
+
+              if (!res.ok) throw new Error('Search failed');
+              const data = await res.json();
+              const results = data.results || data.data || [];
+
+              if (results.length === 0) {
+                searchResultsModal.innerHTML = `<div style="padding:12px; font-size:12px; color:var(--muted); text-align:center;">No anime found</div>`;
+                return;
+              }
+
+              searchResultsModal.innerHTML = results.map(anime => {
+                const title = anime.title || anime.attributes?.canonicalTitle || 'Unknown Title';
+                const poster = anime.image || anime.posterImage || anime.attributes?.posterImage?.small || './logo.png';
+                const mediaType = anime.mediaType || anime.type || anime.subtype || 'TV';
+                const rating = anime.score || anime.averageRating || 'N/A';
+                const episodesCount = anime.episodes || anime.episodeCount || '??';
+                const animeId = anime.id;
+
+                return `
+                  <div class="modal-search-item" data-id="${animeId}" data-title="${encodeURIComponent(title)}" data-image="${encodeURIComponent(poster)}" data-episodes="${episodesCount}" style="display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid var(--border); cursor:pointer;">
+                    <img src="${poster}" alt="${title}" style="width:32px; height:45px; border-radius:4px; object-fit:cover;">
+                    <div style="display:flex; flex-direction:column; gap:2px;">
+                      <div style="font-size:12px; font-weight:600; color:var(--text);">${title}</div>
+                      <div style="font-size:10px; color:var(--muted);">Type: ${mediaType} • Rating: ${rating} • Episodes: ${episodesCount}</div>
+                    </div>
+                  </div>
+                `;
+              }).join('');
+
+              // Handle selection of search result item
+              searchResultsModal.querySelectorAll('.modal-search-item').forEach(el => {
+                el.addEventListener('click', () => {
+                  selectedAnimeData = {
+                    id: el.getAttribute('data-id'),
+                    title: decodeURIComponent(el.getAttribute('data-title')),
+                    image: decodeURIComponent(el.getAttribute('data-image')),
+                    episodes: el.getAttribute('data-episodes')
+                  };
+
+                  // Populate Preview UI
+                  document.getElementById('preview-img').src = selectedAnimeData.image;
+                  document.getElementById('preview-title').textContent = selectedAnimeData.title;
+                  document.getElementById('preview-meta').textContent = `Total Episodes: ${selectedAnimeData.episodes}`;
+                  selectedContainer.style.display = 'block';
+
+                  searchResultsModal.classList.remove('active');
+                  searchInputModal.value = selectedAnimeData.title;
+                });
+              });
+
+            } catch (err) {
+              if (err.name !== 'AbortError') {
+                searchResultsModal.innerHTML = `<div style="padding:12px; font-size:12px; color:var(--danger); text-align:center;">Search failed</div>`;
+              }
+            }
+          }, 400);
+        });
+      }
+
+      // Submit Watchlist Record to Database
+      if (submitBtn) {
+        submitBtn.addEventListener('click', async () => {
+          if (!selectedAnimeData) {
+            showToast('Please search and select an anime first!', 'warning');
+            return;
+          }
+
+          const payload = {
+            anime_id: selectedAnimeData.id,
+            status: document.getElementById('form-status').value,
+            priority: document.getElementById('form-priority').value,
+            episodes_watched: parseInt(document.getElementById('form-episodes-watched').value) || 0,
+            score: parseFloat(document.getElementById('form-score').value) || null,
+            notes: document.getElementById('form-notes').value.trim() || null
+          };
+
+          try {
+            submitBtn.textContent = 'Saving to DB...';
+            submitBtn.disabled = true;
+
+            const response = await fetch('http://127.0.0.1:8000/api/user/addwatchlist', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token.replace('Bearer ', '')}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+              const errData = await response.json();
+              throw new Error(errData.detail || 'Failed to save to database');
+            }
+
+            showToast('Anime successfully added to your watchlist!', 'success');
+            modal.classList.remove('active');
+
+            // Refresh Watchlist Table & Reset Form
+            selectedAnimeData = null;
+            selectedContainer.style.display = 'none';
+            searchInputModal.value = '';
+            document.getElementById('form-notes').value = '';
+
+            await fetchUserWatchlist(token);
+
+          } catch (err) {
+            showToast(err.message, 'error');
+          } finally {
+            submitBtn.textContent = 'Save to Watchlist';
+            submitBtn.disabled = false;
+          }
+        });
+      }
+    }
+
+    /* ---------------- HOMEPAGE SPECIFICATION DESKTOP SEARCH CONTROLLER ---------------- */
+    const API_BASE_URL = 'http://127.0.0.1:8000';
+    let searchAbortController = null;
+    let searchDebounceTimer = null;
+    const desktopSearchInput = document.getElementById('desktop-search-input');
+    const desktopSearchResults = document.getElementById('desktop-search-results');
+
+    if (desktopSearchInput && desktopSearchResults) {
+      desktopSearchInput.addEventListener('input', (e) => {
         const query = e.target.value.trim();
+
+        if (searchAbortController) {
+          searchAbortController.abort();
+        }
+
         if (query.length < 2) {
-          searchResults.classList.remove('active');
-          searchResults.innerHTML = '';
+          desktopSearchResults.classList.remove('active');
+          desktopSearchResults.innerHTML = '';
           return;
         }
 
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(async () => {
-          searchResults.innerHTML = `<div style="padding:12px; font-size:12px; color:var(--muted); text-align:center;">Searching...</div>`;
-          searchResults.classList.add('active');
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(async () => {
+          searchAbortController = new AbortController();
+          desktopSearchResults.innerHTML = `<div style="padding:12px; font-size:12px; color:var(--muted); text-align:center;">Searching...</div>`;
+          desktopSearchResults.classList.add('active');
 
           try {
-            const res = await fetch(`http://127.0.0.1:8000/api/anime/search?q=${encodeURIComponent(query)}`);
-            const data = await res.json();
-            const results = data.results || [];
+            const token = localStorage.getItem('access_token') || getCookie('access_token');
+
+            const response = await fetch(`${API_BASE_URL}/api/anime/kitsu-search?q=${encodeURIComponent(query)}`, {
+              headers: {
+                'Authorization': `Bearer ${token ? token.replace('Bearer ', '') : ''}`,
+                'Content-Type': 'application/vnd.api+json'
+              },
+              signal: searchAbortController.signal
+            });
+
+            if (!response.ok) throw new Error('Search failed');
+            const data = await response.json();
+            const results = data.results || data.data || [];
 
             if (results.length === 0) {
-              searchResults.innerHTML = `<div style="padding:12px; font-size:12px; color:var(--muted); text-align:center;">No anime found</div>`;
+              desktopSearchResults.innerHTML = `<div style="padding:12px; font-size:12px; color:var(--muted); text-align:center;">No anime found</div>`;
               return;
             }
 
-            searchResults.innerHTML = results.map(anime => `
-              <div class="search-result-item" onclick="window.location.href='./anilog-anime-review-responsive.html?id=${anime.id}'" style="display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid var(--border); cursor:pointer;">
-                <img src="${anime.image}" alt="${anime.title}" style="width:32px; height:45px; border-radius:4px;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                  <div style="font-size:12px; font-weight:600; color:var(--text);">${anime.title}</div>
-                  <div style="font-size:10px; color:var(--muted);">Episodes: ${anime.episodes || 'N/A'} • Score: ${anime.score || 'N/A'}</div>
+            desktopSearchResults.innerHTML = results.map(anime => {
+              const title = anime.title || anime.attributes?.canonicalTitle || 'Unknown Title';
+              const poster = anime.image || anime.posterImage || anime.attributes?.posterImage?.small || './logo.png';
+              const mediaType = anime.mediaType || anime.type || anime.subtype || 'TV';
+              const rating = anime.score || anime.averageRating || 'N/A';
+              const animeId = anime.id;
+
+              return `
+                <div class="search-result-item" onclick="window.location.href='./anilog-anime-review-responsive.html?id=${animeId}'" style="display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid var(--border); cursor:pointer;">
+                  <img src="${poster}" alt="${title}" style="width:32px; height:45px; border-radius:4px; object-fit:cover;">
+                  <div style="display:flex; flex-direction:column; gap:2px;">
+                    <div style="font-size:12px; font-weight:600; color:var(--text);">${title}</div>
+                    <div style="font-size:10px; color:var(--muted);">Type: ${mediaType} • Rating: ${rating}</div>
+                  </div>
                 </div>
-              </div>
-            `).join('');
+              `;
+            }).join('');
           } catch (err) {
-            searchResults.innerHTML = `<div style="padding:12px; font-size:12px; color:var(--danger); text-align:center;">Search failed</div>`;
+            if (err.name !== 'AbortError') {
+              desktopSearchResults.innerHTML = `<div style="padding:12px; font-size:12px; color:var(--danger); text-align:center;">Search failed</div>`;
+            }
           }
-        }, 300);
+        }, 400);
       });
     }
 
     document.addEventListener('click', (e) => {
-      if (!e.target.closest('.search')) {
-        if (searchResults) searchResults.classList.remove('active');
+      if (!e.target.closest('.search') && !e.target.closest('.form-group')) {
+        if (desktopSearchResults) desktopSearchResults.classList.remove('active');
+        const searchResultsModal = document.getElementById('modal-search-results');
+        if (searchResultsModal) searchResultsModal.classList.remove('active');
       }
     });
 
     /* ---------------- EVENT LISTENERS & UI ACTIONS ---------------- */
     function setupEventListeners() {
-      // Theme Toggle Action
       const themeBtn = document.getElementById('theme-toggle-btn');
       if (themeBtn) {
         themeBtn.addEventListener('click', () => {
@@ -1392,7 +1821,6 @@
         });
       }
 
-      // Logout Action
       const logoutBtn = document.getElementById('logout-btn');
       if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {

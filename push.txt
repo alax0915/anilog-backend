@@ -24,7 +24,39 @@ add a js code an automatic js code if it doesnt find the    login cookie or sess
 
 
 
-i wanna change somethings on my front end  like on my frontend it loads anime news from certain anime website i wanna mark that as a sensitive link so instead of changing all html structure lets make it like this the front end when it loads after user authentication .... it goes to loading anime on a list see on the html file i sent u so it grabs the link that is stored in the html file and grabs what ever anime thing it want but i wanna change the location of link to the backend main.py the one i sent u so if the frontend needs to grab a anime data it asks the backend for link the backend checks if the user is logged in if the credentials saved on the user device  then it gives the link to the front end then the frontend uses the link now send me the updated code for the  frontend
+
+
+You are an expert frontend developer and UI/UX preservation specialist. 
+Task: Inspect the provided target webpage code. Check if a search engine component exists. If it exists and differs from the ANILOG Homepage search engine specification provided below, replace/update its HTML structure, CSS classes, and JavaScript logic to match the homepage search engine exactly.
+CRITICAL WARNING: By whatever means, DO NOT change or disrupt the existing UI layout or container positioning of the target webpage where the search engine is placed. Only replace the search engine element itself while preserving its exact parent wrapper and layout placement.
+---
+REFERENCE HOMEPAGE SEARCH ENGINE SPECIFICATION:
+1. Desktop Search HTML:
+<div class="search">
+  <input type="text" id="desktop-search-input" placeholder="Search anime...">
+  <span class="material-symbols-outlined">search</span>
+  <div class="search-results-dropdown" id="desktop-search-results"></div>
+</div>
+2. Mobile Search HTML (Include if the page supports mobile headers):
+<div class="mobile-search-bar" id="mobile-search-bar">
+  <div class="mobile-search-input-wrap">
+    <input type="text" id="mobile-search-input" placeholder="Search anime dynamic...">
+  </div>
+  <div class="search-results-dropdown" id="mobile-search-results"></div>
+</div>
+3. JavaScript Search Controller Logic:
+- Must use an AbortController for clean request cancellation.
+- Must debounce user input by 400ms.
+- Must fetch from: `${API_BASE_URL}/api/anime/kitsu-search?q=${encodeURIComponent(query)}`
+- Must dynamically populate `.search-results-dropdown` with poster thumbnails, titles, media type, and ratings, and handle item selection to open the anime review page.
+4,FastAPI requires a valid Bearer token in the request headers whenever this endpoint is called for the search engine.so the  frontend code  search implementation must make a fetch call with sending the Authorization header:
+---
+Perform the replacement on the provided target webpage now while strictly keeping the surrounding UI fixed.
+
+
+
+
+I want to change how my frontend and backend handle  data different for different pages home page may ask animelist dont change the route or anything in the frontend or backend just change the part where if the api link for the anime site is sent from the backend stop that and make it process the data in the backend and send animedata to the front end second if the api key is exposed int the frontend and frontend direclty grabes data from the api key delete the api key from the frontend and make it process in the backend and the backend send data to the front end the end point may vary from one front end to another front end 
 
  there is 1 mistake idk if to call it mistke like  before the updated current cide  the orginal code was not integrated with the backend but after integrating it there are 2 problems fix them  
 
