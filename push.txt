@@ -5,7 +5,7 @@ for browser cookies it use Use HTTP-Only Cookies
 
 git add .
  
-git commit -m "Add new files"
+git commit -m "Update project"
 
 git push origin main
 

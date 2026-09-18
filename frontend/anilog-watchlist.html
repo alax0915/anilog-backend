@@ -1578,14 +1578,17 @@
       }
 
       // Modal Anime Search Execution (Using identical mechanism to the top search engine)
+
       let modalSearchAbortController = null;
       let modalSearchDebounceTimer = null;
+      let isSelectingAnime = false; // Flag to prevent input event reset on selection
 
       if (searchInputModal && searchResultsModal) {
         searchInputModal.addEventListener('input', (e) => {
+          if (isSelectingAnime) return; // Skip if we are currently selecting an item from the list
           const query = e.target.value.trim();
 
-          // FIX: Clear the old selected anime so it doesn't mismatch
+          // Clear the old selected anime so it doesn't mismatch
           selectedAnimeData = null;
           document.getElementById('selected-anime-container').style.display = 'none';
 
@@ -1644,8 +1647,12 @@
               }).join('');
 
               // Handle selection of search result item
+              // --- REPLACE WITH THIS CLICK HANDLER ---
+              // Handle selection of search result item
               searchResultsModal.querySelectorAll('.modal-search-item').forEach(el => {
                 el.addEventListener('click', () => {
+                  isSelectingAnime = true; // Lock input listener
+
                   selectedAnimeData = {
                     id: el.getAttribute('data-id'),
                     title: decodeURIComponent(el.getAttribute('data-title')),
@@ -1661,6 +1668,10 @@
 
                   searchResultsModal.classList.remove('active');
                   searchInputModal.value = selectedAnimeData.title;
+
+                  setTimeout(() => {
+                    isSelectingAnime = false; // Unlock input listener after value updates
+                  }, 50);
                 });
               });
 
