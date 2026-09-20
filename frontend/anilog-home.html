@@ -70,9 +70,18 @@
     body.light-theme .anime-card,
     body.light-theme .episode-card,
     body.light-theme .mobile-episode,
-    body.light-theme .dropdown-panel {
+    body.light-theme .dropdown-panel,
+    body.light-theme .skeleton-card,
+    body.light-theme .skeleton-episode-card {
       background: #ffffff !important;
       border-color: #d1d5e4 !important;
+    }
+
+    body.light-theme .skeleton-box,
+    body.light-theme .skeleton-line,
+    body.light-theme .skeleton-circle {
+      background: linear-gradient(90deg, #e5e7f0 25%, #f2f3f8 50%, #e5e7f0 75%) !important;
+      background-size: 200% 100% !important;
     }
 
     body.light-theme .dropdown-item {
@@ -117,6 +126,91 @@
     img {
       display: block;
       object-fit: cover;
+    }
+
+    /* ---------------- SKELETON LOADING ANIMATION (3s) ---------------- */
+    @keyframes skeletonShimmer {
+      0% {
+        background-position: -200% 0;
+      }
+      100% {
+        background-position: 200% 0;
+      }
+    }
+
+    .skeleton-box,
+    .skeleton-line,
+    .skeleton-circle {
+      background: linear-gradient(90deg, #131522 25%, #1e2235 50%, #131522 75%);
+      background-size: 200% 100%;
+      animation: skeletonShimmer 3s ease-in-out infinite;
+      border-radius: 4px;
+    }
+
+    .skeleton-card {
+      flex: 0 0 170px;
+      min-width: 170px;
+      padding: 6px;
+      border: 1px solid #25263a;
+      border-radius: 7px;
+      background: #0d0f18;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .skeleton-poster {
+      width: 100%;
+      height: 200px;
+      border-radius: 4px;
+    }
+
+    .skeleton-title-line {
+      width: 80%;
+      height: 12px;
+      margin-top: 4px;
+    }
+
+    .skeleton-sub-line {
+      width: 50%;
+      height: 10px;
+      margin-bottom: 4px;
+    }
+
+    .skeleton-episode-card {
+      min-width: 0;
+      height: 94px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      border: 1px solid #1e2130;
+      border-radius: 7px;
+      background: #0b0d16;
+    }
+
+    .skeleton-ep-poster {
+      width: 61px;
+      height: 62px;
+      flex: 0 0 61px;
+      border-radius: 4px;
+    }
+
+    .skeleton-ep-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .skeleton-ep-line1 {
+      width: 70%;
+      height: 12px;
+    }
+
+    .skeleton-ep-line2 {
+      width: 40%;
+      height: 10px;
     }
 
     /* ---------------- TOAST NOTIFICATION CONTAINER ---------------- */
@@ -988,13 +1082,73 @@
       position: absolute;
       top: 7px;
       right: 7px;
-      width: 24px;
-      height: 24px;
-      border-radius: 5px;
-      background: rgba(18, 17, 25, .84);
-      display: grid;
-      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: rgba(18, 17, 25, 0.84);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       color: var(--purple2);
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(4px);
+    }
+
+    .poster-menu .material-symbols-outlined {
+      font-size: 18px;
+      transition: transform 0.2s ease;
+    }
+
+    .poster-menu.is-favorite {
+      background: var(--purple);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 10px rgba(157, 44, 255, 0.4);
+    }
+
+    .poster-menu:hover:not(.loading) {
+      transform: scale(1.08);
+    }
+
+    .poster-menu:active:not(.loading) {
+      transform: scale(0.92);
+    }
+
+    .poster-menu.loading {
+      cursor: wait;
+      opacity: 0.85;
+    }
+
+    .poster-menu.loading .btn-spinner {
+      display: block !important;
+    }
+
+    .poster-menu.loading .material-symbols-outlined {
+      display: none !important;
+    }
+
+    .btn-spinner {
+      display: none;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      box-sizing: border-box;
+    }
+
+    @keyframes popPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+      100% { transform: scale(1); }
+    }
+
+    .poster-menu.fav-animate {
+      animation: popPulse 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .anime-name {
@@ -1492,7 +1646,7 @@
             </div>
           </article>
 
-          <article class="stat-card" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';" style="cursor: pointer;">
+          <article class="stat-card" onclick="window.location.href='./anilog-favorites.html';" style="cursor: pointer;">
             <span class="material-symbols-outlined" style="color: var(--purple2);">favorite</span>
             <div>
               <div class="stat-label">Favorite's</div>
@@ -1517,7 +1671,14 @@
             New Releases <span class="arrow">›</span>
           </h2>
 
-          <div class="anime-scroll-row" id="desktop-new-releases"></div>
+          <div class="anime-scroll-row" id="desktop-new-releases">
+            <!-- Skeleton Loading State (3s Shimmer) -->
+            <div class="skeleton-card"><div class="skeleton-poster skeleton-box"></div><div class="skeleton-title-line skeleton-box"></div><div class="skeleton-sub-line skeleton-box"></div></div>
+            <div class="skeleton-card"><div class="skeleton-poster skeleton-box"></div><div class="skeleton-title-line skeleton-box"></div><div class="skeleton-sub-line skeleton-box"></div></div>
+            <div class="skeleton-card"><div class="skeleton-poster skeleton-box"></div><div class="skeleton-title-line skeleton-box"></div><div class="skeleton-sub-line skeleton-box"></div></div>
+            <div class="skeleton-card"><div class="skeleton-poster skeleton-box"></div><div class="skeleton-title-line skeleton-box"></div><div class="skeleton-sub-line skeleton-box"></div></div>
+            <div class="skeleton-card"><div class="skeleton-poster skeleton-box"></div><div class="skeleton-title-line skeleton-box"></div><div class="skeleton-sub-line skeleton-box"></div></div>
+          </div>
         </section>
 
         <!-- DYNAMIC UPCOMING EPISODES SECTION -->
@@ -1526,7 +1687,13 @@
             Upcoming Episodes <span class="arrow">›</span>
           </h2>
 
-          <div class="upcoming-grid" id="desktop-upcoming-episodes"></div>
+          <div class="upcoming-grid" id="desktop-upcoming-episodes">
+            <!-- Skeleton Loading State (3s Shimmer) -->
+            <div class="skeleton-episode-card"><div class="skeleton-ep-poster skeleton-box"></div><div class="skeleton-ep-info"><div class="skeleton-ep-line1 skeleton-box"></div><div class="skeleton-ep-line2 skeleton-box"></div></div></div>
+            <div class="skeleton-episode-card"><div class="skeleton-ep-poster skeleton-box"></div><div class="skeleton-ep-info"><div class="skeleton-ep-line1 skeleton-box"></div><div class="skeleton-ep-line2 skeleton-box"></div></div></div>
+            <div class="skeleton-episode-card"><div class="skeleton-ep-poster skeleton-box"></div><div class="skeleton-ep-info"><div class="skeleton-ep-line1 skeleton-box"></div><div class="skeleton-ep-line2 skeleton-box"></div></div></div>
+            <div class="skeleton-episode-card"><div class="skeleton-ep-poster skeleton-box"></div><div class="skeleton-ep-info"><div class="skeleton-ep-line1 skeleton-box"></div><div class="skeleton-ep-line2 skeleton-box"></div></div></div>
+          </div>
         </section>
 
       </section>
@@ -1582,7 +1749,7 @@
             <div class="label">Completed</div>
             <div class="value" id="mobile-stat-completed">0</div>
           </article>
-          <article class="mobile-stat" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';">
+          <article class="mobile-stat" onclick="window.location.href='./anilog-favorites.html';">
             <span class="material-symbols-outlined" style="color: var(--purple2);">favorite</span>
             <div class="label">Favorites</div>
             <div class="value" id="mobile-stat-favorites">0</div>
@@ -1601,7 +1768,12 @@
             <span class="see-all" onclick="window.location.href='./anilog-seasonal-all.html';">See All</span>
           </div>
 
-          <div class="anime-scroll-row" id="mobile-new-releases"></div>
+          <div class="anime-scroll-row" id="mobile-new-releases">
+            <!-- Skeleton Loading State (3s Shimmer) -->
+            <div class="skeleton-card"><div class="skeleton-poster skeleton-box"></div><div class="skeleton-title-line skeleton-box"></div><div class="skeleton-sub-line skeleton-box"></div></div>
+            <div class="skeleton-card"><div class="skeleton-poster skeleton-box"></div><div class="skeleton-title-line skeleton-box"></div><div class="skeleton-sub-line skeleton-box"></div></div>
+            <div class="skeleton-card"><div class="skeleton-poster skeleton-box"></div><div class="skeleton-title-line skeleton-box"></div><div class="skeleton-sub-line skeleton-box"></div></div>
+          </div>
         </section>
 
         <!-- DYNAMIC MOBILE UPCOMING EPISODES SECTION -->
@@ -1611,7 +1783,11 @@
             <span class="see-all" onclick="window.location.href='./anilog-seasonal-all.html';">See All</span>
           </div>
 
-          <div class="mobile-episode-list" id="mobile-upcoming-episodes"></div>
+          <div class="mobile-episode-list" id="mobile-upcoming-episodes">
+            <!-- Skeleton Loading State (3s Shimmer) -->
+            <div class="skeleton-episode-card"><div class="skeleton-ep-poster skeleton-box"></div><div class="skeleton-ep-info"><div class="skeleton-ep-line1 skeleton-box"></div><div class="skeleton-ep-line2 skeleton-box"></div></div></div>
+            <div class="skeleton-episode-card"><div class="skeleton-ep-poster skeleton-box"></div><div class="skeleton-ep-info"><div class="skeleton-ep-line1 skeleton-box"></div><div class="skeleton-ep-line2 skeleton-box"></div></div></div>
+          </div>
         </section>
 
       </div>
@@ -1767,7 +1943,7 @@
       const desktopAvatar = document.getElementById('desktop-user-avatar');
       const topbarAvatar = document.getElementById('desktop-topbar-avatar');
       const sideUserName = document.getElementById('desktop-user-name');
-      
+
       if (desktopAvatar) desktopAvatar.src = avatarUrl;
       if (topbarAvatar) topbarAvatar.src = avatarUrl;
       if (sideUserName) sideUserName.textContent = user.username || 'User';
@@ -1813,21 +1989,35 @@
         }
       }
 
+      updateFavoritesCountUI(user.favorites_count ?? 0);
+
       const watchingVal = document.getElementById('stat-watching-value');
       const completedVal = document.getElementById('stat-completed-value');
-      const favoritesVal = document.getElementById('stat-favorites-value');
+      const mWatchingVal = document.getElementById('mobile-stat-watching');
+      const mCompletedVal = document.getElementById('mobile-stat-completed');
 
       if (watchingVal) watchingVal.textContent = user.watching_count ?? 0;
       if (completedVal) completedVal.textContent = user.completed_count ?? 0;
-      if (favoritesVal) favoritesVal.textContent = user.favorites_count ?? 0;
-
-      const mWatchingVal = document.getElementById('mobile-stat-watching');
-      const mCompletedVal = document.getElementById('mobile-stat-completed');
-      const mFavoritesVal = document.getElementById('mobile-stat-favorites');
-
       if (mWatchingVal) mWatchingVal.textContent = user.watching_count ?? 0;
       if (mCompletedVal) mCompletedVal.textContent = user.completed_count ?? 0;
-      if (mFavoritesVal) mFavoritesVal.textContent = user.favorites_count ?? 0;
+    }
+
+    function updateFavoritesCountUI(count) {
+      const favoritesVal = document.getElementById('stat-favorites-value');
+      const mFavoritesVal = document.getElementById('mobile-stat-favorites');
+      if (favoritesVal) favoritesVal.textContent = count;
+      if (mFavoritesVal) mFavoritesVal.textContent = count;
+
+      const cachedUser = localStorage.getItem('user_data');
+      if (cachedUser) {
+        try {
+          const parsed = JSON.parse(cachedUser);
+          parsed.favorites_count = count;
+          localStorage.setItem('user_data', JSON.stringify(parsed));
+        } catch (e) {
+          console.error('Failed to update local storage user state', e);
+        }
+      }
     }
 
     // ==========================================
@@ -1898,7 +2088,8 @@
           <article class="anime-card" data-anime-id="${escapeHTML(anime.id)}">
             <div class="poster">
               <img src="${image}" alt="${escapeHTML(title)}">
-              <span class="poster-menu" data-favorite-id="${escapeHTML(anime.id)}" role="button" tabindex="0" title="Save to favorites">
+              <span class="poster-menu" data-favorite-id="${escapeHTML(anime.id)}" role="button" tabindex="0" title="Toggle favorite">
+                <span class="btn-spinner"></span>
                 <span class="material-symbols-outlined">bookmark</span>
               </span>
             </div>
@@ -1923,50 +2114,74 @@
           });
         });
 
-        refreshFavoriteButtons();
       } catch (err) {
         console.error('Failed to load new releases:', err);
       }
     }
 
-    function refreshFavoriteButtons() {
-      const favoriteIds = new Set((window.anilogFavorites?.read() || []).map(anime => String(anime.id)));
-      document.querySelectorAll('[data-favorite-id]').forEach(button => {
-        const isFavorite = favoriteIds.has(String(button.dataset.favoriteId));
-        button.classList.toggle('is-favorite', isFavorite);
-        button.title = isFavorite ? 'Remove from favorites' : 'Save to favorites';
-        const icon = button.querySelector('.material-symbols-outlined');
-        if (icon) icon.textContent = isFavorite ? 'bookmark_added' : 'bookmark';
-      });
-    }
-
-    function handleFavoriteClick(event) {
+    async function handleFavoriteClick(event) {
       const button = event.target.closest('[data-favorite-id]');
-      if (!button) return;
+      if (!button || button.classList.contains('loading')) return;
       event.preventDefault();
       event.stopPropagation();
-      const card = button.closest('.anime-card');
-      const sourceAnime = window.anilogReleaseAnime?.[String(button.dataset.favoriteId)];
-      const sourceAttributes = sourceAnime?.attributes || {};
-      const anime = {
-        id: button.dataset.favoriteId,
-        title: card.querySelector('.anime-name')?.textContent.trim() || 'Untitled',
-        image: card.querySelector('.poster img')?.src || '',
-        episode: card.querySelector('.episode')?.textContent.trim() || '',
-        genres: sourceAttributes.genres || sourceAttributes.genre || [],
-        episodes: sourceAttributes.episodeCount || '',
-        rating: sourceAttributes.averageRating || '',
-        synopsis: sourceAttributes.synopsis || '',
-        status: sourceAttributes.status || 'current',
-        savedAt: new Date().toISOString()
-      };
-      const added = window.anilogFavorites?.toggle(anime);
-      button.classList.toggle('is-favorite', added);
-      button.title = added ? 'Remove from favorites' : 'Save to favorites';
-      const icon = button.querySelector('.material-symbols-outlined');
-      if (icon) icon.textContent = added ? 'bookmark_added' : 'bookmark';
 
-      showToast(added ? 'Added to favorites!' : 'Removed from favorites.', added ? 'success' : 'info');
+      const animeId = String(button.dataset.favoriteId);
+      const token = getAuthToken();
+
+      if (!token) {
+        showToast('Please login to manage your favorites.', 'warning');
+        return;
+      }
+
+      const matchingBtns = document.querySelectorAll(`[data-favorite-id="${animeId}"]`);
+      matchingBtns.forEach(btn => btn.classList.add('loading'));
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/user/toggle-favorite`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ anime_id: animeId })
+        });
+
+        if (response.status === 401) {
+          showToast('Session expired. Please log in again.', 'error');
+          logoutUser(null);
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(`Failed to toggle favorite: Status ${response.status}`);
+        }
+
+        const data = await response.json();
+        const isFavorite = data.is_favorite;
+
+        matchingBtns.forEach(btn => {
+          btn.classList.toggle('is-favorite', isFavorite);
+          btn.title = isFavorite ? 'Remove from favorites' : 'Add to favorites';
+          const icon = btn.querySelector('.material-symbols-outlined');
+          if (icon) icon.textContent = isFavorite ? 'bookmark_added' : 'bookmark';
+
+          btn.classList.remove('fav-animate');
+          void btn.offsetWidth;
+          btn.classList.add('fav-animate');
+        });
+
+        if (typeof data.favorites_count === 'number') {
+          updateFavoritesCountUI(data.favorites_count);
+        }
+
+        showToast(data.message || (isFavorite ? 'Added to favorites' : 'Removed from favorites'), isFavorite ? 'success' : 'info');
+
+      } catch (err) {
+        console.error('Favorite toggle error:', err);
+        showToast('Could not update favorites. Try again.', 'error');
+      } finally {
+        matchingBtns.forEach(btn => btn.classList.remove('loading'));
+      }
     }
 
     document.addEventListener('click', handleFavoriteClick);

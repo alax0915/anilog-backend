@@ -1,7 +1,6 @@
 backend:- first start enviroment".\venv\Scripts\activate" then start server "uvicorn main:app --reload"
 
-for browser cookies it use Use HTTP-Only Cookies
-
+for browser cookies it use Use HTTP-Only Cookies 
 
 git add .
  

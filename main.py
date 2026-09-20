@@ -95,10 +95,7 @@ DEFAULT_AVATARS = [
 # ==================================================
 
 engine = create_async_engine(
-    DATABASE_URL,
-    echo=True,
-    pool_pre_ping=True,  # Automatically tests connections before using them
-    pool_recycle=300,    # Recycle connections every 5 minutes to prevent stale timeouts
+    DATABASE_URL, echo=True, connect_args={"statement_cache_size": 0}
 )
 
 AsyncSessionLocal = async_sessionmaker(
@@ -201,7 +198,6 @@ class User(Base):
     notifications: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     reaction_logs: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
 
-    # Enhanced security & token management fields
     hashed_refresh_token: Mapped[Optional[str]] = mapped_column(
         String(255), nullable=True
     )
@@ -277,6 +273,22 @@ class Token(BaseModel):
     refresh_token: str
     token_type: str
     user: UserResponse
+
+
+class WatchlistAddRequest(BaseModel):
+    anime_id: str
+    status: str = "Watching"
+    episodes_watched: int = 0
+    score: Optional[int] = None
+    is_favorite: bool = False
+    priority: str = "Medium"
+    notes: Optional[str] = None
+    started_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+
+
+class FavoriteToggleRequest(BaseModel):
+    anime_id: str
 
 
 # ==================================================
@@ -435,14 +447,12 @@ async def login(
 
     now = datetime.now(timezone.utc)
 
-    # Check for Account Lockout
     if user.locked_until and user.locked_until > now:
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail=f"Account is temporarily locked due to failed attempts. Try again later.",
+            detail="Account is temporarily locked due to failed attempts. Try again later.",
         )
 
-    # Verify Password
     if not verify_password(credentials.password, user.password_hash):
         user.failed_login_attempts += 1
         if user.failed_login_attempts >= MAX_FAILED_ATTEMPTS:
@@ -455,11 +465,9 @@ async def login(
             detail="Incorrect email or password",
         )
 
-    # Successful Password Validation Reset
     user.failed_login_attempts = 0
     user.locked_until = None
 
-    # Handle Daily Streak Update
     if user.last_active_at:
         days_diff = (now.date() - user.last_active_at.date()).days
         if days_diff == 1:
@@ -470,7 +478,6 @@ async def login(
     user.last_active_at = now
     user.updated_at = now
 
-    # Audit Logging
     client_ip = request.client.host if request.client else "unknown"
     user_agent = request.headers.get("user-agent", "unknown")
 
@@ -482,19 +489,16 @@ async def login(
 
     logs = list(user.login_audit_logs or [])
     logs.append(audit_entry)
-    user.login_audit_logs = logs[-10:]  # Keep last 10 logins
+    user.login_audit_logs = logs[-10:]
 
-    # Generate Tokens
     access_token = create_access_token(data={"sub": str(user.id)})
     refresh_token = create_refresh_token(data={"sub": str(user.id)})
 
-    # Hash and Store Refresh Token
     user.hashed_refresh_token = hash_password(refresh_token)
 
     await db.commit()
     await db.refresh(user)
 
-    # Set Secure HttpOnly Cookie
     response.set_cookie(
         key="access_token",
         value=f"Bearer {access_token}",
@@ -600,10 +604,21 @@ async def search_anime(
         anime_id = anime.get("id")
         attrs = anime.get("attributes", {})
         titles = attrs.get("titles", {})
-        title = attrs.get("canonicalTitle") or titles.get("en") or titles.get("en_jp") or "Unknown"
+        title = (
+            attrs.get("canonicalTitle")
+            or titles.get("en")
+            or titles.get("en_jp")
+            or "Unknown"
+        )
         poster_img = attrs.get("posterImage")
-        image_url = poster_img.get("original") or poster_img.get("large") or poster_img.get("medium") if poster_img else None
-        
+        image_url = (
+            poster_img.get("original")
+            or poster_img.get("large")
+            or poster_img.get("medium")
+            if poster_img
+            else None
+        )
+
         avg_rating = attrs.get("averageRating")
         score_val = float(avg_rating) / 10.0 if avg_rating else None
 
@@ -625,7 +640,6 @@ async def get_user_watchlist(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    # Query the user's watchlist joined with the anime details from the database
     result = await db.execute(
         select(UserAnimeList, Anime)
         .join(Anime, UserAnimeList.anime_id == Anime.id)
@@ -646,6 +660,7 @@ async def get_user_watchlist(
                 "status": watch.status,
                 "priority": watch.priority,
                 "score": watch.score,
+                "is_favorite": watch.is_favorite,
                 "notes": watch.notes,
             }
         )
@@ -653,24 +668,14 @@ async def get_user_watchlist(
     return {"watchlist": watchlist_items}
 
 
-class WatchlistAddRequest(BaseModel):
-    anime_id: str
-    status: str = "Watching"
-    episodes_watched: int = 0
-    score: Optional[int] = None
-    priority: str = "Medium"
-    notes: Optional[str] = None
-
-
-@app.post("/api/user/addwatchlist", status_code=status.HTTP_201_CREATED)
-async def add_to_watchlist(
-    payload: WatchlistAddRequest,
+@app.post("/api/user/toggle-favorite")
+async def toggle_favorite(
+    payload: FavoriteToggleRequest,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     anime_id_str = str(payload.anime_id)
 
-    # 1. Check if anime exists in local database, if not fetch & cache it from Kitsu
     result = await db.execute(select(Anime).where(Anime.id == anime_id_str))
     anime = result.scalars().first()
 
@@ -691,16 +696,25 @@ async def add_to_watchlist(
         anime_json = res.json().get("data", {})
         attrs = anime_json.get("attributes", {})
         titles = attrs.get("titles", {})
-        
+
         poster_img = attrs.get("posterImage")
-        poster_url = poster_img.get("original") or poster_img.get("large") or poster_img.get("medium") if poster_img else None
+        poster_url = (
+            poster_img.get("original")
+            or poster_img.get("large")
+            or poster_img.get("medium")
+            if poster_img
+            else None
+        )
 
         avg_rating = attrs.get("averageRating")
         score_val = float(avg_rating) / 10.0 if avg_rating else None
 
         anime = Anime(
             id=str(anime_json.get("id")),
-            title=attrs.get("canonicalTitle") or titles.get("en") or titles.get("en_jp") or "Unknown Title",
+            title=attrs.get("canonicalTitle")
+            or titles.get("en")
+            or titles.get("en_jp")
+            or "Unknown Title",
             title_english=titles.get("en") or titles.get("en_us"),
             title_japanese=titles.get("ja_jp") or titles.get("en_jp"),
             type=attrs.get("kind"),
@@ -711,7 +725,125 @@ async def add_to_watchlist(
             synopsis=attrs.get("synopsis"),
             poster_image=poster_url,
             episode_count=attrs.get("episodeCount"),
-            score=score_val
+            score=score_val,
+        )
+        db.add(anime)
+        await db.commit()
+
+    entry_result = await db.execute(
+        select(UserAnimeList).where(
+            UserAnimeList.user_id == current_user.id,
+            UserAnimeList.anime_id == anime_id_str,
+        )
+    )
+    watchlist_entry = entry_result.scalars().first()
+    now = datetime.now(timezone.utc)
+
+    if watchlist_entry:
+        current_favs = int(current_user.favorites_count or 0)
+
+        if watchlist_entry.is_favorite:
+            watchlist_entry.is_favorite = False
+            current_user.favorites_count = max(0, current_favs - 1)
+            is_fav = False
+            msg = "Removed from favorites"
+        else:
+            watchlist_entry.is_favorite = True
+            current_user.favorites_count = current_favs + 1
+            is_fav = True
+            msg = "Added to favorites"
+
+        watchlist_entry.updated_at = now
+    else:
+        watchlist_id = f"item_{random.randint(10000, 99999)}"
+        new_watchlist_item = UserAnimeList(
+            id=watchlist_id,
+            user_id=current_user.id,
+            anime_id=anime_id_str,
+            status="Watching",
+            episodes_watched=0,
+            score=None,
+            is_favorite=True,
+            priority="Medium",
+            notes=None,
+            added_at=now,
+            updated_at=now,
+        )
+        db.add(new_watchlist_item)
+        current_user.favorites_count = int(current_user.favorites_count or 0) + 1
+        is_fav = True
+        msg = "Added to favorites"
+
+    current_user.updated_at = now
+    await db.commit()
+    await db.refresh(current_user)
+
+    return {
+        "message": msg,
+        "is_favorite": is_fav,
+        "favorites_count": current_user.favorites_count,
+    }
+
+
+@app.post("/api/user/addwatchlist", status_code=status.HTTP_201_CREATED)
+async def add_to_watchlist(
+    payload: WatchlistAddRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    anime_id_str = str(payload.anime_id)
+
+    # 1. Check if anime exists in local database, fetch & cache if missing
+    result = await db.execute(select(Anime).where(Anime.id == anime_id_str))
+    anime = result.scalars().first()
+
+    if not anime:
+        async with httpx.AsyncClient() as client:
+            res = await client.get(
+                f"{ANIME_SOURCE_URL}/anime/{anime_id_str}",
+                headers={
+                    "Accept": "application/vnd.api+json",
+                    "Content-Type": "application/vnd.api+json",
+                },
+            )
+        if res.status_code != 200:
+            raise HTTPException(
+                status_code=404, detail="Anime not found on external provider"
+            )
+
+        anime_json = res.json().get("data", {})
+        attrs = anime_json.get("attributes", {})
+        titles = attrs.get("titles", {})
+
+        poster_img = attrs.get("posterImage")
+        poster_url = (
+            poster_img.get("original")
+            or poster_img.get("large")
+            or poster_img.get("medium")
+            if poster_img
+            else None
+        )
+
+        avg_rating = attrs.get("averageRating")
+        score_val = float(avg_rating) / 10.0 if avg_rating else None
+
+        anime = Anime(
+            id=str(anime_json.get("id")),
+            title=attrs.get("canonicalTitle")
+            or titles.get("en")
+            or titles.get("en_jp")
+            or "Unknown Title",
+            title_english=titles.get("en") or titles.get("en_us"),
+            title_japanese=titles.get("ja_jp") or titles.get("en_jp"),
+            type=attrs.get("kind"),
+            subtype=attrs.get("subtype"),
+            age_rating=attrs.get("ageRating"),
+            user_count=attrs.get("userCount"),
+            start_date=attrs.get("startDate"),
+            synopsis=attrs.get("synopsis"),
+            poster_image=poster_url,
+            episode_count=attrs.get("episodeCount"),
+            score=score_val,
         )
         db.add(anime)
         await db.commit()
@@ -728,7 +860,7 @@ async def add_to_watchlist(
             status_code=400, detail="Anime already exists in your watchlist"
         )
 
-    # 3. Create watchlist entry
+    # 3. Create watchlist entry & increment user's favorites_count if is_favorite is True
     watchlist_id = f"item_{random.randint(10000, 99999)}"
     now = datetime.now(timezone.utc)
 
@@ -739,12 +871,18 @@ async def add_to_watchlist(
         status=payload.status,
         episodes_watched=payload.episodes_watched,
         score=payload.score,
-        is_favorite=False,
+        is_favorite=payload.is_favorite,
         priority=payload.priority,
         notes=payload.notes,
+        started_at=payload.started_at,
+        completed_at=payload.completed_at,
         added_at=now,
         updated_at=now,
     )
+
+    if payload.is_favorite:
+        current_user.favorites_count = int(current_user.favorites_count or 0) + 1
+        current_user.updated_at = now
 
     db.add(new_watchlist_item)
     await db.commit()
@@ -832,4 +970,3 @@ async def kitsu_search_anime(
             raise HTTPException(
                 status_code=502, detail="Error connecting to anime data provider"
             )
-            

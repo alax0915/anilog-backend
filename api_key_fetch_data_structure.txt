@@ -1,0 +1,65 @@
+- data (Root Object)
+  - id: String ("12")
+  - type: String ("anime")
+  - links (Object)
+    - self: String URL ("https://kitsu.io/api/edge/anime/12")
+  - attributes (Object)
+    - Timestamps & Meta:
+      - createdAt: String ("2013-02-20T16:00:25.722Z")
+      - updatedAt: String ("2026-09-19T06:55:33.581Z")
+      - slug: String ("one-piece")
+      - subtype: String ("TV")
+      - status: String ("current")
+      - tba: Null / String
+      - nsfw: Boolean (false)
+    - Text & Titles:
+      - synopsis: String
+      - description: String
+      - canonicalTitle: String ("One Piece")
+      - abbreviatedTitles: Array of Strings (["ワンピース"])
+      - titles (Object)
+        - en: String ("One Piece")
+        - en_jp: String ("One Piece")
+        - ja_jp: String ("ONE PIECE")
+    - Ratings & Rankings:
+      - averageRating: String ("84.01")
+      - ratingFrequencies: Object (Maps score keys like "2", "3" to vote counts)
+      - userCount: Integer (324334)
+      - favoritesCount: Integer (10755)
+      - popularityRank: Integer (14)
+      - ratingRank: Integer (57)
+    - Dates & Scheduling:
+      - startDate: String ("1999-10-20")
+      - endDate: Null / String (null)
+      - nextRelease: String ("2026-09-20T09:30:00.000+09:00")
+    - Media, Images & Video:
+      - ageRating: String ("PG")
+      - ageRatingGuide: String ("Teens 13 or older")
+      - episodeCount: Null / Integer (null)
+      - episodeLength: Integer (24)
+      - totalLength: Integer (33648)
+      - youtubeVideoId: String ("CmTeYj2FmRc")
+      - coverImageTopOffset: Integer (50)
+      - posterImage (Object)
+        - tiny, small, medium, large, original: Objects containing image URLs
+        - meta: Object containing dimension sizes
+      - coverImage (Object)
+        - tiny, small, large, original: Objects containing image URLs
+        - meta: Object containing dimension sizes
+  - relationships (Object - Each containing links with self and related URLs)
+    - genres
+    - categories
+    - castings
+    - installments
+    - mappings
+    - reviews
+    - mediaRelationships
+    - characters
+    - staff
+    - productions
+    - quotes
+    - episodes
+    - streamingLinks
+    - animeProductions
+    - animeCharacters
+    - animeStaff

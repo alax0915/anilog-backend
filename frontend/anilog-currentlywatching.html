@@ -67,6 +67,55 @@
       object-fit: cover;
     }
 
+    /* ---------------- NOTIFICATION TOAST POPUP ---------------- */
+    #toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      min-width: 280px;
+      max-width: 380px;
+      padding: 14px 18px;
+      background: rgba(13, 15, 26, 0.95);
+      border: 1px solid var(--purple);
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      color: var(--text);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      pointer-events: auto;
+      backdrop-filter: blur(10px);
+      animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .toast.success { border-color: var(--green); }
+    .toast.error { border-color: var(--danger); }
+
+    .toast .material-symbols-outlined {
+      font-size: 20px;
+    }
+    .toast.success .material-symbols-outlined { color: var(--green); }
+    .toast.error .material-symbols-outlined { color: var(--danger); }
+
+    @keyframes toastSlideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes toastSlideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+
     /* ---------------- PRELOADER OVERLAY ---------------- */
     #preloader {
       position: fixed;
@@ -91,9 +140,7 @@
     }
 
     @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
+      to { transform: rotate(360deg); }
     }
 
     .desktop-page,
@@ -127,7 +174,6 @@
     }
 
     /* ---------------- DESKTOP LAYOUT ---------------- */
-
     .desktop-page {
       min-height: 100vh;
       padding: 40px 8px;
@@ -163,7 +209,6 @@
     }
 
     /* ---------------- SIDEBAR & ANIMATIONS ---------------- */
-
     .sidebar {
       position: relative;
       z-index: 10;
@@ -181,14 +226,8 @@
     }
 
     @keyframes sidebarSlideIn {
-      from {
-        transform: translateX(-100%);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
+      from { transform: translateX(-100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
 
     .side-link {
@@ -200,25 +239,22 @@
       animation: navItemSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    body.loaded .side-link:nth-child(1) { animation-delay: 0.15s; }
-    body.loaded .side-link:nth-child(2) { animation-delay: 0.20s; }
-    body.loaded .side-link:nth-child(3) { animation-delay: 0.25s; }
-    body.loaded .side-link:nth-child(4) { animation-delay: 0.30s; }
-    body.loaded .side-link:nth-child(5) { animation-delay: 0.35s; }
-    body.loaded .side-link:nth-child(6) { animation-delay: 0.40s; }
-    body.loaded .side-link:nth-child(7) { animation-delay: 0.45s; }
-    body.loaded .side-link:nth-child(8) { animation-delay: 0.50s; }
-    body.loaded .side-link:nth-child(9) { animation-delay: 0.55s; }
-    body.loaded .side-link:nth-child(10) { animation-delay: 0.60s; }
-    body.loaded .side-link:nth-child(11) { animation-delay: 0.65s; }
-    body.loaded .side-link:nth-child(12) { animation-delay: 0.70s; }
-    body.loaded .side-link:nth-child(13) { animation-delay: 0.75s; }
+    body.loaded .side-link:nth-child(1) { animation-delay: 0.10s; }
+    body.loaded .side-link:nth-child(2) { animation-delay: 0.15s; }
+    body.loaded .side-link:nth-child(3) { animation-delay: 0.20s; }
+    body.loaded .side-link:nth-child(4) { animation-delay: 0.25s; }
+    body.loaded .side-link:nth-child(5) { animation-delay: 0.30s; }
+    body.loaded .side-link:nth-child(6) { animation-delay: 0.35s; }
+    body.loaded .side-link:nth-child(7) { animation-delay: 0.40s; }
+    body.loaded .side-link:nth-child(8) { animation-delay: 0.45s; }
+    body.loaded .side-link:nth-child(9) { animation-delay: 0.50s; }
+    body.loaded .side-link:nth-child(10) { animation-delay: 0.55s; }
+    body.loaded .side-link:nth-child(11) { animation-delay: 0.60s; }
+    body.loaded .side-link:nth-child(12) { animation-delay: 0.65s; }
+    body.loaded .side-link:nth-child(13) { animation-delay: 0.70s; }
 
     @keyframes navItemSlideIn {
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+      to { opacity: 1; transform: translateX(0); }
     }
 
     .sidebar-brand {
@@ -296,7 +332,7 @@
       box-shadow: inset 0 0 20px rgba(155, 34, 246, .09);
     }
 
-    /* Flip Animation for user-card */
+    /* User Card */
     .user-card {
       position: absolute;
       left: 14px;
@@ -321,14 +357,8 @@
     }
 
     @keyframes userCardFlip {
-      from {
-        opacity: 0;
-        transform: rotateY(-180deg);
-      }
-      to {
-        opacity: 1;
-        transform: rotateY(0deg);
-      }
+      from { opacity: 0; transform: rotateY(-180deg); }
+      to { opacity: 1; transform: rotateY(0deg); }
     }
 
     .user-avatar {
@@ -369,6 +399,7 @@
       width: 63%;
       height: 100%;
       background: #9c2cff;
+      transition: width 0.4s ease;
     }
 
     .xp-text {
@@ -378,7 +409,6 @@
     }
 
     /* ---------------- MAIN SECTION ---------------- */
-
     .main {
       min-width: 0;
       padding: 0 17px 45px;
@@ -394,6 +424,7 @@
       z-index: 100;
     }
 
+    /* Homepage Search Specification */
     .search {
       position: relative;
       width: 300px;
@@ -414,18 +445,9 @@
     }
 
     @keyframes googleSearchExpand {
-      0% {
-        opacity: 0;
-        clip-path: circle(0px at 50% 50%);
-      }
-      10% {
-        opacity: 1;
-        clip-path: circle(12px at 50% 50%);
-      }
-      100% {
-        opacity: 1;
-        clip-path: none;
-      }
+      0% { opacity: 0; clip-path: circle(0px at 50% 50%); }
+      10% { opacity: 1; clip-path: circle(12px at 50% 50%); }
+      100% { opacity: 1; clip-path: none; }
     }
 
     .search:focus-within {
@@ -593,7 +615,6 @@
     }
 
     /* ---------------- HERO ---------------- */
-
     .hero {
       position: relative;
       height: 173px;
@@ -608,14 +629,8 @@
     }
 
     @keyframes heroZoomIn {
-      from {
-        opacity: 0;
-        transform: scale(0.92);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
     }
 
     .hero-art {
@@ -656,7 +671,6 @@
     }
 
     /* ---------------- STATS BOXES ---------------- */
-
     .stats {
       display: flex;
       gap: 15px;
@@ -686,7 +700,6 @@
     }
 
     /* ---------------- FILTER & VIEW TOOLBAR ---------------- */
-
     .toolbar {
       position: relative;
       z-index: 4;
@@ -750,7 +763,6 @@
     }
 
     /* ---------------- CARDS GRID VIEW ---------------- */
-
     .grid-container {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -767,6 +779,7 @@
       transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
       display: flex;
       flex-direction: column;
+      cursor: pointer;
     }
 
     .anime-card:hover {
@@ -915,7 +928,6 @@
     }
 
     /* ---------------- TABLE VIEW ---------------- */
-
     .table-wrap {
       position: relative;
       z-index: 3;
@@ -965,6 +977,7 @@
       font-size: 11px;
       vertical-align: middle;
       text-align: center;
+      cursor: pointer;
     }
 
     .watch-table td:first-child { text-align: left; }
@@ -1045,7 +1058,6 @@
     }
 
     /* ---------------- PAGINATION ---------------- */
-
     .pagination {
       height: 77px;
       display: flex;
@@ -1070,7 +1082,6 @@
     }
 
     /* ---------------- MOBILE LAYOUT ---------------- */
-
     .mobile-page {
       display: none;
     }
@@ -1123,6 +1134,7 @@
         font-size: 6px;
       }
 
+      /* Mobile Search Bar Specification */
       .mobile-search-bar {
         display: none;
         padding: 10px 16px;
@@ -1209,6 +1221,7 @@
         border: 1px solid #29243a;
         border-radius: 6px;
         padding: 10px;
+        cursor: pointer;
       }
 
       .mobile-anime-card img {
@@ -1258,6 +1271,7 @@
         gap: 4px;
         color: #d5d2dc;
         font-size: 8px;
+        cursor: pointer;
       }
 
       .mobile-nav-item.active {
@@ -1268,6 +1282,9 @@
 </head>
 
 <body>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container"></div>
 
   <!-- PRELOADER OVERLAY -->
   <div id="preloader">
@@ -1306,14 +1323,14 @@
         </nav>
 
         <div class="user-card">
-          <img class="user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="Avatar">
+          <img class="user-avatar" id="sidebar-user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="Avatar">
           <div class="user-info">
-            <h3 class="user-name">ShadowX</h3>
-            <div class="user-level">Level 27</div>
+            <h3 class="user-name" id="sidebar-user-name">ShadowX</h3>
+            <div class="user-level" id="sidebar-user-level">Level 1</div>
             <div class="xp-track">
-              <div class="xp-fill"></div>
+              <div class="xp-fill" id="sidebar-xp-fill"></div>
             </div>
-            <div class="xp-text">XP 4,250 / 6,800</div>
+            <div class="xp-text" id="sidebar-xp-text">XP 0 / 1000</div>
           </div>
         </div>
       </aside>
@@ -1321,21 +1338,22 @@
       <section class="main">
 
         <header class="topbar">
+          <!-- Desktop Search Specification -->
           <div class="search">
-            <input type="text" id="desktop-search-input" placeholder="Search active shows...">
+            <input type="text" id="desktop-search-input" placeholder="Search anime...">
             <span class="material-symbols-outlined">search</span>
             <div class="search-results-dropdown" id="desktop-search-results"></div>
           </div>
 
           <div class="top-actions">
             <div class="top-action-wrap">
-              <div class="top-action"><span class="material-symbols-outlined">notifications</span></div>
+              <div class="top-action" onclick="window.location.href='./anilog-notifications.html';"><span class="material-symbols-outlined">notifications</span></div>
             </div>
 
             <div class="top-action-wrap">
               <div class="top-action streak">
                 <span class="material-symbols-outlined" style="color: #ff2d63;">local_fire_department</span>
-                <span>12</span>
+                <span id="header-streak-count">12</span>
               </div>
             </div>
 
@@ -1346,20 +1364,20 @@
               </div>
               <div class="dropdown-panel">
                 <div class="dropdown-panel-header">System Settings</div>
-                <button class="dropdown-item">
+                <button class="dropdown-item" id="theme-toggle-btn">
                   <span class="material-symbols-outlined">dark_mode</span> App Theme
                 </button>
-                <button class="dropdown-item">
+                <button class="dropdown-item" onclick="window.location.href='./anilog-notifications.html';">
                   <span class="material-symbols-outlined">notifications_active</span> Notifications
                 </button>
-                <button class="dropdown-item">
+                <button class="dropdown-item" onclick="window.location.href='./anilog-sub-dub-settings.html';">
                   <span class="material-symbols-outlined">subtitles</span> Default Sub/Dub
                 </button>
-                <button class="dropdown-item">
+                <button class="dropdown-item" onclick="window.location.href='./anilog-content-filter.html';">
                   <span class="material-symbols-outlined">explicit</span> Content Filter
                 </button>
                 <div class="dropdown-divider"></div>
-                <button class="dropdown-item">
+                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';">
                   <span class="material-symbols-outlined">tune</span> Preferences
                 </button>
               </div>
@@ -1368,7 +1386,7 @@
             <!-- PROFILE HOVER DROPDOWN -->
             <div class="profile-wrap">
               <div class="profile">
-                <img class="avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="User">
+                <img class="avatar" id="header-user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="User">
                 <span class="material-symbols-outlined">expand_more</span>
               </div>
               <div class="dropdown-panel">
@@ -1376,14 +1394,14 @@
                 <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';">
                   <span class="material-symbols-outlined">account_circle</span> View Profile
                 </button>
-                <button class="dropdown-item" onclick="window.location.href='./anilog-edit-profile.html';">
+                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';">
                   <span class="material-symbols-outlined">edit</span> Edit Profile
                 </button>
-                <button class="dropdown-item">
+                <button class="dropdown-item" onclick="showToast('VIP status active!', 'success')">
                   <span class="material-symbols-outlined">workspace_premium</span> VIP Membership
                 </button>
                 <div class="dropdown-divider"></div>
-                <button class="dropdown-item" style="color: var(--danger);">
+                <button class="dropdown-item" id="logout-btn" style="color: var(--danger);">
                   <span class="material-symbols-outlined" style="color: var(--danger);">logout</span> Log Out
                 </button>
               </div>
@@ -1427,7 +1445,7 @@
           </div>
         </div>
 
-        <!-- EMPTY STATE PLACEHOLDER (Hidden by default, shown if no lists from backend) -->
+        <!-- EMPTY STATE PLACEHOLDER -->
         <div class="empty-state" id="empty-state">
           <span class="material-symbols-outlined">inbox</span>
           <p>No currently watching anime found from backend server.</p>
@@ -1468,7 +1486,7 @@
     <main class="mobile-shell">
 
       <header class="mobile-topbar">
-        <span class="material-symbols-outlined">menu</span>
+        <span class="material-symbols-outlined" style="cursor: pointer;" onclick="window.location.href='./anilog-notifications.html';">menu</span>
         <div class="mobile-brand">
           <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
           <div>
@@ -1479,9 +1497,10 @@
         <span class="material-symbols-outlined" id="mobile-search-toggle" style="cursor: pointer;">search</span>
       </header>
 
+      <!-- Mobile Search Bar Specification -->
       <div class="mobile-search-bar" id="mobile-search-bar">
         <div class="mobile-search-input-wrap">
-          <input type="text" id="mobile-search-input" placeholder="Search active shows...">
+          <input type="text" id="mobile-search-input" placeholder="Search anime dynamic...">
         </div>
         <div class="search-results-dropdown" id="mobile-search-results"></div>
       </div>
@@ -1510,23 +1529,23 @@
       </div>
 
       <nav class="mobile-bottom-nav">
-        <div class="mobile-nav-item">
+        <div class="mobile-nav-item" onclick="window.location.href='./anilog-home.html';">
           <span class="material-symbols-outlined">home</span>
           <span>Home</span>
         </div>
-        <div class="mobile-nav-item">
+        <div class="mobile-nav-item" onclick="window.location.href='./anilog-watchlist.html';">
           <span class="material-symbols-outlined">list_alt</span>
           <span>Watchlist</span>
         </div>
-        <div class="mobile-nav-item active">
+        <div class="mobile-nav-item active" onclick="window.location.href='./anilog-currentlywatching.html';">
           <span class="material-symbols-outlined">play_arrow</span>
           <span>Watching</span>
         </div>
-        <div class="mobile-nav-item">
+        <div class="mobile-nav-item" onclick="window.location.href='./anilog-completed.html';">
           <span class="material-symbols-outlined">check_circle</span>
           <span>Completed</span>
         </div>
-        <div class="mobile-nav-item">
+        <div class="mobile-nav-item" onclick="window.location.href='./anilog-user-profile-responsive.html';">
           <span class="material-symbols-outlined">more_vert</span>
           <span>More</span>
         </div>
@@ -1536,61 +1555,130 @@
   </div>
 
   <script>
-    // 1. Simulating Backend Response Object when user logs in and opens page
-    async function fetchBackendCurrentlyWatchingList() {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          resolve([
-            { id: 101, slug: "chainsaw-man", episodes_watched: 8, total_episodes: 12, airing_status: "Airing Today", status_type: "airing", last_watched: "2 days ago", score: "9.0" },
-            { id: 102, slug: "jujutsu-kaisen", episodes_watched: 14, total_episodes: 24, airing_status: "2 Eps Behind", status_type: "behind", last_watched: "1 week ago", score: "9.4" },
-            { id: 103, slug: "frieren", episodes_watched: 22, total_episodes: 28, airing_status: "Up to Date", status_type: "airing", last_watched: "Yesterday", score: "9.6" },
-            { id: 104, slug: "solo-leveling", episodes_watched: 4, total_episodes: 12, airing_status: "Airing Today", status_type: "airing", last_watched: "3 days ago", score: "8.7" }
-          ]);
-        }, 600);
-      });
+    const API_BASE_URL = "http://127.0.0.1:8000";
+
+    // 1. Notification Toast Pop Box
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      
+      const icon = type === 'success' ? 'check_circle' : 'error';
+      toast.innerHTML = `
+        <span class="material-symbols-outlined">${icon}</span>
+        <span>${message}</span>
+      `;
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.animation = 'toastSlideOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
     }
 
-    // 2. Fetching rich anime details (name, episode info, image) from external API (Kitsu API) using backend references
-    async function fetchAnimeDetailsFromApi(backendItem) {
-      try {
-        const response = await fetch(`https://kitsu.io/api/edge/anime?filter[text]=${encodeURIComponent(backendItem.slug)}&page[limit]=1`, {
-          headers: {
-            'Accept': 'application/vnd.api+json',
-            'Content-Type': 'application/vnd.api+json'
-          }
-        });
-        if (!response.ok) throw new Error("API request failed");
-        const json = await response.json();
-        const animeRecord = json.data && json.data[0] ? json.data[0].attributes : null;
-
-        if (animeRecord) {
-          return {
-            id: backendItem.id,
-            title: animeRecord.canonicalTitle || animeRecord.titles?.en || "Unknown Title",
-            title_jp: animeRecord.titles?.en_jp || animeRecord.abbreviatedTitles?.[0] || "アニメリスト",
-            cover: animeRecord.posterImage?.small || animeRecord.posterImage?.tiny || "",
-            banner: animeRecord.coverImage?.large || animeRecord.posterImage?.large || "",
-            episodes_watched: backendItem.episodes_watched,
-            total_episodes: animeRecord.episodeCount || backendItem.total_episodes,
-            airing_status: backendItem.airing_status,
-            status_type: backendItem.status_type,
-            last_watched: backendItem.last_watched,
-            score: backendItem.score
-          };
-        }
-      } catch (e) {
-        console.error("Failed fetching from API for slug:", backendItem.slug, e);
+    // 2. Authentication & Session Verification
+    function getAuthToken() {
+      const tokenLocal = localStorage.getItem('access_token') || localStorage.getItem('token');
+      if (tokenLocal) return tokenLocal;
+      
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        const [name, val] = cookie.trim().split('=');
+        if (name === 'access_token') return decodeURIComponent(val);
       }
       return null;
     }
 
-    // Main initialization flow on window load
+    function checkAuthAndRedirect() {
+      const token = getAuthToken();
+      if (!token) {
+        showToast("Session not found. Redirecting to login...", "error");
+        setTimeout(() => {
+          window.location.href = './anilog-login-register.html';
+        }, 1000);
+        return false;
+      }
+      return token;
+    }
+
+    // 3. Load Live User Profile & Watchlist from Backend
+    async function fetchUserData(token) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
+          headers: {
+            'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`
+          }
+        });
+        if (!res.ok) throw new Error("Failed to authenticate user session");
+        const user = await res.json();
+        
+        // Populate UI
+        document.getElementById('sidebar-user-name').innerText = user.username;
+        document.getElementById('sidebar-user-level').innerText = `Level ${user.level || 1}`;
+        document.getElementById('header-streak-count').innerText = user.streak_count || 1;
+        
+        const avatarUrl = user.avatar_seed ? `https://api.dicebear.com/7.x/bottts/svg?seed=${user.avatar_seed}` : "https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX";
+        document.getElementById('sidebar-user-avatar').src = avatarUrl;
+        document.getElementById('header-user-avatar').src = avatarUrl;
+
+        const xp = user.xp_points || 0;
+        const maxXp = (user.level || 1) * 1000;
+        const pct = Math.min(100, Math.round((xp / maxXp) * 100));
+        document.getElementById('sidebar-xp-fill').style.width = `${pct}%`;
+        document.getElementById('sidebar-xp-text').innerText = `XP ${xp} / ${maxXp}`;
+
+      } catch (err) {
+        console.error("User profile fetch error:", err);
+        showToast("Server error or expired session. Please log in again.", "error");
+        setTimeout(() => window.location.href = './anilog-login-register.html', 1500);
+      }
+    }
+
+    async function fetchBackendCurrentlyWatchingList(token) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/user/watchlist`, {
+          headers: {
+            'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`
+          }
+        });
+        if (!res.ok) throw new Error("Failed to fetch watchlist from backend");
+        const data = await res.json();
+        const items = data.watchlist || [];
+        // Filter for currently watching items or return all
+        return items.map(item => ({
+          id: item.anime_id || item.id,
+          slug: item.title,
+          title: item.title,
+          cover: item.poster_image || "./logo.png",
+          banner: item.poster_image || "./logo.png",
+          episodes_watched: item.episodes_watched || 0,
+          total_episodes: item.episodes || 12,
+          airing_status: item.status || "Airing",
+          status_type: (item.status || "").toLowerCase().includes("behind") ? "behind" : "airing",
+          last_watched: "Recently",
+          score: item.score ? item.score.toString() : "9.0"
+        }));
+      } catch (err) {
+        console.error("Watchlist fetch error:", err);
+        showToast("Network error connecting to backend server.", "error");
+        return [];
+      }
+    }
+
+    // Window Load Initialization
     window.addEventListener('load', async () => {
+      const token = checkAuthAndRedirect();
+      if (!token) return;
+
       if (document.fonts) {
         await document.fonts.ready;
       }
 
-      const backendList = (await fetchBackendCurrentlyWatchingList()).filter(item => window.anilogContentFilter?.allows(item) !== false);
+      await fetchUserData(token);
+      const backendList = await fetchBackendCurrentlyWatchingList(token);
 
       const preloader = document.getElementById('preloader');
       preloader.style.opacity = '0';
@@ -1602,33 +1690,9 @@
         return;
       }
 
-      const fullyHydratedData = [];
-      for (const item of backendList) {
-        const hydrated = await fetchAnimeDetailsFromApi(item);
-        if (hydrated) {
-          fullyHydratedData.push(hydrated);
-        }
-      }
-
-      if (fullyHydratedData.length === 0) {
-        hideAllListsAndShowEmpty();
-        return;
-      }
-
-      window.anilogWatchedAnime?.merge(fullyHydratedData.map(item => ({
-        id: item.id,
-        title: item.title,
-        image: item.cover,
-        episodes: item.total_episodes,
-        episodesWatched: item.episodes_watched,
-        rating: item.score,
-        status: item.airing_status,
-        newEpisodes: Math.max(0, item.total_episodes - item.episodes_watched),
-        subAvailable: true,
-        dubAvailable: true
-      })));
-      renderCurrentlyWatching(fullyHydratedData);
-      updateStats(fullyHydratedData);
+      renderCurrentlyWatching(backendList);
+      updateStats(backendList);
+      showToast("Currently watching list synced successfully!", "success");
     });
 
     function hideAllListsAndShowEmpty() {
@@ -1643,7 +1707,7 @@
       const activeCount = items.length;
       const totalWatched = items.reduce((acc, curr) => acc + curr.episodes_watched, 0);
       const behindCount = items.filter(i => i.status_type === 'behind').length;
-      const avgCompletion = Math.round(items.reduce((acc, curr) => acc + (curr.episodes_watched / curr.total_episodes), 0) / activeCount * 100);
+      const avgCompletion = activeCount > 0 ? Math.round(items.reduce((acc, curr) => acc + (curr.episodes_watched / (curr.total_episodes || 1)), 0) / activeCount * 100) : 0;
 
       document.getElementById('stat-active').innerText = `Active Shows: ${activeCount}`;
       document.getElementById('stat-episodes').innerText = `Episodes Watched: ${totalWatched}`;
@@ -1652,6 +1716,18 @@
     }
 
     let globalWatchingData = [];
+
+    function openAnimeReview(item) {
+      const reviewData = {
+        id: item.id,
+        title: item.title,
+        image: item.cover,
+        episodes: item.total_episodes,
+        status: item.airing_status,
+        rating: item.score
+      };
+      window.location.href = `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(JSON.stringify(reviewData))}`;
+    }
 
     function renderCurrentlyWatching(items) {
       globalWatchingData = items;
@@ -1663,14 +1739,14 @@
       gridContainer.innerHTML = items.map(item => {
         const pct = Math.round((item.episodes_watched / item.total_episodes) * 100) || 0;
         return `
-          <div class="anime-card">
+          <div class="anime-card" onclick="openAnimeReview(${JSON.stringify(item).replace(/"/g, '&quot;')})">
             <div class="card-banner">
               <img src="${item.banner || item.cover}" alt="${item.title}">
               <span class="badge-status ${item.status_type}">${item.airing_status}</span>
             </div>
             <div class="card-body">
               <div class="card-title">${item.title}</div>
-              <div class="card-sub">${item.title_jp}</div>
+              <div class="card-sub">Active Progress</div>
               
               <div class="progress-section">
                 <div class="progress-info">
@@ -1682,15 +1758,15 @@
                 </div>
               </div>
 
-              <div class="quick-controls">
-                <button class="ep-counter-btn" onclick="incrementEp(${item.id})">
+              <div class="quick-controls" onclick="event.stopPropagation()">
+                <button class="ep-counter-btn" onclick="incrementEp('${item.id}')">
                   <span class="material-symbols-outlined" style="font-size:16px;">add</span>
                   +1 Ep
                 </button>
-                <button class="card-action-btn" title="Log Reaction">
+                <button class="card-action-btn" title="Log Reaction" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';">
                   <span class="material-symbols-outlined" style="font-size:16px;">edit_note</span>
                 </button>
-                <button class="card-action-btn" title="More Options">
+                <button class="card-action-btn" title="More Options" onclick="openAnimeReview(${JSON.stringify(item).replace(/"/g, '&quot;')})">
                   <span class="material-symbols-outlined" style="font-size:16px;">more_vert</span>
                 </button>
               </div>
@@ -1701,20 +1777,20 @@
 
       // Render Table
       tableBody.innerHTML = items.map(item => `
-        <tr>
+        <tr onclick="openAnimeReview(${JSON.stringify(item).replace(/"/g, '&quot;')})">
           <td>
             <div class="title-cell">
               <img src="${item.cover}" alt="${item.title}">
               <div>
                 <div class="title-main">${item.title}</div>
-                <div class="title-sub">${item.title_jp}</div>
+                <div class="title-sub">Active Watch</div>
               </div>
             </div>
           </td>
-          <td>
+          <td onclick="event.stopPropagation()">
             <div class="ep-tracker">
               <span>${item.episodes_watched} / ${item.total_episodes}</span>
-              <button class="ep-tracker-btn" onclick="incrementEp(${item.id})">+</button>
+              <button class="ep-tracker-btn" onclick="incrementEp('${item.id}')">+</button>
             </div>
           </td>
           <td>${item.last_watched}</td>
@@ -1728,7 +1804,7 @@
       mobileList.innerHTML = items.map(item => {
         const pct = Math.round((item.episodes_watched / item.total_episodes) * 100) || 0;
         return `
-          <div class="mobile-anime-card">
+          <div class="mobile-anime-card" onclick="openAnimeReview(${JSON.stringify(item).replace(/"/g, '&quot;')})">
             <img src="${item.cover}" alt="${item.title}">
             <div class="mobile-card-details">
               <div>
@@ -1744,8 +1820,8 @@
                   <div class="progress-bar-fill" style="width: ${pct}%;"></div>
                 </div>
               </div>
-              <div style="display:flex; justify-content:flex-end;">
-                <button class="ep-counter-btn" style="height:26px; font-size:10px;" onclick="incrementEp(${item.id})">+1 Episode</button>
+              <div style="display:flex; justify-content:flex-end;" onclick="event.stopPropagation()">
+                <button class="ep-counter-btn" style="height:26px; font-size:10px;" onclick="incrementEp('${item.id}')">+1 Episode</button>
               </div>
             </div>
           </div>
@@ -1754,11 +1830,12 @@
     }
 
     function incrementEp(id) {
-      const item = globalWatchingData.find(a => a.id === id);
+      const item = globalWatchingData.find(a => String(a.id) === String(id));
       if (item && item.episodes_watched < item.total_episodes) {
         item.episodes_watched++;
         renderCurrentlyWatching(globalWatchingData);
         updateStats(globalWatchingData);
+        showToast(`Progress updated for ${item.title}!`, "success");
       }
     }
 
@@ -1782,22 +1859,17 @@
       tableView.style.display = 'block';
     });
 
-    // GLOBAL SEARCH FUNCTIONALITY (Kitsu API)
+    // 4. JavaScript Search Controller Logic (Backend Proxy with AbortController, 400ms debounce, Bearer token)
     let searchTimeout = null;
     let currentAbortController = null;
 
     function openAnimeReviewFromSearch(anime) {
-      const attr = anime.attributes || {};
       const reviewData = {
         id: anime.id,
-        title: attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled',
-        image: attr.posterImage?.large || attr.posterImage?.medium || attr.posterImage?.original || '',
-        episodes: attr.episodeCount || '',
-        status: attr.status || '',
-        type: attr.showType || '',
-        rating: attr.averageRating || '',
-        synopsis: attr.synopsis || '',
-        startDate: attr.startDate || ''
+        title: anime.title,
+        image: anime.image,
+        episodes: anime.episodes,
+        rating: anime.score
       };
       window.location.href = `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(JSON.stringify(reviewData))}`;
     }
@@ -1805,7 +1877,7 @@
     function handleSearch(query, resultsContainer) {
       const cleanQuery = query.trim();
 
-      if (cleanQuery.length < 3) {
+      if (cleanQuery.length < 1) {
         resultsContainer.classList.remove('active');
         resultsContainer.innerHTML = '';
         if (currentAbortController) currentAbortController.abort();
@@ -1822,18 +1894,20 @@
         resultsContainer.classList.add('active');
 
         try {
-          const targetUrl = `https://kitsu.io/api/edge/anime?filter[text]=${encodeURIComponent(cleanQuery)}&page[limit]=6`;
+          const token = getAuthToken();
+          const targetUrl = `${API_BASE_URL}/api/anime/kitsu-search?q=${encodeURIComponent(cleanQuery)}`;
           const response = await fetch(targetUrl, {
             signal: currentAbortController.signal,
             headers: {
-              'Accept': 'application/vnd.api+json',
-              'Content-Type': 'application/vnd.api+json'
+              'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`,
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
             }
           });
 
           if (!response.ok) throw new Error(`HTTP_${response.status}`);
           const data = await response.json();
-          const results = data.data || [];
+          const results = data.results || [];
           resultsContainer._animeResults = results;
 
           resultsContainer.innerHTML = '';
@@ -1842,11 +1916,10 @@
             resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">No anime found</div>`;
           } else {
             results.forEach(anime => {
-              const attr = anime.attributes || {};
-              const title = attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled';
-              const img = attr.posterImage?.tiny || attr.posterImage?.small || '';
-              const rating = attr.averageRating ? `★ ${(parseFloat(attr.averageRating) / 10).toFixed(1)}` : 'N/A';
-              const type = attr.showType ? attr.showType.toUpperCase() : 'ANIME';
+              const title = anime.title || 'Untitled';
+              const img = anime.image || './logo.png';
+              const rating = anime.score ? `★ ${anime.score.toFixed(1)}` : 'N/A';
+              const type = anime.episodes ? `${anime.episodes} Eps` : 'ANIME';
 
               const itemHTML = `
                 <div class="search-result-item" data-result-index="${results.indexOf(anime)}" role="button" tabindex="0" style="display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid #1a1c29; cursor:pointer;">
@@ -1863,7 +1936,8 @@
         } catch (err) {
           if (err.name === 'AbortError') return;
           console.error('Search fetch error:', err);
-          resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--danger); text-align: center;">Search failed. Try typing again.</div>`;
+          showToast("Network error during search", "error");
+          resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--danger); text-align: center;">Search failed. Try again.</div>`;
         }
       }, 400);
     }
@@ -1899,6 +1973,29 @@
         mobileResults.classList.remove('active');
       }
     });
+
+    // Theme Toggle & Logout Handlers
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('light-theme');
+        const isLight = document.body.classList.contains('light-theme');
+        showToast(isLight ? "Switched to Light Mode" : "Switched to Dark Mode", "success");
+      });
+    }
+
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('token');
+        document.cookie = "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        showToast("Logged out successfully", "success");
+        setTimeout(() => {
+          window.location.href = './anilog-login-register.html';
+        }, 1000);
+      });
+    }
   </script>
 </body>
 
