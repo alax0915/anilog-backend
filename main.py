@@ -11,7 +11,17 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, EmailStr
-from sqlalchemy import String, DateTime, Integer, JSON, func, Boolean, Text, ForeignKey
+from sqlalchemy import (
+    String,
+    DateTime,
+    Integer,
+    JSON,
+    func,
+    Boolean,
+    Text,
+    ForeignKey,
+    delete as sql_delete,
+)
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -86,6 +96,7 @@ DEFAULT_AVATARS = [
     "https://api.dicebear.com/7.x/bottts/svg?seed=Phoenix",
     "https://api.dicebear.com/7.x/bottts/svg?seed=Cyber",
     "https://api.dicebear.com/7.x/bottts/svg?seed=Pixel",
+    "https://api.dicebear.com/10.x/lorelei/svg?seed=Felix",
     "https://api.dicebear.com/7.x/bottts/svg?seed=Ghost",
 ]
 
@@ -285,6 +296,10 @@ class WatchlistAddRequest(BaseModel):
     notes: Optional[str] = None
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
+
+
+class WatchlistDeleteRequest(BaseModel):
+    watchlist_ids: List[str]
 
 
 class FavoriteToggleRequest(BaseModel):
@@ -666,6 +681,60 @@ async def get_user_watchlist(
         )
 
     return {"watchlist": watchlist_items}
+
+
+@app.delete("/api/user/watchlist/delete")
+async def delete_from_watchlist(
+    payload: WatchlistDeleteRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    if not payload.watchlist_ids:
+        raise HTTPException(
+            status_code=400, detail="No anime item IDs provided for deletion"
+        )
+
+    # 1. Retrieve the watchlist items belonging to current user that are slated for deletion
+    result = await db.execute(
+        select(UserAnimeList).where(
+            UserAnimeList.user_id == current_user.id,
+            UserAnimeList.id.in_(payload.watchlist_ids),
+        )
+    )
+    items_to_delete = result.scalars().all()
+
+    if not items_to_delete:
+        raise HTTPException(
+            status_code=404, detail="No matching watchlist entries found to delete"
+        )
+
+    # 2. Check how many of the selected items were marked as favorite
+    favorite_count_to_deduct = sum(1 for item in items_to_delete if item.is_favorite)
+
+    # 3. Deduct from user's favorites_count column accordingly
+    if favorite_count_to_deduct > 0:
+        current_favs = int(current_user.favorites_count or 0)
+        current_user.favorites_count = max(0, current_favs - favorite_count_to_deduct)
+        current_user.updated_at = datetime.now(timezone.utc)
+
+    # 4. Perform deletion
+    deleted_ids = [item.id for item in items_to_delete]
+    await db.execute(
+        sql_delete(UserAnimeList).where(
+            UserAnimeList.user_id == current_user.id,
+            UserAnimeList.id.in_(deleted_ids),
+        )
+    )
+
+    await db.commit()
+    await db.refresh(current_user)
+
+    return {
+        "message": f"Successfully deleted {len(deleted_ids)} anime from watchlist.",
+        "deleted_count": len(deleted_ids),
+        "favorites_deducted": favorite_count_to_deduct,
+        "favorites_count": current_user.favorites_count,
+    }
 
 
 @app.post("/api/user/toggle-favorite")

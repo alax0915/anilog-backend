@@ -732,7 +732,7 @@
       font-weight: bold;
     }
 
-    /* ---------------- FILTER TOOLBAR ---------------- */
+    /* ---------------- FILTER & ACTION TOOLBAR ---------------- */
     .toolbar {
       position: relative;
       z-index: 4;
@@ -770,6 +770,43 @@
       background: linear-gradient(180deg, #7117bd, #42106e);
     }
 
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .delete-action-btn {
+      height: 38px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(255, 45, 99, 0.5);
+      border-radius: 6px;
+      background: rgba(255, 45, 99, 0.12);
+      color: var(--danger);
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .delete-action-btn.active {
+      opacity: 1;
+      pointer-events: auto;
+      background: rgba(255, 45, 99, 0.25);
+      box-shadow: 0 0 10px rgba(255, 45, 99, 0.3);
+    }
+
+    .delete-action-btn.active:hover {
+      background: var(--danger);
+      color: #ffffff;
+    }
+
     .add-button {
       height: 38px;
       padding: 0 16px;
@@ -785,7 +822,7 @@
       cursor: pointer;
     }
 
-    /* ---------------- TABLE ---------------- */
+    /* ---------------- TABLE & UX LAYOUT ---------------- */
     .table-wrap {
       position: relative;
       z-index: 3;
@@ -798,7 +835,7 @@
 
     .watch-table {
       width: 100%;
-      min-width: 650px;
+      min-width: 750px;
       border-collapse: collapse;
       table-layout: auto;
     }
@@ -814,9 +851,38 @@
       font-weight: 700;
     }
 
-    .watch-table th:first-child {
+    .watch-table th.col-checkbox,
+    .watch-table td.col-checkbox {
+      width: 44px;
+      text-align: center;
+      padding: 0 8px;
+    }
+
+    .watch-table th.col-img,
+    .watch-table td.col-img {
+      width: 55px;
+      text-align: center;
+      padding: 8px;
+    }
+
+    .watch-table th.col-title {
       text-align: left;
-      padding-left: 16px;
+    }
+
+    .anime-poster-img {
+      width: 40px;
+      height: 52px;
+      border-radius: 4px;
+      object-fit: cover;
+      margin: 0 auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+
+    .custom-checkbox {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--purple2);
+      cursor: pointer;
     }
 
     .watch-table td {
@@ -833,32 +899,26 @@
       background: rgba(157, 44, 255, 0.05);
     }
 
-    .watch-table td:first-child {
-      text-align: left;
+    .watch-table tr.selected td {
+      background: rgba(157, 44, 255, 0.12);
     }
 
     .title-cell {
       display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .title-cell img {
-      width: 40px;
-      height: 50px;
-      flex: 0 0 40px;
-      border-radius: 4px;
+      flex-direction: column;
+      text-align: left;
+      gap: 2px;
     }
 
     .title-main {
       font-weight: 700;
       font-size: 12px;
+      color: var(--text);
     }
 
     .title-sub {
-      margin-top: 3px;
       color: var(--muted);
-      font-size: 9px;
+      font-size: 9.5px;
     }
 
     .priority {
@@ -934,7 +994,7 @@
     }
 
     .modal-card {
-      width: min(520px, 100%);
+      width: min(580px, 100%);
       max-height: 90vh;
       overflow-y: auto;
       background: var(--panel);
@@ -966,6 +1026,7 @@
       justify-content: space-between;
       border-bottom: 1px solid var(--border);
       padding-bottom: 12px;
+      flex-shrink: 0;
     }
 
     .modal-title {
@@ -989,6 +1050,7 @@
       flex-direction: column;
       gap: 6px;
       position: relative;
+      flex-shrink: 0;
     }
 
     .form-label {
@@ -1038,24 +1100,91 @@
       display: flex;
     }
 
+    /* FADE-IN ANIMATED SELECTED ANIME PREVIEW CONTAINER */
+    #selected-anime-container {
+      display: none;
+      opacity: 0;
+      transform: translateY(-8px) scale(0.98);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      flex-shrink: 0;
+    }
+
+    #selected-anime-container.visible {
+      display: block;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
     .selected-anime-preview {
       display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px;
+      gap: 14px;
+      padding: 12px;
       background: var(--panel2);
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 8px;
+      align-items: flex-start;
     }
 
     .selected-anime-preview img {
-      width: 45px;
-      height: 60px;
-      border-radius: 4px;
+      width: 80px;
+      height: 115px;
+      border-radius: 6px;
+      object-fit: cover;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    }
+
+    .preview-info-col {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .preview-anime-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    /* MEDIUM FONT METADATA GRID */
+    .preview-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 6px 10px;
+      margin-top: 2px;
+      padding-top: 6px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .meta-tag-item {
+      font-size: 11.5px;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .meta-tag-item span.meta-label {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .preview-synopsis {
+      font-size: 11px;
+      color: var(--dim);
+      margin-top: 4px;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     .modal-submit-btn {
       height: 42px;
+      width: 100%;
+      flex-shrink: 0;
       background: linear-gradient(90deg, #711ac0, #5c18a2);
       border: 1px solid #a52cff;
       border-radius: 6px;
@@ -1063,11 +1192,16 @@
       font-weight: 700;
       font-size: 13px;
       cursor: pointer;
-      transition: opacity 0.2s;
+      transition: opacity 0.2s, transform 0.1s;
+      margin-top: 4px;
     }
 
     .modal-submit-btn:hover {
-      opacity: 0.9;
+      opacity: 0.92;
+    }
+
+    .modal-submit-btn:active {
+      transform: scale(0.99);
     }
 
     /* ---------------- MOBILE NAVIGATION ---------------- */
@@ -1154,20 +1288,31 @@
         <div class="modal-search-results" id="modal-search-results"></div>
       </div>
 
-      <!-- Selected Anime Preview Container -->
-      <div id="selected-anime-container" style="display: none;">
-        <label class="form-label" style="margin-bottom: 6px;">Selected Anime</label>
+      <!-- Selected Anime Rich Preview Container with Opacity Fade-In -->
+      <div id="selected-anime-container">
+        <label class="form-label" style="margin-bottom: 6px;">Selected Anime Details</label>
         <div class="selected-anime-preview">
           <img id="preview-img" src="" alt="Cover">
-          <div>
-            <div id="preview-title" style="font-weight: 700; font-size: 13px; color: var(--text);"></div>
-            <div id="preview-meta" style="font-size: 10px; color: var(--muted); margin-top: 3px;"></div>
+          <div class="preview-info-col">
+            <div id="preview-title" class="preview-anime-title">--</div>
+            
+            <div class="preview-meta-grid">
+              <div class="meta-tag-item"><span class="meta-label">Type:</span> <span id="preview-type">--</span></div>
+              <div class="meta-tag-item"><span class="meta-label">Subtype:</span> <span id="preview-subtype">--</span></div>
+              <div class="meta-tag-item"><span class="meta-label">Episodes:</span> <span id="preview-episodes">--</span></div>
+              <div class="meta-tag-item"><span class="meta-label">Rating:</span> <span id="preview-score">--</span></div>
+              <div class="meta-tag-item"><span class="meta-label">Age Rating:</span> <span id="preview-age">--</span></div>
+              <div class="meta-tag-item"><span class="meta-label">Start Date:</span> <span id="preview-start-date">--</span></div>
+              <div class="meta-tag-item"><span class="meta-label">User Count:</span> <span id="preview-user-count">--</span></div>
+            </div>
+
+            <div class="preview-synopsis" id="preview-synopsis"></div>
           </div>
         </div>
       </div>
 
       <!-- Step 2: Database Table Fields -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex-shrink: 0;">
         <div class="form-group">
           <label class="form-label">Status</label>
           <select id="form-status" class="form-select">
@@ -1188,7 +1333,7 @@
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex-shrink: 0;">
         <div class="form-group">
           <label class="form-label">Episodes Watched</label>
           <input type="number" id="form-episodes-watched" class="form-input" value="0" min="0">
@@ -1199,7 +1344,7 @@
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex-shrink: 0;">
         <div class="form-group">
           <label class="form-label">Started At</label>
           <input type="datetime-local" id="form-started-at" class="form-input">
@@ -1221,7 +1366,7 @@
           rows="2"></textarea>
       </div>
 
-      <!-- Step 3: Submit Button -->
+      <!-- Step 3: Fixed Submit Button -->
       <button class="modal-submit-btn" id="submit-watchlist-btn">Save to Watchlist</button>
     </div>
   </div>
@@ -1369,43 +1514,59 @@
           <div class="stat-box">Planned: <span id="stat-planned">0</span></div>
         </div>
 
+        <!-- TOOLBAR WITH RED DELETE ICON & ADD BUTTON -->
         <div class="toolbar">
-          <div class="filters">
-            <button class="filter active">All</button>
-            <button class="filter">High Priority</button>
-            <button class="filter">Medium Priority</button>
-            <button class="filter">Low Priority</button>
-            <button class="filter">Plan to Watch</button>
+          <div class="filters" id="watchlist-filters">
+            <button class="filter active" data-filter="all">All</button>
+            <button class="filter" data-filter="high">High Priority</button>
+            <button class="filter" data-filter="medium">Medium Priority</button>
+            <button class="filter" data-filter="low">Low Priority</button>
+            <button class="filter" data-filter="watching">Watching</button>
+            <button class="filter" data-filter="plan to watch">Plan to Watch</button>
+            <button class="filter" data-filter="completed">Completed</button>
+            <button class="filter" data-filter="on-hold">On-Hold</button>
+            <button class="filter" data-filter="dropped">Dropped</button>
           </div>
 
-          <button class="add-button" id="open-add-modal-btn">
-            <span class="material-symbols-outlined" style="font-size: 16px;">add</span>
-            Add Anime
-          </button>
+          <div class="toolbar-actions">
+            <!-- Red Delete Icon Button -->
+            <button class="delete-action-btn" id="delete-selected-btn" title="Delete selected anime from watchlist">
+              <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+              <span id="delete-btn-label">Delete</span>
+            </button>
+
+            <button class="add-button" id="open-add-modal-btn">
+              <span class="material-symbols-outlined" style="font-size: 16px;">add</span>
+              Add Anime
+            </button>
+          </div>
         </div>
 
+        <!-- WATCHLIST TABLE -->
         <div class="table-wrap">
           <table class="watch-table">
             <thead>
               <tr>
-                <th>TITLE</th>
+                <th class="col-checkbox">
+                  <input type="checkbox" id="select-all-checkbox" class="custom-checkbox" title="Select all items">
+                </th>
+                <th class="col-img">IMG</th>
+                <th class="col-title">TITLE</th>
                 <th>EPISODES</th>
                 <th>WATCHED</th>
                 <th>PRIORITY</th>
                 <th>STATUS</th>
                 <th>NOTES</th>
-                <th></th>
               </tr>
             </thead>
             <tbody id="watchlist-body">
               <tr>
+                <td class="col-checkbox"><div class="skeleton-bone" style="width: 16px; height: 16px; margin: 0 auto;"></div></td>
+                <td class="col-img"><div class="skeleton-bone skeleton-title-img" style="margin: 0 auto;"></div></td>
                 <td>
                   <div class="title-cell">
-                    <div class="skeleton-bone skeleton-title-img"></div>
-                    <div>
-                      <div class="skeleton-bone skeleton-text-line"></div>
-                      <div class="skeleton-bone skeleton-text-sub"></div>
-                    </div>
+                    <div class="skeleton-bone skeleton-text-line"></div>
+                    <div class="skeleton-bone skeleton-text-sub"></div>
                   </div>
                 </td>
                 <td><div class="skeleton-bone" style="width: 24px; height: 12px; margin: 0 auto;"></div></td>
@@ -1413,7 +1574,6 @@
                 <td><div class="skeleton-bone skeleton-badge"></div></td>
                 <td><div class="skeleton-bone skeleton-pill"></div></td>
                 <td><div class="skeleton-bone" style="width: 100px; height: 12px;"></div></td>
-                <td><div class="skeleton-bone" style="width: 16px; height: 16px; border-radius: 50%; margin: 0 auto;"></div></td>
               </tr>
             </tbody>
           </table>
@@ -1505,6 +1665,9 @@
 
     /* ---------------- INITIALIZATION & BACKEND INTEGRATION ---------------- */
     let selectedAnimeData = null;
+    let allWatchlistData = [];
+    let selectedWatchlistIds = new Set();
+    let currentActiveFilter = 'all';
 
     window.addEventListener('load', async () => {
       const token = checkAuthAndRedirect();
@@ -1520,6 +1683,8 @@
       await fetchUserData(token);
       await fetchUserWatchlist(token);
       setupModalListeners(token);
+      setupFilterListeners();
+      setupSelectionListeners(token);
     });
 
     async function fetchUserData(token) {
@@ -1564,30 +1729,78 @@
 
         if (!response.ok) throw new Error('Failed to fetch watchlist from server');
         const data = await response.json();
-        renderWatchlistTable(data.watchlist || []);
+        allWatchlistData = data.watchlist || [];
+        updateWatchlistStats(allWatchlistData);
+        applyCurrentFilter();
       } catch (err) {
         console.error('Failed to load watchlist:', err);
         showToast('Failed to load watchlist data from server.', 'error', 5000);
+        allWatchlistData = [];
+        updateWatchlistStats([]);
         renderWatchlistTable([]);
       }
+    }
+
+    function updateWatchlistStats(watchlistItems) {
+      let total = watchlistItems.length;
+      let watching = watchlistItems.filter(item => item.status && item.status.toLowerCase() === 'watching').length;
+      let completed = watchlistItems.filter(item => item.status && item.status.toLowerCase() === 'completed').length;
+      let planned = watchlistItems.filter(item => item.status && (item.status.toLowerCase().replace(/_/g, ' ') === 'plan to watch' || item.status.toLowerCase() === 'planned')).length;
+
+      if (document.getElementById('stat-total')) document.getElementById('stat-total').textContent = total;
+      if (document.getElementById('stat-watching')) document.getElementById('stat-watching').textContent = watching;
+      if (document.getElementById('stat-completed')) document.getElementById('stat-completed').textContent = completed;
+      if (document.getElementById('stat-planned')) document.getElementById('stat-planned').textContent = planned;
+    }
+
+    function setupFilterListeners() {
+      const filterContainer = document.getElementById('watchlist-filters');
+      if (!filterContainer) return;
+
+      const buttons = filterContainer.querySelectorAll('.filter');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          buttons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          currentActiveFilter = (btn.getAttribute('data-filter') || 'all').toLowerCase();
+          applyCurrentFilter();
+        });
+      });
+    }
+
+    function applyCurrentFilter() {
+      if (currentActiveFilter === 'all') {
+        renderWatchlistTable(allWatchlistData);
+        return;
+      }
+
+      const filtered = allWatchlistData.filter(item => {
+        const itemPriority = (item.priority || '').toLowerCase();
+        const itemStatus = (item.status || '').toLowerCase().replace(/_/g, ' ');
+
+        if (['high', 'medium', 'low'].includes(currentActiveFilter)) {
+          return itemPriority === currentActiveFilter;
+        }
+
+        return itemStatus === currentActiveFilter;
+      });
+
+      renderWatchlistTable(filtered);
     }
 
     function renderWatchlistTable(watchlistItems) {
       const body = document.getElementById('watchlist-body');
       if (!body) return;
 
-      let total = watchlistItems.length;
-      let watching = watchlistItems.filter(item => item.status && item.status.toLowerCase() === 'watching').length;
-      let completed = watchlistItems.filter(item => item.status && item.status.toLowerCase() === 'completed').length;
-      let planned = watchlistItems.filter(item => item.status && (item.status.toLowerCase() === 'plan_to_watch' || item.status.toLowerCase() === 'plan to watch' || item.status.toLowerCase() === 'planned')).length;
+      selectedWatchlistIds.clear();
+      updateDeleteButtonState();
 
-      if (document.getElementById('stat-total')) document.getElementById('stat-total').textContent = total;
-      if (document.getElementById('stat-watching')) document.getElementById('stat-watching').textContent = watching;
-      if (document.getElementById('stat-completed')) document.getElementById('stat-completed').textContent = completed;
-      if (document.getElementById('stat-planned')) document.getElementById('stat-planned').textContent = planned;
+      const selectAllCb = document.getElementById('select-all-checkbox');
+      if (selectAllCb) selectAllCb.checked = false;
 
       if (watchlistItems.length === 0) {
-        body.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 20px; color: var(--muted);">No watchlist items available. Add some anime to get started!</td></tr>`;
+        body.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 20px; color: var(--muted);">No anime found matching this category.</td></tr>`;
         return;
       }
 
@@ -1600,14 +1813,17 @@
         const status = item.status || 'Watching';
 
         return `
-          <tr>
-            <td>
+          <tr id="row-${item.id}">
+            <td class="col-checkbox">
+              <input type="checkbox" class="custom-checkbox row-checkbox" data-id="${item.id}">
+            </td>
+            <td class="col-img">
+              <img src="${cover}" class="anime-poster-img" alt="${title}">
+            </td>
+            <td class="col-title">
               <div class="title-cell">
-                <img src="${cover}" alt="${title}">
-                <div>
-                  <div class="title-main">${title} ${item.is_favorite ? '<span style="color: var(--purple2);">★</span>' : ''}</div>
-                  <div class="title-sub">Score: ${item.score !== null && item.score !== undefined ? item.score : 'N/A'}</div>
-                </div>
+                <div class="title-main">${title} ${item.is_favorite ? '<span style="color: var(--purple2);">★</span>' : ''}</div>
+                <div class="title-sub">Score: ${item.score !== null && item.score !== undefined ? item.score : 'N/A'}</div>
               </div>
             </td>
             <td>${episodes}</td>
@@ -1620,10 +1836,123 @@
               </span>
             </td>
             <td class="notes">${item.notes ? item.notes : 'No notes'}</td>
-            <td><span class="material-symbols-outlined" style="color:var(--muted);">chevron_right</span></td>
           </tr>
         `;
       }).join('');
+
+      bindRowCheckboxEvents();
+    }
+
+    /* ---------------- SELECTION & DELETION UX LOGIC ---------------- */
+    function bindRowCheckboxEvents() {
+      const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+      rowCheckboxes.forEach(cb => {
+        cb.addEventListener('change', (e) => {
+          const itemId = e.target.getAttribute('data-id');
+          const row = document.getElementById(`row-${itemId}`);
+
+          if (e.target.checked) {
+            selectedWatchlistIds.add(itemId);
+            if (row) row.classList.add('selected');
+          } else {
+            selectedWatchlistIds.delete(itemId);
+            if (row) row.classList.remove('selected');
+          }
+
+          const selectAllCb = document.getElementById('select-all-checkbox');
+          if (selectAllCb) {
+            selectAllCb.checked = (rowCheckboxes.length > 0 && selectedWatchlistIds.size === rowCheckboxes.length);
+          }
+
+          updateDeleteButtonState();
+        });
+      });
+    }
+
+    function setupSelectionListeners(token) {
+      const selectAllCb = document.getElementById('select-all-checkbox');
+      if (selectAllCb) {
+        selectAllCb.addEventListener('change', (e) => {
+          const isChecked = e.target.checked;
+          const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+
+          selectedWatchlistIds.clear();
+
+          rowCheckboxes.forEach(cb => {
+            cb.checked = isChecked;
+            const itemId = cb.getAttribute('data-id');
+            const row = document.getElementById(`row-${itemId}`);
+
+            if (isChecked) {
+              selectedWatchlistIds.add(itemId);
+              if (row) row.classList.add('selected');
+            } else {
+              if (row) row.classList.remove('selected');
+            }
+          });
+
+          updateDeleteButtonState();
+        });
+      }
+
+      const deleteBtn = document.getElementById('delete-selected-btn');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', async () => {
+          if (selectedWatchlistIds.size === 0) return;
+
+          const count = selectedWatchlistIds.size;
+          const confirmDelete = confirm(`Are you sure you want to delete ${count} selected anime from your watchlist?`);
+
+          if (!confirmDelete) return;
+
+          try {
+            deleteBtn.classList.remove('active');
+            deleteBtn.style.pointerEvents = 'none';
+
+            const response = await fetch('http://127.0.0.1:8000/api/user/watchlist/delete', {
+              method: 'DELETE',
+              headers: {
+                'Authorization': `Bearer ${token.replace('Bearer ', '')}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                watchlist_ids: Array.from(selectedWatchlistIds)
+              })
+            });
+
+            if (!response.ok) {
+              const errData = await response.json();
+              throw new Error(errData.detail || 'Failed to delete anime entries');
+            }
+
+            const resData = await response.json();
+            showToast(resData.message || 'Selected anime removed from database.', 'success');
+
+            selectedWatchlistIds.clear();
+            await fetchUserWatchlist(token);
+            await fetchUserData(token);
+
+          } catch (err) {
+            showToast(err.message, 'error');
+            updateDeleteButtonState();
+          }
+        });
+      }
+    }
+
+    function updateDeleteButtonState() {
+      const deleteBtn = document.getElementById('delete-selected-btn');
+      const deleteLabel = document.getElementById('delete-btn-label');
+      if (!deleteBtn) return;
+
+      const count = selectedWatchlistIds.size;
+      if (count > 0) {
+        deleteBtn.classList.add('active');
+        if (deleteLabel) deleteLabel.textContent = `Delete (${count})`;
+      } else {
+        deleteBtn.classList.remove('active');
+        if (deleteLabel) deleteLabel.textContent = 'Delete';
+      }
     }
 
     /* ---------------- MODAL & ADD ANIME WORKFLOW ---------------- */
@@ -1636,6 +1965,18 @@
       const selectedContainer = document.getElementById('selected-anime-container');
       const submitBtn = document.getElementById('submit-watchlist-btn');
 
+      const resetSelectedAnimeView = () => {
+        selectedAnimeData = null;
+        if (selectedContainer) {
+          selectedContainer.classList.remove('visible');
+          setTimeout(() => {
+            if (!selectedContainer.classList.contains('visible')) {
+              selectedContainer.style.display = 'none';
+            }
+          }, 400);
+        }
+      };
+
       if (openBtn) {
         openBtn.addEventListener('click', () => {
           modal.classList.add('active');
@@ -1645,6 +1986,7 @@
       if (closeBtn) {
         closeBtn.addEventListener('click', () => {
           modal.classList.remove('active');
+          resetSelectedAnimeView();
         });
       }
 
@@ -1657,8 +1999,7 @@
           if (isSelectingAnime) return;
           const query = e.target.value.trim();
 
-          selectedAnimeData = null;
-          document.getElementById('selected-anime-container').style.display = 'none';
+          resetSelectedAnimeView();
 
           if (modalSearchAbortController) {
             modalSearchAbortController.abort();
@@ -1678,10 +2019,10 @@
 
             try {
               const currentAuthToken = localStorage.getItem('access_token') || getCookie('access_token');
-              const res = await fetch(`http://127.0.0.1:8000/api/anime/kitsu-search?q=${encodeURIComponent(query)}`, {
+              const res = await fetch(`http://127.0.0.1:8000/api/anime/search?q=${encodeURIComponent(query)}`, {
                 headers: {
                   'Authorization': `Bearer ${currentAuthToken ? currentAuthToken.replace('Bearer ', '') : ''}`,
-                  'Content-Type': 'application/vnd.api+json'
+                  'Content-Type': 'application/json'
                 },
                 signal: modalSearchAbortController.signal
               });
@@ -1695,16 +2036,22 @@
                 return;
               }
 
+              // Store raw anime items for access upon click
+              window.currentSearchResultsMap = {};
+
               searchResultsModal.innerHTML = results.map(anime => {
-                const title = anime.title || anime.attributes?.canonicalTitle || anime.attributes?.titles?.en || 'Unknown Title';
-                const poster = anime.image || anime.posterImage || anime.attributes?.posterImage?.small || anime.attributes?.posterImage?.original || './logo.png';
-                const mediaType = anime.mediaType || anime.type || anime.subtype || anime.attributes?.subtype || 'TV';
-                const rating = anime.score !== undefined ? anime.score : (anime.averageRating || anime.attributes?.averageRating || 'N/A');
-                const episodesCount = anime.episodes || anime.episodeCount || anime.attributes?.episodeCount || '??';
                 const animeId = anime.id;
+                window.currentSearchResultsMap[animeId] = anime;
+
+                const attrs = anime.attributes || {};
+                const title = anime.title || attrs.canonicalTitle || attrs.titles?.en || 'Unknown Title';
+                const poster = anime.image || attrs.posterImage?.small || attrs.posterImage?.original || './logo.png';
+                const mediaType = anime.type || anime.subtype || attrs.kind || attrs.subtype || 'TV';
+                const rating = anime.score !== undefined && anime.score !== null ? anime.score : (attrs.averageRating ? (parseFloat(attrs.averageRating)/10).toFixed(1) : 'N/A');
+                const episodesCount = anime.episodes || attrs.episodeCount || '??';
 
                 return `
-                  <div class="modal-search-item" data-id="${animeId}" data-title="${encodeURIComponent(title)}" data-image="${encodeURIComponent(poster)}" data-episodes="${episodesCount}" style="display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid var(--border); cursor:pointer;">
+                  <div class="modal-search-item" data-id="${animeId}" style="display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid var(--border); cursor:pointer;">
                     <img src="${poster}" alt="${title}" style="width:32px; height:45px; border-radius:4px; object-fit:cover;">
                     <div style="display:flex; flex-direction:column; gap:2px;">
                       <div style="font-size:12px; font-weight:600; color:var(--text);">${title}</div>
@@ -1718,20 +2065,48 @@
                 el.addEventListener('click', () => {
                   isSelectingAnime = true;
 
+                  const animeId = el.getAttribute('data-id');
+                  const animeRaw = window.currentSearchResultsMap[animeId] || {};
+                  const attrs = animeRaw.attributes || {};
+
+                  const title = animeRaw.title || attrs.canonicalTitle || attrs.titles?.en || 'Unknown Title';
+                  const poster = animeRaw.image || attrs.posterImage?.medium || attrs.posterImage?.original || './logo.png';
+                  const mediaType = animeRaw.type || attrs.kind || 'Anime';
+                  const subtype = animeRaw.subtype || attrs.subtype || 'TV';
+                  const scoreVal = animeRaw.score !== undefined && animeRaw.score !== null ? animeRaw.score : (attrs.averageRating ? (parseFloat(attrs.averageRating)/10).toFixed(1) : 'N/A');
+                  const episodes = animeRaw.episodes || attrs.episodeCount || '??';
+                  const ageRating = attrs.ageRating ? `${attrs.ageRating}${attrs.ageRatingGuide ? ' (' + attrs.ageRatingGuide + ')' : ''}` : 'N/A';
+                  const startDate = attrs.startDate || 'N/A';
+                  const userCount = attrs.userCount ? attrs.userCount.toLocaleString() : 'N/A';
+                  const synopsis = attrs.synopsis || animeRaw.synopsis || 'No synopsis available.';
+
                   selectedAnimeData = {
-                    id: el.getAttribute('data-id'),
-                    title: decodeURIComponent(el.getAttribute('data-title')),
-                    image: decodeURIComponent(el.getAttribute('data-image')),
-                    episodes: el.getAttribute('data-episodes')
+                    id: animeId,
+                    title: title,
+                    image: poster,
+                    episodes: episodes
                   };
 
-                  document.getElementById('preview-img').src = selectedAnimeData.image;
-                  document.getElementById('preview-title').textContent = selectedAnimeData.title;
-                  document.getElementById('preview-meta').textContent = `Total Episodes: ${selectedAnimeData.episodes}`;
+                  // Populate preview fields with detailed metadata
+                  document.getElementById('preview-img').src = poster;
+                  document.getElementById('preview-title').textContent = title;
+                  document.getElementById('preview-type').textContent = mediaType.toUpperCase();
+                  document.getElementById('preview-subtype').textContent = subtype.toUpperCase();
+                  document.getElementById('preview-episodes').textContent = episodes;
+                  document.getElementById('preview-score').textContent = scoreVal;
+                  document.getElementById('preview-age').textContent = ageRating;
+                  document.getElementById('preview-start-date').textContent = startDate;
+                  document.getElementById('preview-user-count').textContent = userCount;
+                  document.getElementById('preview-synopsis').textContent = synopsis;
+
+                  // Trigger Smooth Opacity Fade-In Animation
                   selectedContainer.style.display = 'block';
+                  requestAnimationFrame(() => {
+                    selectedContainer.classList.add('visible');
+                  });
 
                   searchResultsModal.classList.remove('active');
-                  searchInputModal.value = selectedAnimeData.title;
+                  searchInputModal.value = title;
 
                   setTimeout(() => {
                     isSelectingAnime = false;
@@ -1791,8 +2166,7 @@
             showToast('Anime successfully added to your watchlist!', 'success');
             modal.classList.remove('active');
 
-            selectedAnimeData = null;
-            selectedContainer.style.display = 'none';
+            resetSelectedAnimeView();
             searchInputModal.value = '';
             document.getElementById('form-notes').value = '';
             document.getElementById('form-episodes-watched').value = '0';
