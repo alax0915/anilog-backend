@@ -976,7 +976,7 @@
       max-width: 180px;
     }
 
-    /* ---------------- ADD ANIME MODAL STYLES ---------------- */
+    /* ---------------- ADD ANIME MODAL STYLES & FORM WORKFLOW ---------------- */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -1045,6 +1045,29 @@
       color: var(--text);
     }
 
+    /* STEP 1: INITIAL SEARCH FORM STYLES */
+    #step-search-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* STEP 2: DETAILS FORM CONTAINER */
+    #step-form-container {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    #step-form-container.visible {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .form-group {
       display: flex;
       flex-direction: column;
@@ -1102,17 +1125,7 @@
 
     /* FADE-IN ANIMATED SELECTED ANIME PREVIEW CONTAINER */
     #selected-anime-container {
-      display: none;
-      opacity: 0;
-      transform: translateY(-8px) scale(0.98);
-      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       flex-shrink: 0;
-    }
-
-    #selected-anime-container.visible {
-      display: block;
-      opacity: 1;
-      transform: translateY(0) scale(1);
     }
 
     .selected-anime-preview {
@@ -1123,6 +1136,7 @@
       border: 1px solid var(--border);
       border-radius: 8px;
       align-items: flex-start;
+      position: relative;
     }
 
     .selected-anime-preview img {
@@ -1149,7 +1163,6 @@
       line-height: 1.2;
     }
 
-    /* MEDIUM FONT METADATA GRID */
     .preview-meta-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
@@ -1181,6 +1194,38 @@
       overflow: hidden;
     }
 
+    .change-anime-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(157, 44, 255, 0.2);
+      border: 1px solid var(--purple2);
+      color: var(--text);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .change-anime-btn:hover {
+      background: var(--purple);
+    }
+
+    /* BUTTON LOADING SPINNER STYLES */
+    .btn-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
     .modal-submit-btn {
       height: 42px;
       width: 100%;
@@ -1194,6 +1239,9 @@
       cursor: pointer;
       transition: opacity 0.2s, transform 0.1s;
       margin-top: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .modal-submit-btn:hover {
@@ -1202,6 +1250,11 @@
 
     .modal-submit-btn:active {
       transform: scale(0.99);
+    }
+
+    .modal-submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
     /* ---------------- MOBILE NAVIGATION ---------------- */
@@ -1280,94 +1333,101 @@
         <span class="material-symbols-outlined modal-close" id="close-modal-btn">close</span>
       </div>
 
-      <!-- Step 1: Search Anime -->
-      <div class="form-group" style="position: relative;">
-        <label class="form-label">Search Anime</label>
-        <input type="text" id="modal-search-input" class="form-input"
-          placeholder="Type anime name (e.g., Naruto, Bleach)..." autocomplete="off">
-        <div class="modal-search-results" id="modal-search-results"></div>
+      <!-- STEP 1: INITIAL SEARCH AND SELECTION -->
+      <div id="step-search-container">
+        <div class="form-group" style="position: relative;">
+          <label class="form-label">Search Anime</label>
+          <input type="text" id="modal-search-input" class="form-input"
+            placeholder="Type anime name (e.g., Naruto, Bleach)..." autocomplete="off">
+          <div class="modal-search-results" id="modal-search-results"></div>
+        </div>
       </div>
 
-      <!-- Selected Anime Rich Preview Container with Opacity Fade-In -->
-      <div id="selected-anime-container">
-        <label class="form-label" style="margin-bottom: 6px;">Selected Anime Details</label>
-        <div class="selected-anime-preview">
-          <img id="preview-img" src="" alt="Cover">
-          <div class="preview-info-col">
-            <div id="preview-title" class="preview-anime-title">--</div>
-            
-            <div class="preview-meta-grid">
-              <div class="meta-tag-item"><span class="meta-label">Type:</span> <span id="preview-type">--</span></div>
-              <div class="meta-tag-item"><span class="meta-label">Subtype:</span> <span id="preview-subtype">--</span></div>
-              <div class="meta-tag-item"><span class="meta-label">Episodes:</span> <span id="preview-episodes">--</span></div>
-              <div class="meta-tag-item"><span class="meta-label">Rating:</span> <span id="preview-score">--</span></div>
-              <div class="meta-tag-item"><span class="meta-label">Age Rating:</span> <span id="preview-age">--</span></div>
-              <div class="meta-tag-item"><span class="meta-label">Start Date:</span> <span id="preview-start-date">--</span></div>
-              <div class="meta-tag-item"><span class="meta-label">User Count:</span> <span id="preview-user-count">--</span></div>
-            </div>
+      <!-- STEP 2: ANIME DETAILS & SAVE TO DB FORM (APPEARS AFTER CLICKING ADD ANIME) -->
+      <div id="step-form-container">
+        <!-- Selected Anime Details Card -->
+        <div id="selected-anime-container">
+          <div class="selected-anime-preview">
+            <button class="change-anime-btn" id="change-anime-btn">Change Anime</button>
+            <img id="preview-img" src="" alt="Cover">
+            <div class="preview-info-col">
+              <div id="preview-title" class="preview-anime-title">--</div>
+              
+              <div class="preview-meta-grid">
+                <div class="meta-tag-item"><span class="meta-label">Type:</span> <span id="preview-type">--</span></div>
+                <div class="meta-tag-item"><span class="meta-label">Subtype:</span> <span id="preview-subtype">--</span></div>
+                <div class="meta-tag-item"><span class="meta-label">Episodes:</span> <span id="preview-episodes">--</span></div>
+                <div class="meta-tag-item"><span class="meta-label">Rating:</span> <span id="preview-score">--</span></div>
+                <div class="meta-tag-item"><span class="meta-label">Age Rating:</span> <span id="preview-age">--</span></div>
+                <div class="meta-tag-item"><span class="meta-label">Start Date:</span> <span id="preview-start-date">--</span></div>
+                <div class="meta-tag-item"><span class="meta-label">User Count:</span> <span id="preview-user-count">--</span></div>
+              </div>
 
-            <div class="preview-synopsis" id="preview-synopsis"></div>
+              <div class="preview-synopsis" id="preview-synopsis"></div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Step 2: Database Table Fields -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex-shrink: 0;">
-        <div class="form-group">
-          <label class="form-label">Status</label>
-          <select id="form-status" class="form-select">
-            <option value="Watching">Watching</option>
-            <option value="Plan to Watch">Plan to Watch</option>
-            <option value="Completed">Completed</option>
-            <option value="On-Hold">On-Hold</option>
-            <option value="Dropped">Dropped</option>
-          </select>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex-shrink: 0;">
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select id="form-status" class="form-select">
+              <option value="Watching">Watching</option>
+              <option value="Plan to Watch">Plan to Watch</option>
+              <option value="Completed">Completed</option>
+              <option value="On-Hold">On-Hold</option>
+              <option value="Dropped">Dropped</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Priority</label>
+            <select id="form-priority" class="form-select">
+              <option value="High">High</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Priority</label>
-          <select id="form-priority" class="form-select">
-            <option value="High">High</option>
-            <option value="Medium" selected>Medium</option>
-            <option value="Low">Low</option>
-          </select>
-        </div>
-      </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex-shrink: 0;">
-        <div class="form-group">
-          <label class="form-label">Episodes Watched</label>
-          <input type="number" id="form-episodes-watched" class="form-input" value="0" min="0">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex-shrink: 0;">
+          <div class="form-group">
+            <label class="form-label">Episodes Watched</label>
+            <input type="number" id="form-episodes-watched" class="form-input" value="0" min="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Score (1-10)</label>
+            <input type="number" id="form-score" class="form-input" value="9" min="1" max="10" step="1">
+          </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Score (1-10)</label>
-          <input type="number" id="form-score" class="form-input" value="9" min="1" max="10" step="1">
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex-shrink: 0;">
+          <div class="form-group">
+            <label class="form-label">Started At</label>
+            <input type="datetime-local" id="form-started-at" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Completed At</label>
+            <input type="datetime-local" id="form-completed-at" class="form-input">
+          </div>
         </div>
-      </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex-shrink: 0;">
-        <div class="form-group">
-          <label class="form-label">Started At</label>
-          <input type="datetime-local" id="form-started-at" class="form-input">
+        <div class="form-group" style="flex-direction: row; align-items: center; gap: 10px;">
+          <input type="checkbox" id="form-is-favorite" style="width: 16px; height: 16px; accent-color: var(--purple2); cursor: pointer;">
+          <label class="form-label" for="form-is-favorite" style="margin-bottom: 0; cursor: pointer;">Is Favorite</label>
         </div>
+
         <div class="form-group">
-          <label class="form-label">Completed At</label>
-          <input type="datetime-local" id="form-completed-at" class="form-input">
+          <label class="form-label">Notes</label>
+          <textarea id="form-notes" class="form-textarea" placeholder="Add personal notes or sub/dub preference..."
+            rows="2"></textarea>
         </div>
-      </div>
 
-      <div class="form-group" style="flex-direction: row; align-items: center; gap: 10px;">
-        <input type="checkbox" id="form-is-favorite" style="width: 16px; height: 16px; accent-color: var(--purple2); cursor: pointer;">
-        <label class="form-label" for="form-is-favorite" style="margin-bottom: 0; cursor: pointer;">Is Favorite</label>
+        <!-- SAVE TO DB BUTTON WITH LOADING SPINNER -->
+        <button class="modal-submit-btn" id="submit-watchlist-btn">
+          <span id="btn-spinner" class="btn-spinner" style="display: none;"></span>
+          <span id="btn-text">Save to DB</span>
+        </button>
       </div>
-
-      <div class="form-group">
-        <label class="form-label">Notes</label>
-        <textarea id="form-notes" class="form-textarea" placeholder="Add personal notes or sub/dub preference..."
-          rows="2"></textarea>
-      </div>
-
-      <!-- Step 3: Fixed Submit Button -->
-      <button class="modal-submit-btn" id="submit-watchlist-btn">Save to Watchlist</button>
     </div>
   </div>
 
@@ -1962,23 +2022,38 @@
       const closeBtn = document.getElementById('close-modal-btn');
       const searchInputModal = document.getElementById('modal-search-input');
       const searchResultsModal = document.getElementById('modal-search-results');
-      const selectedContainer = document.getElementById('selected-anime-container');
+      const stepSearchContainer = document.getElementById('step-search-container');
+      const stepFormContainer = document.getElementById('step-form-container');
+      const changeAnimeBtn = document.getElementById('change-anime-btn');
       const submitBtn = document.getElementById('submit-watchlist-btn');
+      const btnSpinner = document.getElementById('btn-spinner');
+      const btnText = document.getElementById('btn-text');
 
-      const resetSelectedAnimeView = () => {
+      const resetAddModal = () => {
         selectedAnimeData = null;
-        if (selectedContainer) {
-          selectedContainer.classList.remove('visible');
-          setTimeout(() => {
-            if (!selectedContainer.classList.contains('visible')) {
-              selectedContainer.style.display = 'none';
-            }
-          }, 400);
+        if (stepFormContainer) {
+          stepFormContainer.classList.remove('visible');
+          stepFormContainer.style.display = 'none';
         }
+        if (stepSearchContainer) {
+          stepSearchContainer.style.display = 'flex';
+        }
+        if (searchInputModal) searchInputModal.value = '';
+        if (searchResultsModal) {
+          searchResultsModal.classList.remove('active');
+          searchResultsModal.innerHTML = '';
+        }
+        document.getElementById('form-notes').value = '';
+        document.getElementById('form-episodes-watched').value = '0';
+        document.getElementById('form-score').value = '9';
+        document.getElementById('form-started-at').value = '';
+        document.getElementById('form-completed-at').value = '';
+        document.getElementById('form-is-favorite').checked = false;
       };
 
       if (openBtn) {
         openBtn.addEventListener('click', () => {
+          resetAddModal();
           modal.classList.add('active');
         });
       }
@@ -1986,20 +2061,27 @@
       if (closeBtn) {
         closeBtn.addEventListener('click', () => {
           modal.classList.remove('active');
-          resetSelectedAnimeView();
+          resetAddModal();
+        });
+      }
+
+      if (changeAnimeBtn) {
+        changeAnimeBtn.addEventListener('click', () => {
+          selectedAnimeData = null;
+          stepFormContainer.classList.remove('visible');
+          stepFormContainer.style.display = 'none';
+          stepSearchContainer.style.display = 'flex';
+          searchInputModal.value = '';
+          searchInputModal.focus();
         });
       }
 
       let modalSearchAbortController = null;
       let modalSearchDebounceTimer = null;
-      let isSelectingAnime = false;
 
       if (searchInputModal && searchResultsModal) {
         searchInputModal.addEventListener('input', (e) => {
-          if (isSelectingAnime) return;
           const query = e.target.value.trim();
-
-          resetSelectedAnimeView();
 
           if (modalSearchAbortController) {
             modalSearchAbortController.abort();
@@ -2036,7 +2118,6 @@
                 return;
               }
 
-              // Store raw anime items for access upon click
               window.currentSearchResultsMap = {};
 
               searchResultsModal.innerHTML = results.map(anime => {
@@ -2063,8 +2144,6 @@
 
               searchResultsModal.querySelectorAll('.modal-search-item').forEach(el => {
                 el.addEventListener('click', () => {
-                  isSelectingAnime = true;
-
                   const animeId = el.getAttribute('data-id');
                   const animeRaw = window.currentSearchResultsMap[animeId] || {};
                   const attrs = animeRaw.attributes || {};
@@ -2074,7 +2153,11 @@
                   const mediaType = animeRaw.type || attrs.kind || 'Anime';
                   const subtype = animeRaw.subtype || attrs.subtype || 'TV';
                   const scoreVal = animeRaw.score !== undefined && animeRaw.score !== null ? animeRaw.score : (attrs.averageRating ? (parseFloat(attrs.averageRating)/10).toFixed(1) : 'N/A');
-                  const episodes = animeRaw.episodes || attrs.episodeCount || '??';
+                  
+                  // Extract maximum episode count as integer (or null if unknown)
+                  const rawEpCount = animeRaw.episodes || attrs.episodeCount;
+                  const totalEpisodes = rawEpCount ? parseInt(rawEpCount, 10) : null;
+
                   const ageRating = attrs.ageRating ? `${attrs.ageRating}${attrs.ageRatingGuide ? ' (' + attrs.ageRatingGuide + ')' : ''}` : 'N/A';
                   const startDate = attrs.startDate || 'N/A';
                   const userCount = attrs.userCount ? attrs.userCount.toLocaleString() : 'N/A';
@@ -2084,33 +2167,29 @@
                     id: animeId,
                     title: title,
                     image: poster,
-                    episodes: episodes
+                    episodes: totalEpisodes
                   };
 
-                  // Populate preview fields with detailed metadata
+                  // Populate preview fields
                   document.getElementById('preview-img').src = poster;
                   document.getElementById('preview-title').textContent = title;
                   document.getElementById('preview-type').textContent = mediaType.toUpperCase();
                   document.getElementById('preview-subtype').textContent = subtype.toUpperCase();
-                  document.getElementById('preview-episodes').textContent = episodes;
+                  document.getElementById('preview-episodes').textContent = totalEpisodes ? totalEpisodes : '??';
                   document.getElementById('preview-score').textContent = scoreVal;
                   document.getElementById('preview-age').textContent = ageRating;
                   document.getElementById('preview-start-date').textContent = startDate;
                   document.getElementById('preview-user-count').textContent = userCount;
                   document.getElementById('preview-synopsis').textContent = synopsis;
 
-                  // Trigger Smooth Opacity Fade-In Animation
-                  selectedContainer.style.display = 'block';
+                  // Hide search step and show form step
+                  stepSearchContainer.style.display = 'none';
+                  stepFormContainer.style.display = 'flex';
                   requestAnimationFrame(() => {
-                    selectedContainer.classList.add('visible');
+                    stepFormContainer.classList.add('visible');
                   });
 
                   searchResultsModal.classList.remove('active');
-                  searchInputModal.value = title;
-
-                  setTimeout(() => {
-                    isSelectingAnime = false;
-                  }, 50);
                 });
               });
 
@@ -2130,6 +2209,17 @@
             return;
           }
 
+          const episodesInput = document.getElementById('form-episodes-watched');
+          const episodesWatched = parseInt(episodesInput.value) || 0;
+          const maxEpisodes = selectedAnimeData.episodes;
+
+          // FRONTEND EPISODE VALIDATION CHECK
+          if (maxEpisodes && episodesWatched > maxEpisodes) {
+            showToast(`Invalid episode entered! "${selectedAnimeData.title}" only has ${maxEpisodes} episode(s).`, 'error', 5000);
+            episodesInput.focus();
+            return;
+          }
+
           const startedAtVal = document.getElementById('form-started-at').value;
           const completedAtVal = document.getElementById('form-completed-at').value;
 
@@ -2137,7 +2227,7 @@
             anime_id: selectedAnimeData.id,
             status: document.getElementById('form-status').value,
             priority: document.getElementById('form-priority').value,
-            episodes_watched: parseInt(document.getElementById('form-episodes-watched').value) || 0,
+            episodes_watched: episodesWatched,
             score: parseInt(document.getElementById('form-score').value) || null,
             is_favorite: document.getElementById('form-is-favorite').checked,
             started_at: startedAtVal ? new Date(startedAtVal).toISOString() : null,
@@ -2146,7 +2236,9 @@
           };
 
           try {
-            submitBtn.textContent = 'Saving to DB...';
+            // SHOW LOADING ANIMATION INSIDE BUTTON
+            btnSpinner.style.display = 'inline-block';
+            btnText.textContent = 'Saving to DB...';
             submitBtn.disabled = true;
 
             const response = await fetch('http://127.0.0.1:8000/api/user/addwatchlist', {
@@ -2166,14 +2258,7 @@
             showToast('Anime successfully added to your watchlist!', 'success');
             modal.classList.remove('active');
 
-            resetSelectedAnimeView();
-            searchInputModal.value = '';
-            document.getElementById('form-notes').value = '';
-            document.getElementById('form-episodes-watched').value = '0';
-            document.getElementById('form-score').value = '9';
-            document.getElementById('form-started-at').value = '';
-            document.getElementById('form-completed-at').value = '';
-            document.getElementById('form-is-favorite').checked = false;
+            resetAddModal();
 
             await fetchUserWatchlist(token);
             await fetchUserData(token);
@@ -2181,7 +2266,9 @@
           } catch (err) {
             showToast(err.message, 'error');
           } finally {
-            submitBtn.textContent = 'Save to Watchlist';
+            // RESTORE BUTTON STATE
+            btnSpinner.style.display = 'none';
+            btnText.textContent = 'Save to DB';
             submitBtn.disabled = false;
           }
         });

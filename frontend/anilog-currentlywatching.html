@@ -6,7 +6,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ANILOG - Currently Watching</title>
-  
+
   <!-- Google Material Symbols -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -97,23 +97,48 @@
       animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    .toast.success { border-color: var(--green); }
-    .toast.error { border-color: var(--danger); }
+    .toast.success {
+      border-color: var(--green);
+    }
+
+    .toast.error {
+      border-color: var(--danger);
+    }
 
     .toast .material-symbols-outlined {
       font-size: 20px;
     }
-    .toast.success .material-symbols-outlined { color: var(--green); }
-    .toast.error .material-symbols-outlined { color: var(--danger); }
+
+    .toast.success .material-symbols-outlined {
+      color: var(--green);
+    }
+
+    .toast.error .material-symbols-outlined {
+      color: var(--danger);
+    }
 
     @keyframes toastSlideIn {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
     }
 
     @keyframes toastSlideOut {
-      from { transform: translateX(0); opacity: 1; }
-      to { transform: translateX(100%); opacity: 0; }
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
     }
 
     /* ---------------- PRELOADER OVERLAY ---------------- */
@@ -140,7 +165,9 @@
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .desktop-page,
@@ -208,7 +235,7 @@
       clip-path: polygon(0 0, 2% 0, 2.4% 1.5%, 98% 1.5%, 100% 0, 100% 98%, 98.4% 100%, 2% 100%, 0 98%);
     }
 
-    /* ---------------- SIDEBAR & ANIMATIONS ---------------- */
+    /* ---------------- SIDEBAR ---------------- */
     .sidebar {
       position: relative;
       z-index: 10;
@@ -226,8 +253,15 @@
     }
 
     @keyframes sidebarSlideIn {
-      from { transform: translateX(-100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
     }
 
     .side-link {
@@ -239,22 +273,39 @@
       animation: navItemSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    body.loaded .side-link:nth-child(1) { animation-delay: 0.10s; }
-    body.loaded .side-link:nth-child(2) { animation-delay: 0.15s; }
-    body.loaded .side-link:nth-child(3) { animation-delay: 0.20s; }
-    body.loaded .side-link:nth-child(4) { animation-delay: 0.25s; }
-    body.loaded .side-link:nth-child(5) { animation-delay: 0.30s; }
-    body.loaded .side-link:nth-child(6) { animation-delay: 0.35s; }
-    body.loaded .side-link:nth-child(7) { animation-delay: 0.40s; }
-    body.loaded .side-link:nth-child(8) { animation-delay: 0.45s; }
-    body.loaded .side-link:nth-child(9) { animation-delay: 0.50s; }
-    body.loaded .side-link:nth-child(10) { animation-delay: 0.55s; }
-    body.loaded .side-link:nth-child(11) { animation-delay: 0.60s; }
-    body.loaded .side-link:nth-child(12) { animation-delay: 0.65s; }
-    body.loaded .side-link:nth-child(13) { animation-delay: 0.70s; }
+    body.loaded .side-link:nth-child(1) {
+      animation-delay: 0.10s;
+    }
+
+    body.loaded .side-link:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    body.loaded .side-link:nth-child(3) {
+      animation-delay: 0.20s;
+    }
+
+    body.loaded .side-link:nth-child(4) {
+      animation-delay: 0.25s;
+    }
+
+    body.loaded .side-link:nth-child(5) {
+      animation-delay: 0.30s;
+    }
+
+    body.loaded .side-link:nth-child(6) {
+      animation-delay: 0.35s;
+    }
+
+    body.loaded .side-link:nth-child(7) {
+      animation-delay: 0.40s;
+    }
 
     @keyframes navItemSlideIn {
-      to { opacity: 1; transform: translateX(0); }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
 
     .sidebar-brand {
@@ -285,13 +336,28 @@
     }
 
     @keyframes typingLoop {
-      0%, 100% { width: 0; }
-      30%, 70% { width: 6.2ch; }
+
+      0%,
+      100% {
+        width: 0;
+      }
+
+      30%,
+      70% {
+        width: 6.2ch;
+      }
     }
 
     @keyframes blinkCursor {
-      from, to { border-color: transparent; }
-      50% { border-color: #c65cff; }
+
+      from,
+      to {
+        border-color: transparent;
+      }
+
+      50% {
+        border-color: #c65cff;
+      }
     }
 
     .brand-sub {
@@ -357,8 +423,15 @@
     }
 
     @keyframes userCardFlip {
-      from { opacity: 0; transform: rotateY(-180deg); }
-      to { opacity: 1; transform: rotateY(0deg); }
+      from {
+        opacity: 0;
+        transform: rotateY(-180deg);
+      }
+
+      to {
+        opacity: 1;
+        transform: rotateY(0deg);
+      }
     }
 
     .user-avatar {
@@ -424,7 +497,6 @@
       z-index: 100;
     }
 
-    /* Homepage Search Specification */
     .search {
       position: relative;
       width: 300px;
@@ -445,9 +517,20 @@
     }
 
     @keyframes googleSearchExpand {
-      0% { opacity: 0; clip-path: circle(0px at 50% 50%); }
-      10% { opacity: 1; clip-path: circle(12px at 50% 50%); }
-      100% { opacity: 1; clip-path: none; }
+      0% {
+        opacity: 0;
+        clip-path: circle(0px at 50% 50%);
+      }
+
+      10% {
+        opacity: 1;
+        clip-path: circle(12px at 50% 50%);
+      }
+
+      100% {
+        opacity: 1;
+        clip-path: none;
+      }
     }
 
     .search:focus-within {
@@ -461,26 +544,6 @@
       background: transparent;
       color: #eee;
       font-size: 12px;
-    }
-
-    .search-results-dropdown {
-      position: absolute;
-      top: 48px;
-      left: 0;
-      right: 0;
-      max-height: 380px;
-      overflow-y: auto;
-      background: #090b14;
-      border: 1px solid var(--purple);
-      border-radius: 8px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
-      z-index: 200;
-      display: none;
-      flex-direction: column;
-    }
-
-    .search-results-dropdown.active {
-      display: flex;
     }
 
     .top-actions {
@@ -497,8 +560,13 @@
     }
 
     @keyframes topActionsFadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
 
     .top-action-wrap {
@@ -546,74 +614,6 @@
       border: 1px solid var(--purple2);
     }
 
-    .dropdown-panel {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      margin-top: 8px;
-      width: 220px;
-      background: #0d0f1a;
-      border: 1px solid var(--purple);
-      border-radius: 8px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-10px);
-      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 150;
-      padding: 8px 0;
-    }
-
-    .top-action-wrap:hover .dropdown-panel,
-    .profile-wrap:hover .dropdown-panel {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
-
-    .dropdown-panel-header {
-      padding: 8px 14px;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--purple2);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .dropdown-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      font-size: 13px;
-      color: var(--text);
-      transition: background 0.2s ease, color 0.2s ease;
-      cursor: pointer;
-      width: 100%;
-      text-align: left;
-    }
-
-    .dropdown-item:hover {
-      background: rgba(157, 44, 255, 0.2);
-      color: #ffffff;
-    }
-
-    .dropdown-item .material-symbols-outlined {
-      font-size: 18px;
-      color: var(--muted);
-    }
-
-    .dropdown-item:hover .material-symbols-outlined {
-      color: var(--purple2);
-    }
-
-    .dropdown-divider {
-      height: 1px;
-      background: var(--border);
-      margin: 4px 0;
-    }
-
     /* ---------------- HERO ---------------- */
     .hero {
       position: relative;
@@ -629,8 +629,15 @@
     }
 
     @keyframes heroZoomIn {
-      from { opacity: 0; transform: scale(0.92); }
-      to { opacity: 1; transform: scale(1); }
+      from {
+        opacity: 0;
+        transform: scale(0.92);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
 
     .hero-art {
@@ -686,55 +693,54 @@
       text-align: center;
       font-size: 13px;
       font-weight: bold;
-      animation: bounceBox 2s ease-in-out infinite;
     }
 
-    .stat-box:nth-child(1) { animation-delay: 0.0s; }
-    .stat-box:nth-child(2) { animation-delay: 0.2s; }
-    .stat-box:nth-child(3) { animation-delay: 0.4s; }
-    .stat-box:nth-child(4) { animation-delay: 0.6s; }
-
-    @keyframes bounceBox {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
-
-    /* ---------------- FILTER & VIEW TOOLBAR ---------------- */
+    /* ---------------- FILTER & BATCH ACTION TOOLBAR ---------------- */
     .toolbar {
       position: relative;
       z-index: 4;
       margin-top: 10px;
-      height: 42px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    .filters {
-      height: 36px;
+    .actions-bar {
       display: flex;
-      border: 1px solid #2c263b;
-      border-radius: 6px;
-      overflow: hidden;
-      background: #0b0c15;
+      align-items: center;
+      gap: 10px;
     }
 
-    .filter {
-      min-width: 90px;
+    .btn-action {
+      height: 36px;
       padding: 0 14px;
-      border-right: 1px solid #222330;
-      background: transparent;
-      color: #b7b4c1;
-      font-size: 11px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: bold;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      border: 1px solid var(--border);
+      background: var(--panel2);
     }
 
-    .filter:first-child { min-width: 56px; }
-    .filter:last-child { border-right: 0; }
-
-    .filter.active {
+    .btn-action:hover {
+      border-color: var(--purple2);
       color: #fff;
-      border: 1px solid #a52cff;
-      background: linear-gradient(180deg, #7117bd, #42106e);
+    }
+
+    .btn-danger {
+      background: rgba(255, 45, 99, 0.15);
+      border-color: var(--danger);
+      color: #ff6b8b;
+    }
+
+    .btn-danger:hover {
+      background: var(--danger);
+      color: #fff;
     }
 
     .view-toggle-btns {
@@ -757,7 +763,8 @@
       transition: all 0.2s ease;
     }
 
-    .view-btn.active, .view-btn:hover {
+    .view-btn.active,
+    .view-btn:hover {
       background: var(--purple);
       color: #fff;
     }
@@ -779,11 +786,9 @@
       transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
       display: flex;
       flex-direction: column;
-      cursor: pointer;
     }
 
     .anime-card:hover {
-      transform: translateY(-4px);
       border-color: var(--purple);
       box-shadow: 0 8px 20px rgba(157, 44, 255, 0.25);
     }
@@ -800,11 +805,17 @@
       height: 100%;
       object-fit: cover;
       filter: brightness(0.8);
-      transition: transform 0.3s ease;
     }
 
-    .anime-card:hover .card-banner img {
-      transform: scale(1.05);
+    .card-checkbox {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 5;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--purple2);
     }
 
     .badge-status {
@@ -825,12 +836,6 @@
       background: rgba(44, 255, 139, 0.2);
       color: var(--green);
       border: 1px solid var(--green);
-    }
-
-    .badge-status.behind {
-      background: rgba(255, 158, 44, 0.2);
-      color: var(--orange);
-      border: 1px solid var(--orange);
     }
 
     .card-body {
@@ -889,26 +894,6 @@
       gap: 8px;
     }
 
-    .ep-counter-btn {
-      flex: 1;
-      height: 32px;
-      background: rgba(157, 44, 255, 0.1);
-      border: 1px solid var(--purple);
-      border-radius: 5px;
-      color: #fff;
-      font-size: 12px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      transition: background 0.2s ease;
-    }
-
-    .ep-counter-btn:hover {
-      background: var(--purple);
-    }
-
     .card-action-btn {
       width: 32px;
       height: 32px;
@@ -923,8 +908,8 @@
     }
 
     .card-action-btn:hover {
-      color: #fff;
-      border-color: var(--purple2);
+      color: var(--danger);
+      border-color: var(--danger);
     }
 
     /* ---------------- TABLE VIEW ---------------- */
@@ -957,16 +942,30 @@
     }
 
     .watch-table th:first-child {
-      width: 25%;
-      text-align: left;
-      padding-left: 20px;
+      width: 6%;
+      text-align: center;
     }
 
-    .watch-table th:nth-child(2) { width: 15%; }
-    .watch-table th:nth-child(3) { width: 18%; }
-    .watch-table th:nth-child(4) { width: 12%; }
-    .watch-table th:nth-child(5) { width: 15%; }
-    .watch-table th:nth-child(6) { width: 15%; }
+    .watch-table th:nth-child(2) {
+      width: 34%;
+      text-align: left;
+    }
+
+    .watch-table th:nth-child(3) {
+      width: 18%;
+    }
+
+    .watch-table th:nth-child(4) {
+      width: 14%;
+    }
+
+    .watch-table th:nth-child(5) {
+      width: 14%;
+    }
+
+    .watch-table th:nth-child(6) {
+      width: 14%;
+    }
 
     .watch-table td {
       height: 68px;
@@ -977,11 +976,11 @@
       font-size: 11px;
       vertical-align: middle;
       text-align: center;
-      cursor: pointer;
     }
 
-    .watch-table td:first-child { text-align: left; }
-    .watch-table tr:last-child td { border-bottom: 0; }
+    .watch-table td:nth-child(2) {
+      text-align: left;
+    }
 
     .title-cell {
       display: flex;
@@ -999,33 +998,6 @@
     .title-main {
       font-weight: 700;
       font-size: 12px;
-    }
-
-    .title-sub {
-      margin-top: 4px;
-      color: #9b98a5;
-      font-size: 9px;
-    }
-
-    .ep-tracker {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--panel3);
-      padding: 4px 8px;
-      border-radius: 4px;
-      border: 1px solid var(--border);
-    }
-
-    .ep-tracker-btn {
-      width: 20px;
-      height: 20px;
-      background: var(--purple);
-      border-radius: 3px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
     }
 
     /* ---------------- EMPTY STATE PLACEHOLDER ---------------- */
@@ -1057,28 +1029,57 @@
       font-size: 14px;
     }
 
-    /* ---------------- PAGINATION ---------------- */
+    /* ---------------- DEDICATED ANIME LIST PAGINATION ---------------- */
+    .pagination-wrapper {
+      margin-top: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
     .pagination {
-      height: 77px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 9px;
+      gap: 6px;
     }
 
     .page-button {
-      width: 38px;
-      height: 37px;
+      min-width: 36px;
+      height: 36px;
+      padding: 0 10px;
       border: 1px solid #181c29;
       border-radius: 6px;
       background: #080a12;
       color: #f0edf4;
-      font-size: 11px;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .page-button:hover:not(:disabled) {
+      border-color: var(--purple);
+      color: #fff;
     }
 
     .page-button.active {
       border-color: #a52cff;
       background: linear-gradient(180deg, #7b1dd0, #4c1180);
+      font-weight: bold;
+    }
+
+    .page-button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .page-info {
+      font-size: 12px;
+      color: var(--muted);
     }
 
     /* ---------------- MOBILE LAYOUT ---------------- */
@@ -1087,7 +1088,9 @@
     }
 
     @media (max-width: 900px) {
-      .desktop-page { display: none; }
+      .desktop-page {
+        display: none;
+      }
 
       .mobile-page {
         display: block;
@@ -1130,81 +1133,12 @@
         font-size: 17px;
       }
 
-      .mobile-brand .brand-sub {
-        font-size: 6px;
-      }
-
-      /* Mobile Search Bar Specification */
-      .mobile-search-bar {
-        display: none;
-        padding: 10px 16px;
-        background: #090b14;
-        border-bottom: 1px solid var(--border);
-        position: relative;
-      }
-
-      .mobile-search-bar.active {
-        display: block;
-      }
-
-      .mobile-search-input-wrap {
-        display: flex;
-        align-items: center;
-        background: rgba(16, 18, 28, .88);
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 6px 12px;
-      }
-
-      .mobile-search-input-wrap input {
-        width: 100%;
-        background: transparent;
-        border: none;
-        outline: none;
-        color: var(--text);
-        font-size: 13px;
-      }
-
       .mobile-content {
         padding: 14px 13px 0;
       }
 
       .mobile-heading h1 {
         font-size: 24px;
-      }
-
-      .mobile-heading p {
-        color: var(--muted);
-        font-size: 12px;
-        margin-top: 4px;
-      }
-
-      .mobile-filters {
-        height: 43px;
-        margin-top: 15px;
-        display: flex;
-        border: 1px solid #2a2638;
-        border-radius: 6px;
-        overflow: hidden;
-        background: #0b0c15;
-      }
-
-      .mobile-filter {
-        flex: 1;
-        min-width: 0;
-        padding: 0 5px;
-        border-right: 1px solid #222330;
-        background: transparent;
-        color: #aaa6b4;
-        font-size: 9px;
-      }
-
-      .mobile-filter:last-child { border-right: 0; }
-
-      .mobile-filter.active {
-        color: #fff;
-        border: 1px solid #a42cff;
-        background: #6715ad;
       }
 
       .mobile-cards-list {
@@ -1221,7 +1155,7 @@
         border: 1px solid #29243a;
         border-radius: 6px;
         padding: 10px;
-        cursor: pointer;
+        position: relative;
       }
 
       .mobile-anime-card img {
@@ -1237,18 +1171,6 @@
         justify-content: space-between;
       }
 
-      .mobile-card-title {
-        font-size: 13px;
-        font-weight: bold;
-        color: #fff;
-      }
-
-      .mobile-card-sub {
-        font-size: 10px;
-        color: var(--muted);
-        margin-top: 2px;
-      }
-
       .mobile-bottom-nav {
         position: fixed;
         z-index: 50;
@@ -1257,7 +1179,7 @@
         bottom: 0;
         height: 72px;
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         border-top: 1px solid #242636;
         background: rgba(7, 8, 14, .98);
         backdrop-filter: blur(14px);
@@ -1307,23 +1229,50 @@
         </div>
 
         <nav class="sidebar-nav">
-          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span class="material-symbols-outlined">home</span>Home</button>
-          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';"><span class="material-symbols-outlined">list_alt</span>Watchlist</button>
-          <button class="side-link active" onclick="window.location.href='./anilog-currentlywatching.html';"><span class="material-symbols-outlined">play_circle</span>Currently Watching</button>
-          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span class="material-symbols-outlined">check_circle</span>Completed</button>
-          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span class="material-symbols-outlined">calendar_month</span>Seasonal</button>
-          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span class="material-symbols-outlined">rate_review</span>Reviews</button>
-          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span>Profile</button>
-          <button class="side-link" onclick="window.location.href='./anilog-favorites.html';"><span class="material-symbols-outlined">bookmark</span>Favorites</button>
-          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span class="material-symbols-outlined">leaderboard</span>Top Lists</button>
-          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span class="material-symbols-outlined">shopping_bag</span>Merch</button>
-          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span class="material-symbols-outlined">history</span>Logs</button>
-          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span class="material-symbols-outlined">target</span>Goals</button>
-          <button class="side-link" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
+          <button class="side-link" onclick="window.location.href='./anilog-home.html';">
+            <span class="material-symbols-outlined">home</span>Home
+          </button>
+          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';">
+            <span class="material-symbols-outlined">list_alt</span>Watchlist
+          </button>
+          <button class="side-link active" onclick="window.location.href='./anilog-currentlywatching.html';">
+            <span class="material-symbols-outlined">play_circle</span>Currently Watching
+          </button>
+          <button class="side-link" onclick="window.location.href='./anilog-completed.html';">
+            <span class="material-symbols-outlined">check_circle</span>Completed
+          </button>
+          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';">
+            <span class="material-symbols-outlined">calendar_month</span>Seasonal
+          </button>
+          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';">
+            <span class="material-symbols-outlined">rate_review</span>Reviews
+          </button>
+          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';">
+            <span class="material-symbols-outlined">account_circle</span>Profile
+          </button>
+          <button class="side-link" onclick="window.location.href='./anilog-favorites.html';">
+            <span class="material-symbols-outlined">bookmark</span>Favorites
+          </button>
+          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';">
+            <span class="material-symbols-outlined">leaderboard</span>Top Lists
+          </button>
+          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';">
+            <span class="material-symbols-outlined">shopping_bag</span>Merch
+          </button>
+          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';">
+            <span class="material-symbols-outlined">history</span>Logs
+          </button>
+          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';">
+            <span class="material-symbols-outlined">target</span>Goals
+          </button>
+          <button class="side-link" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';">
+            <span class="material-symbols-outlined">history</span>Year view
+          </button>
         </nav>
 
         <div class="user-card">
-          <img class="user-avatar" id="sidebar-user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="Avatar">
+          <img class="user-avatar" id="sidebar-user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX"
+            alt="Avatar">
           <div class="user-info">
             <h3 class="user-name" id="sidebar-user-name">ShadowX</h3>
             <div class="user-level" id="sidebar-user-level">Level 1</div>
@@ -1338,75 +1287,18 @@
       <section class="main">
 
         <header class="topbar">
-          <!-- Desktop Search Specification -->
           <div class="search">
             <input type="text" id="desktop-search-input" placeholder="Search anime...">
             <span class="material-symbols-outlined">search</span>
-            <div class="search-results-dropdown" id="desktop-search-results"></div>
           </div>
 
           <div class="top-actions">
-            <div class="top-action-wrap">
-              <div class="top-action" onclick="window.location.href='./anilog-notifications.html';"><span class="material-symbols-outlined">notifications</span></div>
-            </div>
-
-            <div class="top-action-wrap">
-              <div class="top-action streak">
-                <span class="material-symbols-outlined" style="color: #ff2d63;">local_fire_department</span>
-                <span id="header-streak-count">12</span>
-              </div>
-            </div>
-
-            <!-- SETTINGS HOVER DROPDOWN -->
-            <div class="top-action-wrap">
-              <div class="top-action">
-                <span class="material-symbols-outlined">settings</span>
-              </div>
-              <div class="dropdown-panel">
-                <div class="dropdown-panel-header">System Settings</div>
-                <button class="dropdown-item" id="theme-toggle-btn">
-                  <span class="material-symbols-outlined">dark_mode</span> App Theme
-                </button>
-                <button class="dropdown-item" onclick="window.location.href='./anilog-notifications.html';">
-                  <span class="material-symbols-outlined">notifications_active</span> Notifications
-                </button>
-                <button class="dropdown-item" onclick="window.location.href='./anilog-sub-dub-settings.html';">
-                  <span class="material-symbols-outlined">subtitles</span> Default Sub/Dub
-                </button>
-                <button class="dropdown-item" onclick="window.location.href='./anilog-content-filter.html';">
-                  <span class="material-symbols-outlined">explicit</span> Content Filter
-                </button>
-                <div class="dropdown-divider"></div>
-                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';">
-                  <span class="material-symbols-outlined">tune</span> Preferences
-                </button>
-              </div>
-            </div>
-
-            <!-- PROFILE HOVER DROPDOWN -->
             <div class="profile-wrap">
               <div class="profile">
-                <img class="avatar" id="header-user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="User">
-                <span class="material-symbols-outlined">expand_more</span>
-              </div>
-              <div class="dropdown-panel">
-                <div class="dropdown-panel-header">User Profile</div>
-                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';">
-                  <span class="material-symbols-outlined">account_circle</span> View Profile
-                </button>
-                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';">
-                  <span class="material-symbols-outlined">edit</span> Edit Profile
-                </button>
-                <button class="dropdown-item" onclick="showToast('VIP status active!', 'success')">
-                  <span class="material-symbols-outlined">workspace_premium</span> VIP Membership
-                </button>
-                <div class="dropdown-divider"></div>
-                <button class="dropdown-item" id="logout-btn" style="color: var(--danger);">
-                  <span class="material-symbols-outlined" style="color: var(--danger);">logout</span> Log Out
-                </button>
+                <img class="avatar" id="header-user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX"
+                  alt="User">
               </div>
             </div>
-
           </div>
         </header>
 
@@ -1415,7 +1307,7 @@
           <div class="hero-copy">
             <h1 class="hero-title">Currently Watching</h1>
             <p class="hero-description">
-              Track your active anime series, log recent episodes, and manage your progress.
+              Track your active anime series, delete completed entries, and manage progress.
             </p>
           </div>
         </section>
@@ -1423,16 +1315,17 @@
         <div class="stats">
           <div class="stat-box" id="stat-active">Active Shows: 0</div>
           <div class="stat-box" id="stat-episodes">Episodes Watched: 0</div>
-          <div class="stat-box" id="stat-behind">Behind Schedule: 0</div>
           <div class="stat-box" id="stat-completion">Avg. Completion: 0%</div>
         </div>
 
         <div class="toolbar">
-          <div class="filters">
-            <button class="filter active">All Active</button>
-            <button class="filter">Airing Today</button>
-            <button class="filter">Behind</button>
-            <button class="filter">Up to Date</button>
+          <div class="actions-bar">
+            <button class="btn-action" id="toggle-select-all-btn">
+              <span class="material-symbols-outlined">select_all</span> Select All
+            </button>
+            <button class="btn-action btn-danger" id="delete-selected-btn">
+              <span class="material-symbols-outlined">delete</span> Delete Selected (<span id="selected-count">0</span>)
+            </button>
           </div>
 
           <div class="view-toggle-btns">
@@ -1448,7 +1341,7 @@
         <!-- EMPTY STATE PLACEHOLDER -->
         <div class="empty-state" id="empty-state">
           <span class="material-symbols-outlined">inbox</span>
-          <p>No currently watching anime found from backend server.</p>
+          <p>No currently watching anime found in your watchlist.</p>
         </div>
 
         <!-- GRID VIEW -->
@@ -1459,9 +1352,9 @@
           <table class="watch-table">
             <thead>
               <tr>
+                <th><input type="checkbox" id="table-header-checkbox"></th>
                 <th>TITLE</th>
                 <th>PROGRESS</th>
-                <th>LAST WATCHED</th>
                 <th>SCORE</th>
                 <th>STATUS</th>
                 <th>ACTION</th>
@@ -1471,8 +1364,10 @@
           </table>
         </div>
 
-        <div class="pagination">
-          <button class="page-button active">1</button>
+        <!-- DEDICATED LIST PAGINATION CONTAINER -->
+        <div class="pagination-wrapper" id="pagination-wrapper">
+          <div class="pagination" id="anime-pagination"></div>
+          <div class="page-info" id="page-info">Showing page 1</div>
         </div>
 
       </section>
@@ -1486,7 +1381,6 @@
     <main class="mobile-shell">
 
       <header class="mobile-topbar">
-        <span class="material-symbols-outlined" style="cursor: pointer;" onclick="window.location.href='./anilog-notifications.html';">menu</span>
         <div class="mobile-brand">
           <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
           <div>
@@ -1494,28 +1388,18 @@
             <div class="brand-sub">アニログ</div>
           </div>
         </div>
-        <span class="material-symbols-outlined" id="mobile-search-toggle" style="cursor: pointer;">search</span>
       </header>
-
-      <!-- Mobile Search Bar Specification -->
-      <div class="mobile-search-bar" id="mobile-search-bar">
-        <div class="mobile-search-input-wrap">
-          <input type="text" id="mobile-search-input" placeholder="Search anime dynamic...">
-        </div>
-        <div class="search-results-dropdown" id="mobile-search-results"></div>
-      </div>
 
       <div class="mobile-content">
         <div class="mobile-heading">
           <h1>Currently Watching</h1>
-          <p>Track your active anime progress.</p>
+          <p>Track active anime and delete entries.</p>
         </div>
 
-        <div class="mobile-filters">
-          <button class="mobile-filter active">All</button>
-          <button class="mobile-filter">Airing</button>
-          <button class="mobile-filter">Behind</button>
-          <button class="mobile-filter">Updated</button>
+        <div style="margin-top:15px; display:flex; gap:10px;">
+          <button class="btn-action btn-danger" style="flex:1;" id="mobile-delete-selected-btn">
+            <span class="material-symbols-outlined">delete</span> Delete Selected
+          </button>
         </div>
 
         <!-- MOBILE EMPTY STATE -->
@@ -1525,6 +1409,10 @@
         </div>
 
         <div class="mobile-cards-list" id="mobile-watching-list"></div>
+
+        <div class="pagination-wrapper" id="mobile-pagination-wrapper">
+          <div class="pagination" id="mobile-anime-pagination"></div>
+        </div>
 
       </div>
 
@@ -1545,10 +1433,6 @@
           <span class="material-symbols-outlined">check_circle</span>
           <span>Completed</span>
         </div>
-        <div class="mobile-nav-item" onclick="window.location.href='./anilog-user-profile-responsive.html';">
-          <span class="material-symbols-outlined">more_vert</span>
-          <span>More</span>
-        </div>
       </nav>
 
     </main>
@@ -1557,14 +1441,20 @@
   <script>
     const API_BASE_URL = "http://127.0.0.1:8000";
 
-    // 1. Notification Toast Pop Box
+    // Application state
+    let globalWatchingData = [];
+    let selectedWatchlistIds = new Set();
+    let currentPage = 1;
+    const itemsPerPage = 6;
+
+    // Toast Popup
     function showToast(message, type = 'success') {
       const container = document.getElementById('toast-container');
       if (!container) return;
 
       const toast = document.createElement('div');
       toast.className = `toast ${type}`;
-      
+
       const icon = type === 'success' ? 'check_circle' : 'error';
       toast.innerHTML = `
         <span class="material-symbols-outlined">${icon}</span>
@@ -1579,11 +1469,11 @@
       }, 3500);
     }
 
-    // 2. Authentication & Session Verification
+    // Token & Authentication
     function getAuthToken() {
       const tokenLocal = localStorage.getItem('access_token') || localStorage.getItem('token');
       if (tokenLocal) return tokenLocal;
-      
+
       const cookies = document.cookie.split(';');
       for (let cookie of cookies) {
         const [name, val] = cookie.trim().split('=');
@@ -1595,7 +1485,7 @@
     function checkAuthAndRedirect() {
       const token = getAuthToken();
       if (!token) {
-        showToast("Session not found. Redirecting to login...", "error");
+        showToast("Session missing. Redirecting to login...", "error");
         setTimeout(() => {
           window.location.href = './anilog-login-register.html';
         }, 1000);
@@ -1604,7 +1494,6 @@
       return token;
     }
 
-    // 3. Load Live User Profile & Watchlist from Backend
     async function fetchUserData(token) {
       try {
         const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
@@ -1614,12 +1503,10 @@
         });
         if (!res.ok) throw new Error("Failed to authenticate user session");
         const user = await res.json();
-        
-        // Populate UI
+
         document.getElementById('sidebar-user-name').innerText = user.username;
         document.getElementById('sidebar-user-level').innerText = `Level ${user.level || 1}`;
-        document.getElementById('header-streak-count').innerText = user.streak_count || 1;
-        
+
         const avatarUrl = user.avatar_seed ? `https://api.dicebear.com/7.x/bottts/svg?seed=${user.avatar_seed}` : "https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX";
         document.getElementById('sidebar-user-avatar').src = avatarUrl;
         document.getElementById('header-user-avatar').src = avatarUrl;
@@ -1632,11 +1519,10 @@
 
       } catch (err) {
         console.error("User profile fetch error:", err);
-        showToast("Server error or expired session. Please log in again.", "error");
-        setTimeout(() => window.location.href = './anilog-login-register.html', 1500);
       }
     }
 
+    // Load Watchlist with STATUS = "Watching"
     async function fetchBackendCurrentlyWatchingList(token) {
       try {
         const res = await fetch(`${API_BASE_URL}/api/user/watchlist`, {
@@ -1647,19 +1533,21 @@
         if (!res.ok) throw new Error("Failed to fetch watchlist from backend");
         const data = await res.json();
         const items = data.watchlist || [];
-        // Filter for currently watching items or return all
-        return items.map(item => ({
-          id: item.anime_id || item.id,
-          slug: item.title,
+
+        // Filter status to strictly match 'Watching' (case-insensitive)
+        const watchingItems = items.filter(item =>
+          item.status && item.status.toLowerCase() === "watching"
+        );
+
+        return watchingItems.map(item => ({
+          watchlist_id: item.id,
+          anime_id: item.anime_id,
           title: item.title,
           cover: item.poster_image || "./logo.png",
-          banner: item.poster_image || "./logo.png",
           episodes_watched: item.episodes_watched || 0,
           total_episodes: item.episodes || 12,
-          airing_status: item.status || "Airing",
-          status_type: (item.status || "").toLowerCase().includes("behind") ? "behind" : "airing",
-          last_watched: "Recently",
-          score: item.score ? item.score.toString() : "9.0"
+          status: item.status,
+          score: item.score ? item.score.toString() : "N/A"
         }));
       } catch (err) {
         console.error("Watchlist fetch error:", err);
@@ -1668,81 +1556,128 @@
       }
     }
 
-    // Window Load Initialization
+    // Single / Batch Delete Call to Backend
+    async function deleteWatchlistItems(watchlistIds) {
+      const token = getAuthToken();
+      if (!token || !watchlistIds || watchlistIds.length === 0) return;
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/user/watchlist/delete`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ watchlist_ids: watchlistIds })
+        });
+
+        if (!res.ok) throw new Error("Failed to delete selected item(s)");
+
+        const responseData = await res.json();
+        showToast(responseData.message || "Item(s) deleted successfully", "success");
+
+        // Remove deleted items locally
+        globalWatchingData = globalWatchingData.filter(item => !watchlistIds.includes(item.watchlist_id));
+        watchlistIds.forEach(id => selectedWatchlistIds.delete(id));
+        updateSelectedCount();
+
+        // Adjust page if needed
+        const totalPages = Math.ceil(globalWatchingData.length / itemsPerPage) || 1;
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        if (globalWatchingData.length === 0) {
+          hideAllListsAndShowEmpty();
+        } else {
+          renderCurrentlyWatching();
+          updateStats(globalWatchingData);
+        }
+
+      } catch (err) {
+        console.error("Delete error:", err);
+        showToast("Failed to delete anime from watchlist.", "error");
+      }
+    }
+
+    // Setup Initialization
     window.addEventListener('load', async () => {
       const token = checkAuthAndRedirect();
       if (!token) return;
 
-      if (document.fonts) {
-        await document.fonts.ready;
-      }
-
       await fetchUserData(token);
-      const backendList = await fetchBackendCurrentlyWatchingList(token);
+      globalWatchingData = await fetchBackendCurrentlyWatchingList(token);
 
       const preloader = document.getElementById('preloader');
       preloader.style.opacity = '0';
       preloader.style.visibility = 'hidden';
       document.body.classList.add('loaded');
 
-      if (!backendList || backendList.length === 0) {
+      if (!globalWatchingData || globalWatchingData.length === 0) {
         hideAllListsAndShowEmpty();
         return;
       }
 
-      renderCurrentlyWatching(backendList);
-      updateStats(backendList);
-      showToast("Currently watching list synced successfully!", "success");
+      renderCurrentlyWatching();
+      updateStats(globalWatchingData);
     });
 
     function hideAllListsAndShowEmpty() {
       document.getElementById('currently-watching-grid').style.display = 'none';
       document.getElementById('currently-watching-table').style.display = 'none';
       document.getElementById('mobile-watching-list').style.display = 'none';
+      document.getElementById('pagination-wrapper').style.display = 'none';
+      document.getElementById('mobile-pagination-wrapper').style.display = 'none';
       document.getElementById('empty-state').classList.add('active');
       document.getElementById('mobile-empty-state').classList.add('active');
+      updateStats([]);
     }
 
     function updateStats(items) {
       const activeCount = items.length;
       const totalWatched = items.reduce((acc, curr) => acc + curr.episodes_watched, 0);
-      const behindCount = items.filter(i => i.status_type === 'behind').length;
       const avgCompletion = activeCount > 0 ? Math.round(items.reduce((acc, curr) => acc + (curr.episodes_watched / (curr.total_episodes || 1)), 0) / activeCount * 100) : 0;
 
       document.getElementById('stat-active').innerText = `Active Shows: ${activeCount}`;
       document.getElementById('stat-episodes').innerText = `Episodes Watched: ${totalWatched}`;
-      document.getElementById('stat-behind').innerText = `Behind Schedule: ${behindCount}`;
       document.getElementById('stat-completion').innerText = `Avg. Completion: ${avgCompletion}%`;
     }
 
-    let globalWatchingData = [];
-
-    function openAnimeReview(item) {
-      const reviewData = {
-        id: item.id,
-        title: item.title,
-        image: item.cover,
-        episodes: item.total_episodes,
-        status: item.airing_status,
-        rating: item.score
-      };
-      window.location.href = `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(JSON.stringify(reviewData))}`;
+    function updateSelectedCount() {
+      document.getElementById('selected-count').innerText = selectedWatchlistIds.size;
     }
 
-    function renderCurrentlyWatching(items) {
-      globalWatchingData = items;
+    function toggleSelectAnime(watchlistId) {
+      if (selectedWatchlistIds.has(watchlistId)) {
+        selectedWatchlistIds.delete(watchlistId);
+      } else {
+        selectedWatchlistIds.add(watchlistId);
+      }
+      updateSelectedCount();
+      renderCurrentlyWatching();
+    }
+
+    // Render Function using Dedicated List Pagination
+    function renderCurrentlyWatching() {
       const gridContainer = document.getElementById('currently-watching-grid');
       const tableBody = document.getElementById('currently-watching-table-body');
       const mobileList = document.getElementById('mobile-watching-list');
 
-      // Render Grid
-      gridContainer.innerHTML = items.map(item => {
+      // Pagination Calculations
+      const totalItems = globalWatchingData.length;
+      const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const paginatedItems = globalWatchingData.slice(startIndex, startIndex + itemsPerPage);
+
+      // Render Grid View
+      gridContainer.innerHTML = paginatedItems.map(item => {
         const pct = Math.round((item.episodes_watched / item.total_episodes) * 100) || 0;
+        const isChecked = selectedWatchlistIds.has(item.watchlist_id);
+
         return `
-          <div class="anime-card" onclick="openAnimeReview(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+          <div class="anime-card">
             <div class="card-banner">
-              <img src="${item.banner || item.cover}" alt="${item.title}">
-              <span class="badge-status ${item.status_type}">${item.airing_status}</span>
+              <input type="checkbox" class="card-checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSelectAnime('${item.watchlist_id}')">
+              <img src="${item.cover}" alt="${item.title}">
+              <span class="badge-status airing">${item.status}</span>
             </div>
             <div class="card-body">
               <div class="card-title">${item.title}</div>
@@ -1758,16 +1693,9 @@
                 </div>
               </div>
 
-              <div class="quick-controls" onclick="event.stopPropagation()">
-                <button class="ep-counter-btn" onclick="incrementEp('${item.id}')">
-                  <span class="material-symbols-outlined" style="font-size:16px;">add</span>
-                  +1 Ep
-                </button>
-                <button class="card-action-btn" title="Log Reaction" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';">
-                  <span class="material-symbols-outlined" style="font-size:16px;">edit_note</span>
-                </button>
-                <button class="card-action-btn" title="More Options" onclick="openAnimeReview(${JSON.stringify(item).replace(/"/g, '&quot;')})">
-                  <span class="material-symbols-outlined" style="font-size:16px;">more_vert</span>
+              <div class="quick-controls" style="margin-top:10px; justify-content:flex-end;">
+                <button class="card-action-btn" title="Delete from list" onclick="deleteWatchlistItems(['${item.watchlist_id}'])">
+                  <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
                 </button>
               </div>
             </div>
@@ -1775,41 +1703,47 @@
         `;
       }).join('');
 
-      // Render Table
-      tableBody.innerHTML = items.map(item => `
-        <tr onclick="openAnimeReview(${JSON.stringify(item).replace(/"/g, '&quot;')})">
-          <td>
-            <div class="title-cell">
-              <img src="${item.cover}" alt="${item.title}">
-              <div>
-                <div class="title-main">${item.title}</div>
-                <div class="title-sub">Active Watch</div>
-              </div>
-            </div>
-          </td>
-          <td onclick="event.stopPropagation()">
-            <div class="ep-tracker">
-              <span>${item.episodes_watched} / ${item.total_episodes}</span>
-              <button class="ep-tracker-btn" onclick="incrementEp('${item.id}')">+</button>
-            </div>
-          </td>
-          <td>${item.last_watched}</td>
-          <td><span style="color:var(--orange);">★ ${item.score}</span></td>
-          <td><span class="badge-status ${item.status_type}">${item.airing_status}</span></td>
-          <td><span class="material-symbols-outlined" style="cursor:pointer; color:var(--muted);">more_vert</span></td>
-        </tr>
-      `).join('');
-
-      // Render Mobile
-      mobileList.innerHTML = items.map(item => {
-        const pct = Math.round((item.episodes_watched / item.total_episodes) * 100) || 0;
+      // Render Table View
+      tableBody.innerHTML = paginatedItems.map(item => {
+        const isChecked = selectedWatchlistIds.has(item.watchlist_id);
         return `
-          <div class="mobile-anime-card" onclick="openAnimeReview(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+          <tr>
+            <td>
+              <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSelectAnime('${item.watchlist_id}')">
+            </td>
+            <td>
+              <div class="title-cell">
+                <img src="${item.cover}" alt="${item.title}">
+                <div>
+                  <div class="title-main">${item.title}</div>
+                </div>
+              </div>
+            </td>
+            <td>${item.episodes_watched} / ${item.total_episodes}</td>
+            <td><span style="color:var(--orange);">★ ${item.score}</span></td>
+            <td><span class="badge-status airing">${item.status}</span></td>
+            <td>
+              <button class="card-action-btn" style="margin: 0 auto;" onclick="deleteWatchlistItems(['${item.watchlist_id}'])">
+                <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // Render Mobile List
+      mobileList.innerHTML = paginatedItems.map(item => {
+        const pct = Math.round((item.episodes_watched / item.total_episodes) * 100) || 0;
+        const isChecked = selectedWatchlistIds.has(item.watchlist_id);
+
+        return `
+          <div class="mobile-anime-card">
+            <input type="checkbox" style="position:absolute; top:8px; right:8px;" ${isChecked ? 'checked' : ''} onchange="toggleSelectAnime('${item.watchlist_id}')">
             <img src="${item.cover}" alt="${item.title}">
             <div class="mobile-card-details">
               <div>
                 <div class="mobile-card-title">${item.title}</div>
-                <div class="mobile-card-sub">${item.airing_status}</div>
+                <div class="mobile-card-sub">${item.status}</div>
               </div>
               <div class="progress-section">
                 <div class="progress-info">
@@ -1820,24 +1754,89 @@
                   <div class="progress-bar-fill" style="width: ${pct}%;"></div>
                 </div>
               </div>
-              <div style="display:flex; justify-content:flex-end;" onclick="event.stopPropagation()">
-                <button class="ep-counter-btn" style="height:26px; font-size:10px;" onclick="incrementEp('${item.id}')">+1 Episode</button>
+              <div style="display:flex; justify-content:flex-end;">
+                <button class="card-action-btn" onclick="deleteWatchlistItems(['${item.watchlist_id}'])">
+                  <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
+                </button>
               </div>
             </div>
           </div>
         `;
       }).join('');
+
+      renderPaginationControls(totalPages);
     }
 
-    function incrementEp(id) {
-      const item = globalWatchingData.find(a => String(a.id) === String(id));
-      if (item && item.episodes_watched < item.total_episodes) {
-        item.episodes_watched++;
-        renderCurrentlyWatching(globalWatchingData);
-        updateStats(globalWatchingData);
-        showToast(`Progress updated for ${item.title}!`, "success");
+    // Render Dedicated Pagination Controls for Anime List
+    function renderPaginationControls(totalPages) {
+      const paginationContainer = document.getElementById('anime-pagination');
+      const mobilePaginationContainer = document.getElementById('mobile-anime-pagination');
+      const pageInfo = document.getElementById('page-info');
+
+      pageInfo.innerText = `Showing page ${currentPage} of ${totalPages} (${globalWatchingData.length} active shows)`;
+
+      let buttonsHTML = `
+        <button class="page-button" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">
+          <span class="material-symbols-outlined" style="font-size:16px;">chevron_left</span>
+        </button>
+      `;
+
+      for (let i = 1; i <= totalPages; i++) {
+        buttonsHTML += `
+          <button class="page-button ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>
+        `;
+      }
+
+      buttonsHTML += `
+        <button class="page-button" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">
+          <span class="material-symbols-outlined" style="font-size:16px;">chevron_right</span>
+        </button>
+      `;
+
+      paginationContainer.innerHTML = buttonsHTML;
+      mobilePaginationContainer.innerHTML = buttonsHTML;
+    }
+
+    function changePage(page) {
+      const totalPages = Math.ceil(globalWatchingData.length / itemsPerPage);
+      if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        renderCurrentlyWatching();
       }
     }
+
+    // Batch Action Handlers
+    document.getElementById('toggle-select-all-btn').addEventListener('click', () => {
+      if (selectedWatchlistIds.size === globalWatchingData.length) {
+        selectedWatchlistIds.clear();
+      } else {
+        globalWatchingData.forEach(item => selectedWatchlistIds.add(item.watchlist_id));
+      }
+      updateSelectedCount();
+      renderCurrentlyWatching();
+    });
+
+    document.getElementById('table-header-checkbox').addEventListener('change', (e) => {
+      if (e.target.checked) {
+        globalWatchingData.forEach(item => selectedWatchlistIds.add(item.watchlist_id));
+      } else {
+        selectedWatchlistIds.clear();
+      }
+      updateSelectedCount();
+      renderCurrentlyWatching();
+    });
+
+    const triggerDeleteSelected = () => {
+      const idsToDelete = Array.from(selectedWatchlistIds);
+      if (idsToDelete.length === 0) {
+        showToast("Please select at least one anime to delete.", "error");
+        return;
+      }
+      deleteWatchlistItems(idsToDelete);
+    };
+
+    document.getElementById('delete-selected-btn').addEventListener('click', triggerDeleteSelected);
+    document.getElementById('mobile-delete-selected-btn').addEventListener('click', triggerDeleteSelected);
 
     // TOGGLE GRID / TABLE VIEW
     const gridBtn = document.getElementById('view-grid-btn');
@@ -1858,144 +1857,6 @@
       gridView.style.display = 'none';
       tableView.style.display = 'block';
     });
-
-    // 4. JavaScript Search Controller Logic (Backend Proxy with AbortController, 400ms debounce, Bearer token)
-    let searchTimeout = null;
-    let currentAbortController = null;
-
-    function openAnimeReviewFromSearch(anime) {
-      const reviewData = {
-        id: anime.id,
-        title: anime.title,
-        image: anime.image,
-        episodes: anime.episodes,
-        rating: anime.score
-      };
-      window.location.href = `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(JSON.stringify(reviewData))}`;
-    }
-
-    function handleSearch(query, resultsContainer) {
-      const cleanQuery = query.trim();
-
-      if (cleanQuery.length < 1) {
-        resultsContainer.classList.remove('active');
-        resultsContainer.innerHTML = '';
-        if (currentAbortController) currentAbortController.abort();
-        return;
-      }
-
-      clearTimeout(searchTimeout);
-
-      searchTimeout = setTimeout(async () => {
-        if (currentAbortController) currentAbortController.abort();
-        currentAbortController = new AbortController();
-
-        resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">Searching...</div>`;
-        resultsContainer.classList.add('active');
-
-        try {
-          const token = getAuthToken();
-          const targetUrl = `${API_BASE_URL}/api/anime/kitsu-search?q=${encodeURIComponent(cleanQuery)}`;
-          const response = await fetch(targetUrl, {
-            signal: currentAbortController.signal,
-            headers: {
-              'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`,
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            }
-          });
-
-          if (!response.ok) throw new Error(`HTTP_${response.status}`);
-          const data = await response.json();
-          const results = data.results || [];
-          resultsContainer._animeResults = results;
-
-          resultsContainer.innerHTML = '';
-
-          if (results.length === 0) {
-            resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">No anime found</div>`;
-          } else {
-            results.forEach(anime => {
-              const title = anime.title || 'Untitled';
-              const img = anime.image || './logo.png';
-              const rating = anime.score ? `★ ${anime.score.toFixed(1)}` : 'N/A';
-              const type = anime.episodes ? `${anime.episodes} Eps` : 'ANIME';
-
-              const itemHTML = `
-                <div class="search-result-item" data-result-index="${results.indexOf(anime)}" role="button" tabindex="0" style="display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid #1a1c29; cursor:pointer;">
-                  <img src="${img}" alt="${title}" style="width:32px; height:45px; border-radius:4px;">
-                  <div style="display:flex; flex-direction:column; gap:2px; overflow:hidden;">
-                    <div style="font-size:12px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600;">${title}</div>
-                    <div style="font-size:10px; color:var(--muted);">${type} • ${rating}</div>
-                  </div>
-                </div>
-              `;
-              resultsContainer.insertAdjacentHTML('beforeend', itemHTML);
-            });
-          }
-        } catch (err) {
-          if (err.name === 'AbortError') return;
-          console.error('Search fetch error:', err);
-          showToast("Network error during search", "error");
-          resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--danger); text-align: center;">Search failed. Try again.</div>`;
-        }
-      }, 400);
-    }
-
-    const desktopInput = document.getElementById('desktop-search-input');
-    const desktopResults = document.getElementById('desktop-search-results');
-    if (desktopInput) desktopInput.addEventListener('input', (e) => handleSearch(e.target.value, desktopResults));
-
-    const mobileInput = document.getElementById('mobile-search-input');
-    const mobileResults = document.getElementById('mobile-search-results');
-    if (mobileInput) mobileInput.addEventListener('input', (e) => handleSearch(e.target.value, mobileResults));
-
-    const mobileSearchToggle = document.getElementById('mobile-search-toggle');
-    const mobileSearchBar = document.getElementById('mobile-search-bar');
-    if (mobileSearchToggle) {
-      mobileSearchToggle.addEventListener('click', () => {
-        mobileSearchBar.classList.toggle('active');
-      });
-    }
-
-    document.addEventListener('click', (event) => {
-      const resultItem = event.target.closest('.search-result-item');
-      if (!resultItem) return;
-      const anime = resultItem.parentElement._animeResults?.[Number(resultItem.dataset.resultIndex)];
-      if (anime) openAnimeReviewFromSearch(anime);
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.search')) {
-        desktopResults.classList.remove('active');
-      }
-      if (!e.target.closest('#mobile-search-bar') && !e.target.closest('#mobile-search-toggle')) {
-        mobileResults.classList.remove('active');
-      }
-    });
-
-    // Theme Toggle & Logout Handlers
-    const themeToggleBtn = document.getElementById('theme-toggle-btn');
-    if (themeToggleBtn) {
-      themeToggleBtn.addEventListener('click', () => {
-        document.body.classList.toggle('light-theme');
-        const isLight = document.body.classList.contains('light-theme');
-        showToast(isLight ? "Switched to Light Mode" : "Switched to Dark Mode", "success");
-      });
-    }
-
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('token');
-        document.cookie = "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        showToast("Logged out successfully", "success");
-        setTimeout(() => {
-          window.location.href = './anilog-login-register.html';
-        }, 1000);
-      });
-    }
   </script>
 </body>
 
