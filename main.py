@@ -1,6 +1,7 @@
 import os
 import random
-from datetime import datetime, timedelta, timezone
+import uuid
+from datetime import datetime, date, timedelta, timezone
 from typing import Optional, Any, Dict, List
 
 import httpx
@@ -14,6 +15,7 @@ from pydantic import BaseModel, EmailStr
 from sqlalchemy import (
     String,
     DateTime,
+    Date,
     Integer,
     JSON,
     func,
@@ -22,6 +24,7 @@ from sqlalchemy import (
     ForeignKey,
     delete as sql_delete,
 )
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -170,6 +173,22 @@ class UserAnimeList(Base):
     )
 
 
+class DailyWatchActivity(Base):
+    __tablename__ = "daily_watch_activities"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
+    anime_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    primary_genre: Mapped[str] = mapped_column(String(50), nullable=False)
+    episodes_count: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    watch_time_mins: Mapped[int] = mapped_column(Integer, default=24, nullable=False)
+    activity_date: Mapped[date] = mapped_column(
+        Date, default=date.today, nullable=False
+    )
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -304,6 +323,14 @@ class WatchlistDeleteRequest(BaseModel):
 
 class FavoriteToggleRequest(BaseModel):
     anime_id: str
+
+
+class WatchActivityRequest(BaseModel):
+    primary_genre: str
+    category: Optional[str] = "series"
+    episodes_count: Optional[int] = 1
+    watch_time_mins: Optional[int] = 24
+    activity_date: Optional[str] = None
 
 
 # ==================================================
@@ -602,7 +629,7 @@ async def search_anime(
     async with httpx.AsyncClient() as client:
         response = await client.get(
             f"{ANIME_SOURCE_URL}/anime",
-            params={"filter[text]": q, "page[limit]": "5"},
+            params={"filter[text]": q, "page[limit]": "20"},
             headers={
                 "Accept": "application/vnd.api+json",
                 "Content-Type": "application/vnd.api+json",
@@ -650,6 +677,136 @@ async def search_anime(
     return {"results": results}
 
 
+@app.get("/api/anime/genres")
+async def get_anime_genres(current_user: User = Depends(get_current_user)):
+    genres = []
+    url = f"{ANIME_SOURCE_URL}/genres?page[limit]=20"
+
+    async with httpx.AsyncClient() as client:
+        while url:
+            try:
+                res = await client.get(
+                    url,
+                    headers={
+                        "Accept": "application/vnd.api+json",
+                        "Content-Type": "application/vnd.api+json",
+                    },
+                )
+                if res.status_code != 200:
+                    break
+                data = res.json()
+                for item in data.get("data", []):
+                    name = item.get("attributes", {}).get("name")
+                    if name and name not in genres:
+                        genres.append(name)
+                url = data.get("links", {}).get("next")
+            except Exception:
+                break
+
+    genres.sort()
+    return {"genres": genres}
+
+
+@app.post("/api/anime/watch-activity")
+async def submit_watch_activity(
+    payload: WatchActivityRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    category = (payload.category or "series").lower()
+    genre_param = payload.primary_genre.lower().strip()
+
+    headers = {
+        "Accept": "application/vnd.api+json",
+        "Content-Type": "application/vnd.api+json",
+    }
+
+    params = {
+        "filter[categories]": genre_param,
+        "page[limit]": "20",
+        "sort": "-userCount",
+    }
+
+    if category == "seasonal":
+        params["filter[status]"] = "current"
+    elif category == "movie":
+        params["filter[subtype]"] = "movie"
+    elif category == "series":
+        params["filter[subtype]"] = "TV"
+
+    fetched_anime_list = []
+    included_list = []
+
+    async with httpx.AsyncClient() as client:
+        res = await client.get(f"{ANIME_SOURCE_URL}/anime", params=params, headers=headers)
+        
+        if res.status_code == 200:
+            kitsu_data = res.json()
+            fetched_anime_list = kitsu_data.get("data", [])
+            included_list = kitsu_data.get("included", [])
+
+        # Fallback 1: Try filter[genres] instead of filter[categories]
+        if len(fetched_anime_list) < 5:
+            fallback_params = dict(params)
+            del fallback_params["filter[categories]"]
+            fallback_params["filter[genres]"] = genre_param
+            res = await client.get(f"{ANIME_SOURCE_URL}/anime", params=fallback_params, headers=headers)
+            if res.status_code == 200:
+                data = res.json()
+                existing_ids = {a["id"] for a in fetched_anime_list}
+                for item in data.get("data", []):
+                    if item["id"] not in existing_ids:
+                        fetched_anime_list.append(item)
+                included_list.extend(data.get("included", []))
+
+        # Fallback 2: Broaden filter if strict seasonal status returned too few
+        if len(fetched_anime_list) < 10:
+            broad_params = {
+                "filter[categories]": genre_param,
+                "page[limit]": "20",
+                "sort": "-userCount",
+            }
+            if category == "movie":
+                broad_params["filter[subtype]"] = "movie"
+            res = await client.get(f"{ANIME_SOURCE_URL}/anime", params=broad_params, headers=headers)
+            if res.status_code == 200:
+                data = res.json()
+                existing_ids = {a["id"] for a in fetched_anime_list}
+                for item in data.get("data", []):
+                    if item["id"] not in existing_ids:
+                        fetched_anime_list.append(item)
+                included_list.extend(data.get("included", []))
+
+    parsed_date = date.today()
+    if payload.activity_date:
+        try:
+            parsed_date = datetime.strptime(payload.activity_date, "%Y-%m-%d").date()
+        except ValueError:
+            parsed_date = date.today()
+
+    user_uuid = uuid.uuid5(uuid.NAMESPACE_DNS, str(current_user.id))
+    primary_anime_id = fetched_anime_list[0].get("id") if fetched_anime_list else "unknown"
+
+    activity = DailyWatchActivity(
+        user_id=user_uuid,
+        anime_id=str(primary_anime_id),
+        primary_genre=payload.primary_genre,
+        episodes_count=payload.episodes_count if payload.episodes_count is not None else 1,
+        watch_time_mins=payload.watch_time_mins if payload.watch_time_mins is not None else 24,
+        activity_date=parsed_date,
+    )
+
+    db.add(activity)
+    await db.commit()
+
+    return {
+        "message": "Watch activity stored successfully",
+        "activity_id": str(activity.id),
+        "data": fetched_anime_list,
+        "included": included_list,
+    }
+
+
 @app.get("/api/user/watchlist")
 async def get_user_watchlist(
     current_user: User = Depends(get_current_user),
@@ -694,7 +851,6 @@ async def delete_from_watchlist(
             status_code=400, detail="No anime item IDs provided for deletion"
         )
 
-    # 1. Retrieve the watchlist items belonging to current user that are slated for deletion
     result = await db.execute(
         select(UserAnimeList).where(
             UserAnimeList.user_id == current_user.id,
@@ -708,16 +864,13 @@ async def delete_from_watchlist(
             status_code=404, detail="No matching watchlist entries found to delete"
         )
 
-    # 2. Check how many of the selected items were marked as favorite
     favorite_count_to_deduct = sum(1 for item in items_to_delete if item.is_favorite)
 
-    # 3. Deduct from user's favorites_count column accordingly
     if favorite_count_to_deduct > 0:
         current_favs = int(current_user.favorites_count or 0)
         current_user.favorites_count = max(0, current_favs - favorite_count_to_deduct)
         current_user.updated_at = datetime.now(timezone.utc)
 
-    # 4. Perform deletion
     deleted_ids = [item.id for item in items_to_delete]
     await db.execute(
         sql_delete(UserAnimeList).where(
@@ -862,7 +1015,6 @@ async def add_to_watchlist(
 ):
     anime_id_str = str(payload.anime_id)
 
-    # 1. Check if anime exists in local database, fetch & cache if missing
     result = await db.execute(select(Anime).where(Anime.id == anime_id_str))
     anime = result.scalars().first()
 
@@ -917,7 +1069,6 @@ async def add_to_watchlist(
         db.add(anime)
         await db.commit()
 
-    # 2. Check if already in user's watchlist
     existing_entry = await db.execute(
         select(UserAnimeList).where(
             UserAnimeList.user_id == current_user.id,
@@ -929,7 +1080,6 @@ async def add_to_watchlist(
             status_code=400, detail="Anime already exists in your watchlist"
         )
 
-    # 3. Create watchlist entry & increment user's favorites_count if is_favorite is True
     watchlist_id = f"item_{random.randint(10000, 99999)}"
     now = datetime.now(timezone.utc)
 
@@ -968,7 +1118,7 @@ async def get_new_releases(current_user: User = Depends(get_current_user)):
                 params={
                     "filter[status]": "current",
                     "sort": "-userCount",
-                    "page[limit]": "15",
+                    "page[limit]": "20",
                 },
                 headers={
                     "Accept": "application/vnd.api+json",
@@ -996,7 +1146,7 @@ async def get_upcoming_anime(current_user: User = Depends(get_current_user)):
                 params={
                     "filter[status]": "upcoming",
                     "sort": "-userCount",
-                    "page[limit]": "10",
+                    "page[limit]": "20",
                 },
                 headers={
                     "Accept": "application/vnd.api+json",
@@ -1023,7 +1173,7 @@ async def kitsu_search_anime(
         try:
             response = await client.get(
                 f"{ANIME_SOURCE_URL}/anime",
-                params={"filter[text]": q, "page[limit]": "6"},
+                params={"filter[text]": q, "page[limit]": "10"},
                 headers={
                     "Accept": "application/vnd.api+json",
                     "Content-Type": "application/vnd.api+json",
