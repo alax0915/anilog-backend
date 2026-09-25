@@ -22,10 +22,23 @@
       --border: #25283a;
       --purple: #9d2cff;
       --purple2: #c34cff;
+      --star-color: #ffd700;
       --text: #f5f3f8;
       --muted: #8f8d9d;
       --dim: #676675;
       --danger: #ff2d63;
+      --success: #00e676;
+    }
+
+    body.light-mode {
+      --bg: #f4f5f9;
+      --panel: #ffffff;
+      --panel2: #eef0f5;
+      --panel3: #e2e5f0;
+      --border: #d1d5db;
+      --text: #111827;
+      --muted: #4b5563;
+      --dim: #6b7280;
     }
 
     * {
@@ -38,9 +51,10 @@
     body {
       width: 100%;
       min-height: 100%;
-      background: #03040a;
+      background: var(--bg);
       color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
     body {
@@ -62,6 +76,76 @@
     img {
       display: block;
       object-fit: cover;
+    }
+
+    /* ---------------- SKELETON LOADING ANIMATIONS ---------------- */
+    .skeleton {
+      background: linear-gradient(90deg, #181a29 25%, #2a2d42 50%, #181a29 75%);
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.5s infinite;
+      border-radius: 4px;
+      color: transparent !important;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    @keyframes skeleton-loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ---------------- TOAST NOTIFICATION CONTAINER ---------------- */
+    #toast-container {
+      position: fixed;
+      top: 20px;
+      right: 50%;
+      transform: translateX(50%);
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+      width: min(400px, 90vw);
+    }
+
+    .toast {
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+      pointer-events: auto;
+      animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .toast.toast-error {
+      background: rgba(255, 45, 99, 0.92);
+    }
+
+    .toast.toast-success {
+      background: rgba(0, 230, 118, 0.92);
+      color: #000;
+    }
+
+    .toast.toast-info {
+      background: rgba(157, 44, 255, 0.92);
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     /* ---------------- PRELOADER OVERLAY ---------------- */
@@ -198,57 +282,19 @@
       animation: navItemSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    body.loaded .side-link:nth-child(1) {
-      animation-delay: 0.15s;
-    }
-
-    body.loaded .side-link:nth-child(2) {
-      animation-delay: 0.20s;
-    }
-
-    body.loaded .side-link:nth-child(3) {
-      animation-delay: 0.25s;
-    }
-
-    body.loaded .side-link:nth-child(4) {
-      animation-delay: 0.30s;
-    }
-
-    body.loaded .side-link:nth-child(5) {
-      animation-delay: 0.35s;
-    }
-
-    body.loaded .side-link:nth-child(6) {
-      animation-delay: 0.40s;
-    }
-
-    body.loaded .side-link:nth-child(7) {
-      animation-delay: 0.45s;
-    }
-
-    body.loaded .side-link:nth-child(8) {
-      animation-delay: 0.50s;
-    }
-
-    body.loaded .side-link:nth-child(9) {
-      animation-delay: 0.55s;
-    }
-
-    body.loaded .side-link:nth-child(10) {
-      animation-delay: 0.60s;
-    }
-
-    body.loaded .side-link:nth-child(11) {
-      animation-delay: 0.65s;
-    }
-
-    body.loaded .side-link:nth-child(12) {
-      animation-delay: 0.70s;
-    }
-
-    body.loaded .side-link:nth-child(13) {
-      animation-delay: 0.75s;
-    }
+    body.loaded .side-link:nth-child(1) { animation-delay: 0.15s; }
+    body.loaded .side-link:nth-child(2) { animation-delay: 0.20s; }
+    body.loaded .side-link:nth-child(3) { animation-delay: 0.25s; }
+    body.loaded .side-link:nth-child(4) { animation-delay: 0.30s; }
+    body.loaded .side-link:nth-child(5) { animation-delay: 0.35s; }
+    body.loaded .side-link:nth-child(6) { animation-delay: 0.40s; }
+    body.loaded .side-link:nth-child(7) { animation-delay: 0.45s; }
+    body.loaded .side-link:nth-child(8) { animation-delay: 0.50s; }
+    body.loaded .side-link:nth-child(9) { animation-delay: 0.55s; }
+    body.loaded .side-link:nth-child(10) { animation-delay: 0.60s; }
+    body.loaded .side-link:nth-child(11) { animation-delay: 0.65s; }
+    body.loaded .side-link:nth-child(12) { animation-delay: 0.70s; }
+    body.loaded .side-link:nth-child(13) { animation-delay: 0.75s; }
 
     @keyframes navItemSlideIn {
       to {
@@ -286,28 +332,13 @@
     }
 
     @keyframes typingLoop {
-
-      0%,
-      100% {
-        width: 0;
-      }
-
-      30%,
-      70% {
-        width: 6.2ch;
-      }
+      0%, 100% { width: 0; }
+      30%, 70% { width: 6.2ch; }
     }
 
     @keyframes blinkCursor {
-
-      from,
-      to {
-        border-color: transparent;
-      }
-
-      50% {
-        border-color: #c65cff;
-      }
+      from, to { border-color: transparent; }
+      50% { border-color: #c65cff; }
     }
 
     .brand-sub {
@@ -363,26 +394,6 @@
       border: 1px solid #9b31e7;
       border-radius: 7px;
       background: linear-gradient(145deg, rgba(14, 16, 27, .98), rgba(7, 8, 15, .98));
-      clip-path: polygon(4% 0, 96% 0, 100% 7%, 100% 93%, 96% 100%, 4% 100%, 0 93%, 0 7%);
-      backface-visibility: hidden;
-      transform-style: preserve-3d;
-      opacity: 0;
-    }
-
-    body.loaded .user-card {
-      animation: userCardFlip 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s forwards;
-    }
-
-    @keyframes userCardFlip {
-      from {
-        opacity: 0;
-        transform: rotateY(-180deg);
-      }
-
-      to {
-        opacity: 1;
-        transform: rotateY(0deg);
-      }
     }
 
     .user-avatar {
@@ -392,7 +403,6 @@
       border: 1px solid #a42df2;
       border-radius: 50%;
       padding: 3px;
-      object-fit: cover;
     }
 
     .user-info {
@@ -404,6 +414,7 @@
       margin: 0 0 4px;
       font-size: 14px;
       font-weight: 700;
+      word-break: break-word;
     }
 
     .user-level {
@@ -477,12 +488,10 @@
         opacity: 0;
         clip-path: circle(0px at 50% 50%);
       }
-
       10% {
         opacity: 1;
         clip-path: circle(12px at 50% 50%);
       }
-
       100% {
         opacity: 1;
         clip-path: none;
@@ -582,13 +591,8 @@
     }
 
     @keyframes topActionsFadeIn {
-      from {
-        opacity: 0;
-      }
-
-      to {
-        opacity: 1;
-      }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     .top-action-wrap {
@@ -714,7 +718,7 @@
 
     .content-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 220px;
+      grid-template-columns: minmax(0, 1fr) 280px;
       gap: 10px;
     }
 
@@ -723,6 +727,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
+      align-items: start;
     }
 
     .card {
@@ -731,6 +736,7 @@
       background: rgba(12, 11, 22, .87);
       overflow: hidden;
       min-width: 0;
+      height: auto;
     }
 
     .card-title {
@@ -739,13 +745,8 @@
       padding: 10px 12px 7px;
     }
 
-    .basic {
-      grid-column: 1;
-    }
-
-    .plot {
-      grid-column: 2;
-    }
+    .basic { grid-column: 1; }
+    .plot { grid-column: 2; height: auto; }
 
     .info-grid {
       display: grid;
@@ -777,21 +778,24 @@
     }
 
     .scrolltext {
-      height: 121px;
-      overflow: auto;
-      padding: 0 13px 9px;
-      font-size: 10.5px;
-      line-height: 1.35;
-      color: #e0dce5;
+      height: auto;
+      max-height: 280px;
+      overflow-y: auto;
+      padding: 0 13px 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #f5f3f8;
     }
 
     .scrolltext::-webkit-scrollbar,
-    .mini-scroll::-webkit-scrollbar {
+    .mini-scroll::-webkit-scrollbar,
+    .scrollable-box::-webkit-scrollbar {
       width: 4px;
     }
 
     .scrolltext::-webkit-scrollbar-thumb,
-    .mini-scroll::-webkit-scrollbar-thumb {
+    .mini-scroll::-webkit-scrollbar-thumb,
+    .scrollable-box::-webkit-scrollbar-thumb {
       background: #4c3563;
       border-radius: 4px;
     }
@@ -800,18 +804,21 @@
       grid-column: 1 / -1;
     }
 
+    /* Scrollable Characters Listing */
     .characters-row {
       display: flex;
       align-items: center;
-      gap: 9px;
-      padding: 2px 10px 10px;
+      gap: 12px;
+      padding: 6px 12px 12px;
       overflow-x: auto;
+      scroll-behavior: smooth;
     }
 
     .char {
       width: 74px;
       flex: 0 0 74px;
       text-align: center;
+      cursor: pointer;
     }
 
     .char img {
@@ -825,17 +832,19 @@
     .char div {
       font-size: 11px;
       margin-top: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .arrow {
       color: #b64aff;
       font-size: 22px;
       cursor: pointer;
+      user-select: none;
     }
 
-    .rating {
-      grid-column: 1;
-    }
+    .rating { grid-column: 1; }
 
     .rating-body {
       height: 90px;
@@ -855,6 +864,7 @@
       font-size: 10px;
       line-height: 1.6;
       color: #d5cfdf;
+      flex: 1;
     }
 
     .rating-list b {
@@ -863,8 +873,12 @@
       margin-left: 12px;
     }
 
-    .favorite {
-      grid-column: 2;
+    /* Overrated Episodes (Formerly Favorite Episodes) */
+    .favorite { grid-column: 2; }
+
+    .episode-list-container {
+      max-height: 150px;
+      overflow-y: auto;
     }
 
     .episode {
@@ -874,6 +888,12 @@
       padding: 7px 12px;
       border-top: 1px solid #29213a;
       font-size: 11px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .episode:hover {
+      background: rgba(157, 44, 255, 0.12);
     }
 
     .episode img {
@@ -898,7 +918,7 @@
     }
 
     .rewatch {
-      grid-column: 2;
+      grid-column: 1 / -1;
       padding-bottom: 8px;
     }
 
@@ -906,10 +926,12 @@
       padding: 8px 12px;
     }
 
-    .stars {
-      color: #a23cff;
-      font-size: 21px;
-      letter-spacing: 2px;
+    /* Colored Stars Rating */
+    .stars-colored {
+      color: var(--star-color);
+      font-size: 22px;
+      letter-spacing: 3px;
+      margin-top: 4px;
     }
 
     .toggle {
@@ -921,6 +943,7 @@
       vertical-align: middle;
       margin-left: 7px;
       position: relative;
+      cursor: pointer;
     }
 
     .toggle:after {
@@ -934,17 +957,89 @@
       top: 2px;
     }
 
-    .thoughts {
-      grid-column: 1;
-      margin-top: 0;
+    /* Creator / Production Section */
+    .creator-section {
+      grid-column: 1 / -1;
     }
 
-    .thoughts p {
-      padding: 0 12px 10px;
-      margin: 0;
+    .creator-body {
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .creator-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1px solid var(--purple2);
+    }
+
+    .creator-info h4 {
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .creator-info p {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* NEW FEATURE 2: ALL EPISODES SCROLLABLE SECTION */
+    .all-episodes-section {
+      grid-column: 1 / -1;
+      margin-top: 10px;
+    }
+
+    .episodes-fixed-box {
+      height: 280px;
+      overflow-y: auto;
+      border-top: 1px solid #29213a;
+    }
+
+    .ep-row-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-bottom: 1px solid #1a1729;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .ep-row-item:hover {
+      background: rgba(157, 44, 255, 0.15);
+    }
+
+    .ep-row-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ep-num-badge {
+      background: #25163b;
+      color: var(--purple2);
+      font-weight: 700;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid #3c205e;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .ep-title-text {
+      font-size: 12px;
+      font-weight: 600;
+      color: #eee;
+    }
+
+    .ep-air-date {
       font-size: 10px;
-      line-height: 1.4;
-      color: #ddd7e3;
+      color: var(--muted);
     }
 
     .quotes {
@@ -1009,19 +1104,13 @@
       border-color: #a13aff;
     }
 
-    .mobile {
-      display: none;
-    }
+    .mobile { display: none; }
 
     /* ---------------- MOBILE LAYOUT & ANIMATIONS ---------------- */
-    .mobile-page {
-      display: none;
-    }
+    .mobile-page { display: none; }
 
     @media(max-width:900px) {
-      .desktop-page {
-        display: none;
-      }
+      .desktop-page { display: none; }
 
       .mobile-page {
         display: block;
@@ -1100,7 +1189,7 @@
       }
 
       .m-hero {
-        margin-top: 42px;
+        margin-top: 20px;
       }
 
       .m-hero h1 {
@@ -1151,12 +1240,12 @@
       }
 
       .m-plot {
-        height: 110px;
-        overflow: auto;
-        padding: 7px 10px;
-        font-size: 8px;
-        line-height: 1.35;
-        color: #d7d0df;
+        max-height: 200px;
+        overflow-y: auto;
+        padding: 10px 12px;
+        font-size: 12px;
+        line-height: 1.5;
+        color: var(--text);
       }
 
       .m-chars {
@@ -1167,14 +1256,15 @@
       }
 
       .m-char {
-        flex: 0 0 46px;
+        flex: 0 0 54px;
         text-align: center;
-        font-size: 7px;
+        font-size: 8px;
+        cursor: pointer;
       }
 
       .m-char img {
-        width: 35px;
-        height: 35px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
         border: 1px solid #a03cff;
         object-fit: cover;
@@ -1193,7 +1283,7 @@
       }
 
       .m-rating span {
-        font-size: 8px;
+        font-size: 9px;
         line-height: 1.5;
       }
 
@@ -1203,8 +1293,9 @@
         gap: 8px;
         padding: 7px 10px;
         border-top: 1px solid #282039;
-        font-size: 8px;
+        font-size: 9px;
         align-items: center;
+        cursor: pointer;
       }
 
       .m-episode img {
@@ -1215,18 +1306,18 @@
       }
 
       .m-episode b {
-        font-size: 8px;
+        font-size: 9px;
       }
 
       .m-episode small {
-        font-size: 7px;
+        font-size: 8px;
         color: #a8a1b2;
       }
 
       .m-stars {
         padding: 7px 10px;
-        font-size: 17px;
-        color: #a33cff;
+        font-size: 18px;
+        color: var(--star-color);
       }
 
       .m-rewatch {
@@ -1241,6 +1332,7 @@
         background: #9e39e9;
         border-radius: 10px;
         position: relative;
+        cursor: pointer;
       }
 
       .m-toggle:after {
@@ -1254,15 +1346,9 @@
         top: 2px;
       }
 
-      .m-thoughts {
-        padding: 7px 10px;
-        font-size: 8px;
-        line-height: 1.35;
-      }
-
       .m-quote {
         padding: 10px;
-        font-size: 8px;
+        font-size: 9px;
         line-height: 1.4;
         color: #e3dce9;
       }
@@ -1271,6 +1357,11 @@
         display: block;
         text-align: right;
         color: #a843ed;
+      }
+
+      .m-episodes-box {
+        max-height: 240px;
+        overflow-y: auto;
       }
 
       .bottom-nav {
@@ -1330,7 +1421,7 @@
       }
 
       .content-grid {
-        grid-template-columns: minmax(0, 1fr) 190px;
+        grid-template-columns: minmax(0, 1fr) 220px;
       }
 
       .left-grid {
@@ -1356,6 +1447,9 @@
 
 <body>
 
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container"></div>
+
   <!-- PRELOADER OVERLAY -->
   <div id="preloader">
     <div class="spinner"></div>
@@ -1373,40 +1467,30 @@
           </div>
         </div>
         <nav class="sidebar-nav">
-          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span
-              class="material-symbols-outlined">home</span>Home</button>
-          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';"><span
-              class="material-symbols-outlined">list_alt</span>Watchlist</button>
-          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span
-              class="material-symbols-outlined">play_circle</span>Currently Watching</button>
-          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span
-              class="material-symbols-outlined">check_circle</span>Completed</button>
-          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span
-              class="material-symbols-outlined">calendar_month</span>Seasonal</button>
-          <button class="side-link active" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span class="material-symbols-outlined"
-              >rate_review</span>Reviews</button>
+          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span class="material-symbols-outlined">home</span>Home</button>
+          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';"><span class="material-symbols-outlined">list_alt</span>Watchlist</button>
+          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span class="material-symbols-outlined">play_circle</span>Currently Watching</button>
+          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span class="material-symbols-outlined">check_circle</span>Completed</button>
+          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span class="material-symbols-outlined">calendar_month</span>Seasonal</button>
+          <button class="side-link active" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span class="material-symbols-outlined">rate_review</span>Reviews</button>
           <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span>Profile</button>
           <button class="side-link" onclick="window.location.href='./anilog-favorites.html';"><span class="material-symbols-outlined">bookmark</span>Favorites</button>
-          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span class="material-symbols-outlined"
-              >leaderboard</span>Top Lists</button>
-          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span class="material-symbols-outlined"
-              >shopping_bag</span>Merch</button>
-          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span class="material-symbols-outlined"
-             >history</span>Logs</button>
-          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span class="material-symbols-outlined"
-              >target</span>Goals</button>
+          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span class="material-symbols-outlined">leaderboard</span>Top Lists</button>
+          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span class="material-symbols-outlined">shopping_bag</span>Merch</button>
+          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span class="material-symbols-outlined">history</span>Logs</button>
+          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span class="material-symbols-outlined">target</span>Goals</button>
           <button class="side-link" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
         </nav>
 
         <div class="user-card">
-          <img class="user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="Avatar">
+          <img class="user-avatar" id="sidebar-user-avatar" src="" alt="Avatar">
           <div class="user-info">
-            <h3 class="user-name">ShadowX</h3>
-            <div class="user-level">Level 27</div>
+            <h3 class="user-name" id="sidebar-user-name">Loading...</h3>
+            <div class="user-level" id="sidebar-user-level">LVL 1 - Otaku Novice</div>
             <div class="xp-track">
-              <div class="xp-fill"></div>
+              <div class="xp-fill" id="sidebar-xp-fill" style="width: 0%;"></div>
             </div>
-            <div class="xp-text">XP 4,300 / 6,800</div>
+            <div class="xp-text" id="sidebar-xp-text">0 / 500 XP</div>
           </div>
         </div>
       </aside>
@@ -1415,45 +1499,65 @@
         <header class="topbar">
           <div class="search">
             <input type="text" id="desktop-search-input" placeholder="Search anime...">
-            <span class="material-symbols-outlined"
-              style="position: absolute; right: 12px; color: #777184; font-size: 16px;">search</span>
+            <span class="material-symbols-outlined" style="position: absolute; right: 12px; color: #777184; font-size: 16px;">search</span>
             <div class="search-results-dropdown" id="desktop-search-results"></div>
           </div>
 
           <div class="top-actions">
             <div class="top-action-wrap">
-              <div class="top-action"><span class="material-symbols-outlined">notifications</span></div>
-            </div>
-            <div class="top-action-wrap">
-              <div class="top-action fire">
-                <span class="material-symbols-outlined" style="color: #ca5aff;">local_fire_department</span>
-                <span>12</span>
+              <div class="top-action" onclick="window.location.href='anilog-notifications.html';" title="Notifications">
+                <span class="material-symbols-outlined">notifications</span>
               </div>
             </div>
             <div class="top-action-wrap">
-              <div class="top-action crown"><span class="material-symbols-outlined"
-                  style="color: #ffd33e;">workspace_premium</span></div>
+              <div class="top-action fire" id="streak-counter" title="Streak">
+                <span class="material-symbols-outlined" style="color: #ca5aff;">local_fire_department</span>
+                <span id="streak-val">1</span>
+              </div>
+            </div>
+            <div class="top-action-wrap">
+              <div class="top-action crown" title="Premium"><span class="material-symbols-outlined" style="color: #ffd33e;">workspace_premium</span></div>
+            </div>
+
+            <!-- Settings Hover Dropdown -->
+            <div class="top-action-wrap">
+              <div class="top-action">
+                <span class="material-symbols-outlined">settings</span>
+              </div>
+              <div class="dropdown-panel">
+                <div class="dropdown-panel-header">Settings Menu</div>
+                <button class="dropdown-item" onclick="window.location.href='anilog-notifications.html';">
+                  <span class="material-symbols-outlined">notifications</span> Notifications
+                </button>
+                <button class="dropdown-item" onclick="window.location.href='anilog-sub-dub-settings.html';">
+                  <span class="material-symbols-outlined">subtitles</span> Sub / Dub
+                </button>
+                <button class="dropdown-item" onclick="window.location.href='anilog-content-filter.html';">
+                  <span class="material-symbols-outlined">filter_alt</span> Content Filter
+                </button>
+                <button class="dropdown-item" id="theme-toggle-btn">
+                  <span class="material-symbols-outlined">contrast</span> Toggle Light/Dark
+                </button>
+              </div>
             </div>
 
             <div class="profile-wrap">
               <div class="profile">
-                <img class="avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="User">
+                <img class="avatar" id="header-user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="User">
                 <span class="material-symbols-outlined">expand_more</span>
               </div>
               <div class="dropdown-panel">
                 <div class="dropdown-panel-header">User Profile</div>
-                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span> View
-                  Profile</button>
-                <button class="dropdown-item" onclick="window.location.href='./anilog-edit-profile.html';"><span class="material-symbols-outlined">edit</span> Edit Profile</button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span> View Profile</button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">edit</span> Edit Profile</button>
                 <div class="dropdown-divider"></div>
-                <button class="dropdown-item" style="color: var(--danger);"><span class="material-symbols-outlined"
-                    style="color: var(--danger);">logout</span> Log Out</button>
+                <button class="dropdown-item" id="logout-btn" style="color: var(--danger);"><span class="material-symbols-outlined" style="color: var(--danger);">logout</span> Log Out</button>
               </div>
             </div>
           </div>
         </header>
 
-        <h1 id="review-title">Anime Review: loading ....</h1>
+        <h1 id="review-title" class="skeleton">Anime Review Loading...</h1>
 
         <div class="content-grid">
           <div class="left-grid">
@@ -1461,52 +1565,34 @@
             <section class="card basic">
               <div class="card-title">Basic Info</div>
               <div class="info-grid">
-                <div class="info"><label>Genre</label><span>...</span></div>
-                <div class="info"><label>Episodes</label><span id="review-episodes">...</span></div>
-                <div class="info"><label>Studio</label><span>...</span></div>
-                <div class="info"><label>Source</label><span>...</span></div>
-                <div class="info"><label>Status</label><span>...</span></div>
-                <div class="info"><label>My Rating</label><span>...</span></div>
-                <div class="info"><label>Age Rating</label><span>...</span></div>
+                <div class="info"><label>Genre</label><span id="review-genre" class="skeleton">Action, Fantasy</span></div>
+                <div class="info"><label>Episodes</label><span id="review-episodes" class="skeleton">...</span></div>
+                <div class="info"><label>Studio</label><span id="review-studio" class="skeleton">MAPPA</span></div>
+                <div class="info"><label>Source</label><span id="review-source" class="skeleton">Manga</span></div>
+                <div class="info"><label>Status</label><span id="review-status" class="skeleton">Finished</span></div>
+                <div class="info"><label>My Rating</label><span id="review-rating" class="skeleton">9.5/10</span></div>
+                <div class="info"><label>Age Rating</label><span id="review-age-rating" class="skeleton">PG-13</span></div>
               </div>
             </section>
 
             <!-- Plot Summary -->
             <section class="card plot">
               <div class="card-title">Plot Summary</div>
-              <div class="scrolltext" id="review-synopsis">The Rumbling enters the Rumbling and takes control of the continent. He is a
-                powerful warrior who has been training for years to become the strongest warrior in the world. He is
-                also a skilled fighter, and he is determined to prove himself to the world.<br><br>Eldiar Marley is a
-                powerful warrior who has been training for years to become the strongest warrior in the world. He is
-                also a skilled fighter, and he is determined to prove himself to the world.<br><br>The Rumbling and
-                Eldiar Marley are both determined to prove themselves to the world. They are both skilled fighters, and
-                they are both determined to become the strongest warriors in the world.</div>
+              <div class="scrolltext skeleton" id="review-synopsis">Loading plot summary details...</div>
             </section>
 
-            <!-- Characters -->
+            <!-- Characters Section -->
             <section class="card characters">
               <div class="card-title">Characters</div>
-              <div class="characters-row">
-                <span class="arrow">‹</span>
-                <div class="char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Eren" alt="Eren">
-                  <div>Eren</div>
+              <div style="display: flex; align-items: center; padding: 0 10px;">
+                <span class="arrow" id="char-scroll-left">‹</span>
+                <div class="characters-row mini-scroll" id="characters-container">
+                  <div class="char skeleton"><img src="" class="skeleton"><div>Name</div></div>
+                  <div class="char skeleton"><img src="" class="skeleton"><div>Name</div></div>
+                  <div class="char skeleton"><img src="" class="skeleton"><div>Name</div></div>
+                  <div class="char skeleton"><img src="" class="skeleton"><div>Name</div></div>
                 </div>
-                <div class="char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Mikasa" alt="Mikasa">
-                  <div>Mikasa</div>
-                </div>
-                <div class="char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Armin" alt="Armin">
-                  <div>Armin</div>
-                </div>
-                <div class="char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Zeke" alt="Zeke">
-                  <div>Zeke</div>
-                </div>
-                <div class="char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Reiner" alt="Reiner">
-                  <div>Reiner</div>
-                </div>
-                <div class="char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Gabi" alt="Gabi">
-                  <div>Gabi</div>
-                </div>
-                <span class="arrow">›</span>
+                <span class="arrow" id="char-scroll-right">›</span>
               </div>
             </section>
 
@@ -1514,70 +1600,83 @@
             <section class="card rating">
               <div class="card-title">Overall Rating</div>
               <div class="rating-body">
-                <div class="rating-num">9.8</div>
-                <div class="rating-list">Story <b>10/10</b><br>Pacing <b>9.5/10</b><br>Art <b>10/10</b><br>Sound
-                  <b>10/10</b><br>Overall <b>9.8/10</b>
+                <div class="rating-num skeleton" id="review-score-num">--</div>
+                <div class="rating-list">
+                  Story <b id="score-story" class="skeleton">--</b><br>
+                  Pacing <b id="score-pacing" class="skeleton">--</b><br>  
+                  Art <b id="score-art" class="skeleton">--</b><br>
+                  Sound <b id="score-sound" class="skeleton">--</b><br>
+                  Overall <b id="review-score-overall" class="skeleton">--</b>
                 </div>
               </div>
             </section>
 
-            <!-- Favorite Episodes -->
+            <!-- Overrated Episodes Section (Changed from Favorite Episodes) -->
             <section class="card favorite">
-              <div class="card-title">Favorite Episodes</div>
-              <div class="episode"><span>Ep 80</span><img id="review-anime-image" src="https://api.dicebear.com/7.x/bottts/svg?seed=Ep80"
-                  alt="Ep 80">
-                <div><b>"From You, 2,000 Years Ago"</b><small>Masterful execution</small></div>
-              </div>
-              <div class="episode"><span>Ep 81</span><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Ep81"
-                  alt="Ep 81">
-                <div><b>"Thaw"</b><small>Emotional climax</small></div>
+              <div class="card-title">1-5 Episodes</div>
+              <div class="episode-list-container" id="overrated-episodes-container">
+                <div class="episode skeleton"><span>Ep --</span><div><b>"Loading..."</b><small>Community rating</small></div></div>
               </div>
             </section>
 
-            <!-- OST -->
+            <!-- OST / OP / ED -->
             <section class="card ost">
-              <div class="card-title">OST/OP/ED</div>
-              <div class="episode"><span>OP</span>
-                <div><b>"The Rumbling"</b><small>SiM - The perfect tone setter</small></div>
+              <div class="card-title">OST / OP / ED</div>
+              <div class="episode">
+                <span>OP</span>
+                <div><b id="review-op" class="skeleton">"Loading OP..."</b><small id="review-op-artist">Song Artist</small></div>
               </div>
-              <div class="episode"><span>ED</span>
-                <div><b>"Akuma no Ko"</b><small>Ai Higuchi - So haunting and beautiful</small></div>
+              <div class="episode">
+                <span>ED</span>
+                <div><b id="review-ed" class="skeleton">"Loading ED..."</b><small id="review-ed-artist">Song Artist</small></div>
               </div>
-              <div class="episode"><span>Key OST</span>
-                <div><b>"Ashes on the Fire"</b></div>
+              <div class="episode">
+                <span>Key OST</span>
+                <div><b id="review-ost" class="skeleton">"Loading Key Track..."</b></div>
               </div>
             </section>
 
-            <!-- Quotes -->
+            <!-- Quotes from Different Selected Anime Characters -->
             <section class="card quotes">
-              <div class="card-title">Quotes</div>
-              <div class="quote-row">
-                <div class="quote">If we kill all the enemies on the other side... will we finally be free?<em>-
-                    Eren</em></div>
-                <div class="quote">You're not a slave, nor are you a god... you're just a person.<em>- Armin</em></div>
+              <div class="card-title">Character Quotes</div>
+              <div class="quote-row" id="quotes-container">
+                <div class="quote skeleton">Loading character quote...<em>- Character</em></div>
+                <div class="quote skeleton">Loading character quote...<em>- Character</em></div>
               </div>
             </section>
-
-            <div class="pagination">
-              <button>‹</button><button
-                class="active">1</button><button>2</button><button>3</button><button>…</button><button>8</button><button>›</button>
-            </div>
           </div>
 
           <!-- Right Sidebar -->
           <aside>
+            <!-- Rewatch Section with Colored Stars -->
             <section class="card rewatch">
               <div class="card-title">Would Rewatch?</div>
-              <div class="rewatch-body">Yes <span class="toggle"></span>
-                <div class="stars">★★★★★</div>
-                <div style="font-size:10px;background:#171224;padding:8px;border-radius:5px;margin-top:6px;">Absolutely
-                  essential</div>
+              <div class="rewatch-body">
+                Yes <span class="toggle" onclick="showToast('Rewatch preference toggled!', 'info')"></span>
+                <div class="stars-colored" id="star-rating-display">★★★★★</div>
+                <div style="font-size:10px;background:#171224;padding:8px;border-radius:5px;margin-top:6px;" id="rewatch-verdict">Essential rewatch candidate</div>
               </div>
             </section>
-            <section class="card thoughts">
-              <div class="card-title">Personal Thoughts</div>
-              <p>I am not recently personal to this anime. I am a fan of the series and I have watched it multiple
-                times. I think it is a great series and I would recommend it to anyone who is interested in anime.</p>
+
+            <!-- REPLACED PERSONAL THOUGHTS -> ANIME CREATOR SECTION -->
+            <section class="card creator-section">
+              <div class="card-title">Anime Creator & Staff</div>
+              <div class="creator-body">
+                <img id="creator-avatar" class="creator-avatar skeleton" src="https://api.dicebear.com/7.x/bottts/svg?seed=Author" alt="Creator">
+                <div class="creator-info">
+                  <h4 id="creator-name" class="skeleton">Original Creator</h4>
+                  <p id="creator-role" class="skeleton">Manga Author / Original Work</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- NEW FEATURE 2: ALL EPISODES FIXED & SCROLLABLE BOX -->
+            <section class="card all-episodes-section">
+              <div class="card-title">All Episodes</div>
+              <div class="episodes-fixed-box" id="all-episodes-container">
+                <div class="ep-row-item skeleton"><span class="ep-num-badge">Ep --</span><span class="ep-title-text">Loading episodes...</span></div>
+                <div class="ep-row-item skeleton"><span class="ep-num-badge">Ep --</span><span class="ep-title-text">Loading episodes...</span></div>
+              </div>
             </section>
           </aside>
         </div>
@@ -1599,106 +1698,92 @@
 
       <div class="mobile-search-bar" id="mobile-search-bar">
         <div class="mobile-search-input-wrap">
-          <input type="text" id="mobile-search-input" placeholder="Search anime...">
+          <input type="text" id="mobile-search-input" placeholder="Search anime dynamic...">
         </div>
         <div class="search-results-dropdown" id="mobile-search-results"></div>
       </div>
 
       <div class="m-hero">
-        <h1 id="mobile-review-title">Attack on Titan<br>Final S. Pt 2</h1>
-        <p>Overall Rating: 9.8/10</p>
+        <h1 id="mobile-review-title" class="skeleton">Anime Review</h1>
+        <p id="mobile-review-sub" class="skeleton">Overall Rating: --/10</p>
       </div>
 
       <!-- Basic Info -->
       <section class="m-card">
         <div class="m-title">Basic Info</div>
         <div class="m-info">
-          <div><label>Genre</label><span>Action, Drama, Fantasy, Mystery</span></div>
-          <div><label>Episodes</label><span id="mobile-review-episodes">12</span></div>
-          <div><label>Studio</label><span>MAPPA</span></div>
-          <div><label>Source</label><span>Manga</span></div>
-          <div><label>Status</label><span>Completed</span></div>
-          <div><label>My Rating</label><span>9.8/10</span></div>
-          <div><label>Age Rating</label><span>TV-MA</span></div>
+          <div><label>Genre</label><span id="m-review-genre" class="skeleton">...</span></div>
+          <div><label>Episodes</label><span id="mobile-review-episodes" class="skeleton">...</span></div>
+          <div><label>Studio</label><span id="m-review-studio" class="skeleton">...</span></div>
+          <div><label>Source</label><span id="m-review-source" class="skeleton">...</span></div>
+          <div><label>Status</label><span id="m-review-status" class="skeleton">...</span></div>
+          <div><label>My Rating</label><span id="m-review-rating" class="skeleton">...</span></div>
         </div>
       </section>
 
       <!-- Plot Summary -->
       <section class="m-card">
         <div class="m-title">Plot Summary</div>
-        <div class="m-plot" id="mobile-review-synopsis">The Rumbling enters the Rumbling and takes control of the continent. He is a powerful
-          warrior who has been training for years to become the strongest warrior in the world. He is also a skilled
-          fighter, and he is determined to prove himself to the world. Eldiar Marley is a powerful warrior who has been
-          training for years to become the strongest warrior in the world.</div>
+        <div class="m-plot skeleton" id="mobile-review-synopsis">Loading synopsis...</div>
       </section>
 
       <!-- Characters -->
       <section class="m-card">
         <div class="m-title">Characters</div>
-        <div class="m-chars">
-          <div class="m-char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Eren" alt="Eren">Eren</div>
-          <div class="m-char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Mikasa" alt="Mikasa">Mikasa</div>
-          <div class="m-char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Armin" alt="Armin">Armin</div>
-          <div class="m-char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Zeke" alt="Zeke">Zeke</div>
-          <div class="m-char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Reiner" alt="Reiner">Reiner</div>
-          <div class="m-char"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Gabi" alt="Gabi">Gabi</div>
+        <div class="m-chars" id="m-characters-container">
+          <div class="m-char skeleton"><div>...</div></div>
         </div>
       </section>
 
       <!-- Overall Rating -->
       <section class="m-card">
         <div class="m-title">Overall Rating</div>
-        <div class="m-rating"><strong>9.8</strong><span>Story 10/10<br>Pacing 9.5/10<br>Art 10/10<br>Sound
-            10/10<br>Overall 9.8/10</span></div>
-      </section>
-
-      <!-- Favorite Episodes -->
-      <section class="m-card">
-        <div class="m-title">Favorite Episodes</div>
-        <div class="m-episode"><span>Ep 80</span><img id="mobile-review-anime-image" src="https://api.dicebear.com/7.x/bottts/svg?seed=Ep80"
-            alt="Ep 80">
-          <div><b>"From You, 2,000 Years Ago"</b><small>Masterful execution</small></div>
-        </div>
-        <div class="m-episode"><span>Ep 81</span><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Ep81"
-            alt="Ep 81">
-          <div><b>"Thaw"</b><small>Emotional climax</small></div>
+        <div class="m-rating">
+          <strong id="mobile-score-num" class="skeleton">--</strong>
+          <span id="mobile-score-breakdown">Story --<br>Pacing --<br>Art --<br>Sound --</span>
         </div>
       </section>
 
-      <!-- OST -->
+      <!-- Overrated Episodes -->
       <section class="m-card">
-        <div class="m-title">OST/OP/ED</div>
-        <div class="m-episode"><span>OP</span>
-          <div><b>"The Rumbling"</b><small>SiM - The perfect tone setter</small></div>
+        <div class="m-title">Overrated Episodes</div>
+        <div id="m-overrated-container">
+          <div class="m-episode skeleton"><span>Ep --</span><div><b>"Loading..."</b></div></div>
         </div>
-        <div class="m-episode"><span>ED</span>
-          <div><b>"Akuma no Ko"</b><small>Ai Higuchi - So haunting and beautiful</small></div>
+      </section>
+
+      <!-- Creator Section -->
+      <section class="m-card">
+        <div class="m-title">Anime Creator</div>
+        <div class="creator-body">
+          <img id="m-creator-avatar" class="creator-avatar skeleton" src="" alt="Creator">
+          <div class="creator-info">
+            <h4 id="m-creator-name" class="skeleton">Creator Name</h4>
+            <p id="m-creator-role">Author / Director</p>
+          </div>
         </div>
-        <div class="m-episode"><span>Key OST</span>
-          <div><b>"Ashes on the Fire"</b></div>
+      </section>
+
+      <!-- Mobile All Episodes Section -->
+      <section class="m-card">
+        <div class="m-title">All Episodes</div>
+        <div class="m-episodes-box" id="m-episodes-container">
+          <div class="m-episode skeleton"><span>Ep --</span><div><b>"Loading..."</b></div></div>
         </div>
       </section>
 
       <!-- Rewatch -->
       <section class="m-card">
         <div class="m-title">Would Rewatch?</div>
-        <div class="m-rewatch">Yes <span class="m-toggle"></span></div>
-        <div class="m-stars">★★★★★</div>
-        <div style="padding: 0 10px 8px; font-size: 8px; color: var(--muted);">Absolutely essential</div>
-      </section>
-
-      <!-- Personal Thoughts -->
-      <section class="m-card">
-        <div class="m-title">Personal Thoughts</div>
-        <div class="m-thoughts">I am not recently personal to this anime. I am a fan of the series and I have watched it
-          multiple times. I think it is a great series and I would recommend it to anyone who is interested in anime.
-        </div>
+        <div class="m-rewatch">Yes <span class="m-toggle" onclick="showToast('Rewatch preference toggled!', 'info')"></span></div>
+        <div class="m-stars" id="m-star-rating">★★★★★</div>
       </section>
 
       <!-- Quote -->
       <section class="m-card">
-        <div class="m-title">Quote</div>
-        <div class="m-quote">"If we kill all the enemies on the other side... will we finally be free?"<em>- Eren</em>
+        <div class="m-title">Character Quotes</div>
+        <div id="m-quotes-container">
+          <div class="m-quote skeleton">"Loading quote..."<em>- Character</em></div>
         </div>
       </section>
 
@@ -1713,111 +1798,469 @@
   </div>
 
   <script>
-    async function safeFetchKitsu(endpoint) {
+    const API_BASE_URL = 'http://127.0.0.1:8000';
+
+    // ---------------- UI TOAST NOTIFICATION CONTROLLER ----------------
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      
+      let iconName = 'info';
+      if (type === 'error') iconName = 'error';
+      if (type === 'success') iconName = 'check_circle';
+
+      toast.innerHTML = `<span class="material-symbols-outlined">${iconName}</span><span>${message}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-10px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // ---------------- AUTHENTICATION & COOKIE UTILS ----------------
+    function getAuthToken() {
+      const token = localStorage.getItem('access_token');
+      if (token) return token;
+
+      const cookieValue = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('access_token='));
+      if (cookieValue) {
+        let val = cookieValue.split('=')[1];
+        if (val.startsWith('Bearer%20')) val = decodeURIComponent(val);
+        if (val.startsWith('Bearer ')) val = val.substring(7);
+        return val;
+      }
+      return null;
+    }
+
+    async function verifyUserSession() {
+      const token = getAuthToken();
+      if (!token) {
+        window.location.href = './anilog-login-register.html';
+        return null;
+      }
+
       try {
-        const response = await fetch(endpoint, {
+        const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+          method: 'GET',
           headers: {
-            'Accept': 'application/vnd.api+json',
-            'Content-Type': 'application/vnd.api+json'
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
           }
         });
-        if (!response.ok) throw new Error(`HTTP_${response.status}`);
-        const json = await response.json();
-        return json.data || [];
+
+        if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            showToast('Session expired. Please log in again.', 'error');
+            localStorage.removeItem('access_token');
+            document.cookie = 'access_token=; Max-Age=0; path=/;';
+            setTimeout(() => {
+              window.location.href = './anilog-login-register.html';
+            }, 1200);
+            return null;
+          }
+          throw new Error(`HTTP Error ${response.status}`);
+        }
+
+        const user = await response.json();
+        updateUserProfileUI(user);
+        return user;
       } catch (err) {
-        console.error('Kitsu Fetch Error:', err);
-        throw err;
+        console.error('Session Verification Failed:', err);
+        showToast('Network error verifying authentication session', 'error');
+        return null;
       }
     }
 
+    // Helper function to calculate user level and progress percentage
+    function calculateUserLevel(xp) {
+      const levels = [
+        { level: 1, title: 'Otaku Novice', minXP: 0, nextLevelXP: 500 },
+        { level: 2, title: 'Casual Watcher', minXP: 500, nextLevelXP: 2000 },
+        { level: 3, title: 'Anime Enthusiast', minXP: 1200, nextLevelXP: 3000 },
+        { level: 4, title: 'Seasoned Binger', minXP: 2500, nextLevelXP: 5000 },
+        { level: 5, title: 'Master Otaku', minXP: 5000, nextLevelXP: 10000 },
+        { level: 6, title: 'Anime Scholar', minXP: 10000, nextLevelXP: 20000 },
+        { level: 7, title: 'Supreme Weeb', minXP: 20000, nextLevelXP: 50000 }
+      ];
+
+      for (let i = levels.length - 1; i >= 0; i--) {
+        if (xp >= levels[i].minXP) {
+          const lvl = levels[i];
+          const range = lvl.nextLevelXP - lvl.minXP;
+          const progress = xp - lvl.minXP;
+          const percent = Math.min(100, Math.max(0, Math.floor((progress / range) * 100)));
+          return {
+            level: lvl.level,
+            title: lvl.title,
+            currentXP: xp,
+            nextLevelXP: lvl.nextLevelXP,
+            percent: percent
+          };
+        }
+      }
+      return { level: 1, title: 'Otaku Novice', currentXP: xp, nextLevelXP: 500, percent: 0 };
+    }
+
+    // Logic to populate and render data into the user-card component
+    function renderUserCard(user) {
+      const avatarUrl = user.avatar_seed || 'https://api.dicebear.com/7.x/bottts/svg?seed=Shadow';
+      document.getElementById('sidebar-user-avatar').src = avatarUrl;
+      document.getElementById('sidebar-user-name').innerText = user.username;
+
+      const currentXP = user.xp_points || 0;
+      const levelObj = calculateUserLevel(currentXP);
+
+      const sidebarLevel = document.getElementById('sidebar-user-level');
+      if (sidebarLevel) sidebarLevel.innerText = `LVL ${levelObj.level} - ${levelObj.title}`;
+
+      const sidebarXpFill = document.getElementById('sidebar-xp-fill');
+      if (sidebarXpFill) sidebarXpFill.style.width = `${levelObj.percent}%`;
+
+      const sidebarXpText = document.getElementById('sidebar-xp-text');
+      if (sidebarXpText) sidebarXpText.innerText = `${currentXP.toLocaleString()} / ${levelObj.nextLevelXP.toLocaleString()} XP`;
+    }
+
+    function updateUserProfileUI(user) {
+      if (!user) return;
+      
+      renderUserCard(user);
+
+      const streakVal = document.getElementById('streak-val');
+      if (streakVal) streakVal.textContent = user.streak_count || 1;
+
+      const avatarSrc = user.avatar_seed || `https://api.dicebear.com/7.x/bottts/svg?seed=${user.username}`;
+      const headerAvatar = document.getElementById('header-user-avatar');
+      if (headerAvatar) headerAvatar.src = avatarSrc;
+    }
+
+    // Remove Skeleton helper
+    function clearSkeletons() {
+      document.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
+    }
+
+    // ---------------- INITIALIZATION ----------------
     window.addEventListener('load', async () => {
       if (document.fonts) {
         await document.fonts.ready;
       }
+      
+      const user = await verifyUserSession();
+      if (!user) return;
+
       const preloader = document.getElementById('preloader');
-      preloader.style.opacity = '0';
-      preloader.style.visibility = 'hidden';
+      if (preloader) {
+        preloader.style.opacity = '0';
+        preloader.style.visibility = 'hidden';
+      }
       document.body.classList.add('loaded');
+
       await loadSelectedAnime();
+      setupInteractiveEvents();
     });
 
-    async function loadSelectedAnime() {
-      const encodedAnime = new URLSearchParams(window.location.search).get('anime');
-      if (!encodedAnime) return;
-
-      let anime;
-      try {
-        anime = JSON.parse(encodedAnime);
-      } catch (err) {
-        console.error('Invalid anime data in review URL:', err);
-        return;
+    // Helper: Compute colored star string based on score out of 10 or 5
+    function renderStars(scoreVal) {
+      const numScore = parseFloat(scoreVal) || 0;
+      const starsOutOfFive = Math.min(5, Math.max(1, Math.round(numScore > 5 ? numScore / 2 : numScore)));
+      let starStr = '';
+      for (let i = 1; i <= 5; i++) {
+        starStr += i <= starsOutOfFive ? '★' : '☆';
       }
+      return starStr;
+    }
 
-      if (anime.id && (!anime.synopsis || !anime.episodes || !anime.image)) {
+    // ---------------- LOAD ANIME OR SPECIFIC EPISODE REVIEW DATA ----------------
+    async function loadSelectedAnime() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const encodedAnime = urlParams.get('anime');
+      const episodeIdParam = urlParams.get('episode_id');
+
+      let anime = null;
+
+      if (encodedAnime) {
         try {
-          const sourceAnime = await safeFetchKitsu(`https://kitsu.io/api/edge/anime/${encodeURIComponent(anime.id)}`);
-          const attr = sourceAnime.attributes || {};
-          anime = {
-            ...anime,
-            title: anime.title || attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp,
-            image: anime.image || attr.posterImage?.large || attr.posterImage?.medium || attr.posterImage?.original,
-            episodes: anime.episodes || attr.episodeCount,
-            synopsis: anime.synopsis || attr.synopsis,
-            status: anime.status || attr.status,
-            type: anime.type || attr.showType,
-            rating: anime.rating || attr.averageRating
-          };
+          anime = JSON.parse(encodedAnime);
         } catch (err) {
-          console.error('Could not refresh selected anime:', err);
+          console.error('Failed to parse anime review query:', err);
         }
       }
 
-      const title = anime.title || 'Untitled';
-      const titleElement = document.getElementById('review-title');
-      const mobileTitleElement = document.getElementById('mobile-review-title');
-      const episodes = anime.episodes ? String(anime.episodes) : 'Unknown';
-      const synopsis = anime.synopsis || 'No plot summary is available for this anime yet.';
-
-      titleElement.textContent = `Anime Review: ${title}`;
-      mobileTitleElement.textContent = title;
-      document.getElementById('review-episodes').textContent = episodes;
-      document.getElementById('mobile-review-episodes').textContent = episodes;
-      document.getElementById('review-synopsis').textContent = synopsis;
-      document.getElementById('mobile-review-synopsis').textContent = synopsis;
-
-      if (anime.image) {
-        document.getElementById('review-anime-image').src = anime.image;
-        document.getElementById('mobile-review-anime-image').src = anime.image;
-        document.getElementById('review-anime-image').alt = title;
-        document.getElementById('mobile-review-anime-image').alt = title;
+      if (!anime) {
+        anime = { id: "12", title: "One Piece", rating: "8.4" };
       }
 
+      // Feature 2 Check: Specific Episode detail redirection logic
+      if (episodeIdParam) {
+        await fetchAndRenderSingleEpisode(episodeIdParam, anime);
+        return;
+      }
+
+      const animeId = anime.id || "12";
+      const title = anime.title || 'Untitled Anime';
+      const scoreNum = anime.rating ? (parseFloat(anime.rating) > 10 ? (parseFloat(anime.rating)/10).toFixed(1) : parseFloat(anime.rating).toFixed(1)) : '8.4';
+
+      document.getElementById('review-title').textContent = `Anime Review: ${title}`;
+      document.getElementById('mobile-review-title').textContent = title;
+      document.getElementById('mobile-review-sub').textContent = `Overall Rating: ${scoreNum}/10`;
+      
+      // Render Star Rating Colors out of 5
+      const starsHtml = renderStars(scoreNum);
+      document.getElementById('star-rating-display').textContent = starsHtml;
+      document.getElementById('m-star-rating').textContent = starsHtml;
+
       document.title = `ANILOG - ${title} Review`;
+
+      // Fetch full anime info from backend
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/anime/${animeId}/full-details`);
+        if (response.ok) {
+          const data = await response.json();
+          renderAnimeData(data, scoreNum);
+        } else {
+          fallbackRender(anime, scoreNum);
+        }
+      } catch (err) {
+        console.warn('Backend endpoint unreached, applying fallback render.', err);
+        fallbackRender(anime, scoreNum);
+      }
+
+      // Load Overrated Episodes
+      loadOverratedEpisodes(animeId);
+
+      // Load All Episodes in Scrollable Fixed Box
+      loadAllEpisodes(animeId);
+
+      clearSkeletons();
     }
 
+    function renderAnimeData(data, scoreNum) {
+      // Basic Info
+      const genreText = (data.genres || []).join(', ') || 'Action, Fantasy';
+      document.getElementById('review-genre').textContent = genreText;
+      document.getElementById('m-review-genre').textContent = genreText;
+
+      document.getElementById('review-episodes').textContent = data.episodes || 'Multiple';
+      document.getElementById('mobile-review-episodes').textContent = data.episodes || 'Multiple';
+
+      document.getElementById('review-studio').textContent = data.studio || 'Toei / MAPPA';
+      document.getElementById('m-review-studio').textContent = data.studio || 'Toei / MAPPA';
+
+      document.getElementById('review-source').textContent = data.source || 'Manga';
+      document.getElementById('m-review-source').textContent = data.source || 'Manga';
+
+      document.getElementById('review-status').textContent = data.status || 'Finished';
+      document.getElementById('m-review-status').textContent = data.status || 'Finished';
+
+      document.getElementById('review-rating').textContent = `${scoreNum}/10`;
+      document.getElementById('m-review-rating').textContent = `${scoreNum}/10`;
+
+      document.getElementById('review-age-rating').textContent = data.ageRating || 'PG-13';
+
+      // Plot Summary
+      document.getElementById('review-synopsis').textContent = data.synopsis || 'No plot summary available.';
+      document.getElementById('mobile-review-synopsis').textContent = data.synopsis || 'No plot summary available.';
+
+      // Overall Ratings Breakdown
+      document.getElementById('review-score-num').textContent = scoreNum;
+      document.getElementById('mobile-score-num').textContent = scoreNum;
+      document.getElementById('score-story').textContent = `${scoreNum}/10`;
+      document.getElementById('score-pacing').textContent = `${(scoreNum * 0.95).toFixed(1)}/10`;
+      document.getElementById('score-art').textContent = `${scoreNum}/10`;
+      document.getElementById('score-sound').textContent = `${scoreNum}/10`;
+      document.getElementById('review-score-overall').textContent = `${scoreNum}/10`;
+
+      // Characters Section Listing
+      const charsContainer = document.getElementById('characters-container');
+      const mCharsContainer = document.getElementById('m-characters-container');
+      charsContainer.innerHTML = '';
+      mCharsContainer.innerHTML = '';
+
+      if (data.characters && data.characters.length > 0) {
+        data.characters.forEach(c => {
+          const charImg = c.image || `https://api.dicebear.com/7.x/bottts/svg?seed=${c.name}`;
+          const charHtml = `
+            <div class="char" title="${c.name}">
+              <img src="${charImg}" alt="${c.name}" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=${c.name}'">
+              <div>${c.name}</div>
+            </div>`;
+          charsContainer.insertAdjacentHTML('beforeend', charHtml);
+
+          const mCharHtml = `
+            <div class="m-char">
+              <img src="${charImg}" alt="${c.name}" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=${c.name}'">
+              <div>${c.name}</div>
+            </div>`;
+          mCharsContainer.insertAdjacentHTML('beforeend', mCharHtml);
+        });
+      } else {
+        charsContainer.innerHTML = '<div style="font-size:11px;color:var(--muted);">No character list found</div>';
+      }
+
+      // Feature 3: Anime Creator Info (Replaced Personal Thoughts)
+      document.getElementById('creator-name').textContent = data.creator || 'Eiichiro Oda / Studio Staff';
+      document.getElementById('m-creator-name').textContent = data.creator || 'Eiichiro Oda / Studio Staff';
+
+      const creatorAvatar = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(data.creator || 'Creator')}`;
+      document.getElementById('creator-avatar').src = creatorAvatar;
+      document.getElementById('m-creator-avatar').src = creatorAvatar;
+
+      // OST / OP / ED
+      if (data.ost) {
+        document.getElementById('review-op').textContent = `"${data.ost.op}"`;
+        document.getElementById('review-ed').textContent = `"${data.ost.ed}"`;
+        document.getElementById('review-ost').textContent = `"${data.ost.key_ost}"`;
+      }
+
+      // Quotes
+      const quotesContainer = document.getElementById('quotes-container');
+      const mQuotesContainer = document.getElementById('m-quotes-container');
+      quotesContainer.innerHTML = '';
+      mQuotesContainer.innerHTML = '';
+
+      if (data.quotes && data.quotes.length > 0) {
+        data.quotes.forEach(q => {
+          quotesContainer.insertAdjacentHTML('beforeend', `<div class="quote">${q.quote}<em>- ${q.character}</em></div>`);
+          mQuotesContainer.insertAdjacentHTML('beforeend', `<div class="m-quote">"${q.quote}"<em>- ${q.character}</em></div>`);
+        });
+      }
+    }
+
+    function fallbackRender(anime, scoreNum) {
+      document.getElementById('review-synopsis').textContent = anime.synopsis || 'Plot summary details.';
+      document.getElementById('mobile-review-synopsis').textContent = anime.synopsis || 'Plot summary details.';
+      document.getElementById('review-score-num').textContent = scoreNum;
+      document.getElementById('creator-name').textContent = "Original Creator / Studio";
+      document.getElementById('m-creator-name').textContent = "Original Creator / Studio";
+    }
+
+    // ---------------- LOAD OVERRATED EPISODES ----------------
+    async function loadOverratedEpisodes(animeId) {
+      const container = document.getElementById('overrated-episodes-container');
+      const mContainer = document.getElementById('m-overrated-container');
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/anime/${animeId}/overrated-episodes`);
+        if (res.ok) {
+          const data = await res.json();
+          container.innerHTML = '';
+          mContainer.innerHTML = '';
+
+          data.overrated_episodes.forEach(ep => {
+            const img = ep.thumbnail || 'https://api.dicebear.com/7.x/bottts/svg?seed=' + ep.number;
+            const epHtml = `
+              <div class="episode" onclick="openEpisodeDetail('${ep.id}')">
+                <span>Ep ${ep.number}</span>
+                <img src="${img}" alt="Ep ${ep.number}">
+                <div><b>"${ep.title}"</b><small>Overrated Rating</small></div>
+              </div>`;
+            container.insertAdjacentHTML('beforeend', epHtml);
+
+            const mEpHtml = `
+              <div class="m-episode" onclick="openEpisodeDetail('${ep.id}')">
+                <span>Ep ${ep.number}</span>
+                <img src="${img}" alt="Ep ${ep.number}">
+                <div><b>"${ep.title}"</b><small>Overrated Rating</small></div>
+              </div>`;
+            mContainer.insertAdjacentHTML('beforeend', mEpHtml);
+          });
+          return;
+        }
+      } catch (err) {
+        console.warn('Overrated episodes endpoint fallback.');
+      }
+
+      container.innerHTML = `<div class="episode"><span>Ep 1</span><div><b>"Pilot Overhype"</b><small>High expectation</small></div></div>`;
+    }
+
+    // ---------------- FEATURE 2: LOAD ALL EPISODES IN SCROLLABLE BOX ----------------
+    async function loadAllEpisodes(animeId) {
+      const container = document.getElementById('all-episodes-container');
+      const mContainer = document.getElementById('m-episodes-container');
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/anime/${animeId}/episodes?limit=100`);
+        if (res.ok) {
+          const data = await res.json();
+          container.innerHTML = '';
+          mContainer.innerHTML = '';
+
+          if (data.episodes && data.episodes.length > 0) {
+            data.episodes.forEach(ep => {
+              const epRow = `
+                <div class="ep-row-item" onclick="openEpisodeDetail('${ep.id}')">
+                  <div class="ep-row-left">
+                    <span class="ep-num-badge">EP ${ep.number}</span>
+                    <span class="ep-title-text">${ep.title}</span>
+                  </div>
+                  <span class="ep-air-date">${ep.airDate}</span>
+                </div>`;
+              container.insertAdjacentHTML('beforeend', epRow);
+
+              const mEpRow = `
+                <div class="m-episode" onclick="openEpisodeDetail('${ep.id}')">
+                  <span>EP ${ep.number}</span>
+                  <div><b>"${ep.title}"</b><small>${ep.airDate}</small></div>
+                </div>`;
+              mContainer.insertAdjacentHTML('beforeend', mEpRow);
+            });
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Error fetching episode list.', err);
+      }
+
+      container.innerHTML = `<div style="padding:12px;font-size:11px;color:var(--muted);">No episodes loaded.</div>`;
+    }
+
+    // Feature 2: When 1 episode is clicked, loads specific episode detail data on same page
+    function openEpisodeDetail(episodeId) {
+      const urlParams = new URLSearchParams(window.location.search);
+      urlParams.set('episode_id', episodeId);
+      window.location.href = `./anilog-anime-review-responsive.html?${urlParams.toString()}`;
+    }
+
+    async function fetchAndRenderSingleEpisode(episodeId, anime) {
+      showToast('Loading specific episode detail...', 'info');
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/anime/episodes/${episodeId}`);
+        if (res.ok) {
+          const epData = await res.json();
+          
+          document.getElementById('review-title').textContent = `${anime.title || 'Anime'} - Episode ${epData.number}: ${epData.title}`;
+          document.getElementById('mobile-review-title').textContent = `EP ${epData.number}: ${epData.title}`;
+          document.getElementById('review-synopsis').textContent = epData.synopsis;
+          document.getElementById('mobile-review-synopsis').textContent = epData.synopsis;
+          document.getElementById('mobile-review-sub').textContent = `Air Date: ${epData.airDate}`;
+
+          clearSkeletons();
+          return;
+        }
+      } catch (err) {
+        console.error('Error fetching episode detail:', err);
+      }
+
+      document.getElementById('review-title').textContent = `Episode Review Details`;
+      clearSkeletons();
+    }
+
+    // ---------------- SEARCH ENGINE CONTROLLER ----------------
     let searchTimeout = null;
     let currentAbortController = null;
-
-    function openAnimeReviewFromSearch(anime) {
-      const attr = anime.attributes || {};
-      const reviewData = {
-        id: anime.id,
-        title: attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled',
-        image: attr.posterImage?.large || attr.posterImage?.medium || attr.posterImage?.original || '',
-        episodes: attr.episodeCount || '',
-        status: attr.status || '',
-        type: attr.showType || '',
-        rating: attr.averageRating || '',
-        synopsis: attr.synopsis || '',
-        startDate: attr.startDate || ''
-      };
-      window.location.href = `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(JSON.stringify(reviewData))}`;
-    }
 
     function handleSearch(query, resultsContainer) {
       const cleanQuery = query.trim();
 
-      if (cleanQuery.length < 3) {
+      if (cleanQuery.length < 2) {
         resultsContainer.classList.remove('active');
         resultsContainer.innerHTML = '';
         if (currentAbortController) currentAbortController.abort();
@@ -1836,18 +2279,27 @@
         resultsContainer.classList.add('active');
 
         try {
-          const targetUrl = `https://kitsu.io/api/edge/anime?filter[text]=${encodeURIComponent(cleanQuery)}&page[limit]=6`;
+          const token = getAuthToken();
+          const targetUrl = `${API_BASE_URL}/api/anime/search?q=${encodeURIComponent(cleanQuery)}`;
+          
           const response = await fetch(targetUrl, {
             signal: currentAbortController.signal,
             headers: {
-              'Accept': 'application/vnd.api+json',
-              'Content-Type': 'application/vnd.api+json'
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
             }
           });
 
-          if (!response.ok) throw new Error(`HTTP_${response.status}`);
+          if (!response.ok) {
+            if (response.status === 401) {
+              showToast('Authentication error while searching', 'error');
+              return;
+            }
+            throw new Error(`HTTP_${response.status}`);
+          }
+
           const data = await response.json();
-          const results = data.data || [];
+          const results = data.results || [];
           resultsContainer._animeResults = results;
 
           resultsContainer.innerHTML = '';
@@ -1855,68 +2307,120 @@
           if (results.length === 0) {
             resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">No anime found</div>`;
           } else {
-            results.forEach(anime => {
-              const attr = anime.attributes || {};
-              const title = attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled';
-              const img = attr.posterImage?.tiny || attr.posterImage?.small || '';
-              const rating = attr.averageRating ? `★ ${(parseFloat(attr.averageRating) / 10).toFixed(1)}` : 'N/A';
-              const type = attr.showType ? attr.showType.toUpperCase() : 'ANIME';
+            results.forEach((anime, index) => {
+              const title = anime.title || 'Untitled';
+              const img = anime.image || '';
+              const rating = anime.score ? `★ ${anime.score.toFixed(1)}` : 'N/A';
+              const type = anime.type ? anime.type.toUpperCase() : 'ANIME';
 
               const itemHTML = `
-              <div class="search-result-item" data-result-index="${results.indexOf(anime)}" role="button" tabindex="0">
-                <img src="${img}" alt="${title}">
-                <div class="search-result-info">
-                  <div class="search-result-title">${title}</div>
-                  <div class="search-result-meta">${type} • ${rating}</div>
+                <div class="search-result-item" data-result-index="${index}" role="button" tabindex="0">
+                  <img src="${img}" alt="${title}" onerror="this.src='https://via.placeholder.com/32x45?text=ANIME'">
+                  <div class="search-result-info">
+                    <div class="search-result-title">${title}</div>
+                    <div class="search-result-meta">${type} • ${rating}</div>
+                  </div>
                 </div>
-              </div>
-            `;
+              `;
               resultsContainer.insertAdjacentHTML('beforeend', itemHTML);
             });
           }
         } catch (err) {
           if (err.name === 'AbortError') return;
           console.error('Search fetch error:', err);
-          resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--danger); text-align: center;">Search failed. Try typing again.</div>`;
+          resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--danger); text-align: center;">Search failed. Server error.</div>`;
         }
       }, 400);
     }
 
-    const desktopInput = document.getElementById('desktop-search-input');
-    const desktopResults = document.getElementById('desktop-search-results');
-    if (desktopInput) {
-      desktopInput.addEventListener('input', (e) => handleSearch(e.target.value, desktopResults));
-    }
+    // ---------------- EVENT LISTENERS & INTERACTION SETUP ----------------
+    function setupInteractiveEvents() {
+      // Character Scroll Buttons
+      const leftBtn = document.getElementById('char-scroll-left');
+      const rightBtn = document.getElementById('char-scroll-right');
+      const charBox = document.getElementById('characters-container');
 
-    const mobileInput = document.getElementById('mobile-search-input');
-    const mobileResults = document.getElementById('mobile-search-results');
-    if (mobileInput) {
-      mobileInput.addEventListener('input', (e) => handleSearch(e.target.value, mobileResults));
-    }
+      if (leftBtn && rightBtn && charBox) {
+        leftBtn.addEventListener('click', () => charBox.scrollBy({ left: -180, behavior: 'smooth' }));
+        rightBtn.addEventListener('click', () => charBox.scrollBy({ left: 180, behavior: 'smooth' }));
+      }
 
-    const mobileSearchToggle = document.getElementById('mobile-search-toggle');
-    const mobileSearchBar = document.getElementById('mobile-search-bar');
-    if (mobileSearchToggle && mobileSearchBar) {
-      mobileSearchToggle.addEventListener('click', () => {
-        mobileSearchBar.classList.toggle('active');
+      // Desktop Search
+      const desktopInput = document.getElementById('desktop-search-input');
+      const desktopResults = document.getElementById('desktop-search-results');
+      if (desktopInput && desktopResults) {
+        desktopInput.addEventListener('input', (e) => handleSearch(e.target.value, desktopResults));
+      }
+
+      // Mobile Search
+      const mobileInput = document.getElementById('mobile-search-input');
+      const mobileResults = document.getElementById('mobile-search-results');
+      if (mobileInput && mobileResults) {
+        mobileInput.addEventListener('input', (e) => handleSearch(e.target.value, mobileResults));
+      }
+
+      const mobileSearchToggle = document.getElementById('mobile-search-toggle');
+      const mobileSearchBar = document.getElementById('mobile-search-bar');
+      if (mobileSearchToggle && mobileSearchBar) {
+        mobileSearchToggle.addEventListener('click', () => {
+          mobileSearchBar.classList.toggle('active');
+        });
+      }
+
+      // Search Item Click Handler
+      document.addEventListener('click', (event) => {
+        const resultItem = event.target.closest('.search-result-item');
+        if (!resultItem) return;
+
+        const parentContainer = resultItem.closest('.search-results-dropdown');
+        if (!parentContainer || !parentContainer._animeResults) return;
+
+        const anime = parentContainer._animeResults[Number(resultItem.dataset.resultIndex)];
+        if (anime) {
+          const reviewData = {
+            id: anime.id,
+            title: anime.title,
+            image: anime.image,
+            episodes: anime.episodes,
+            rating: anime.score
+          };
+          window.location.href = `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(JSON.stringify(reviewData))}`;
+        }
       });
+
+      // Close Search Dropdowns on Outside Click
+      document.addEventListener('click', (e) => {
+        if (desktopResults && !e.target.closest('.search')) {
+          desktopResults.classList.remove('active');
+        }
+        if (mobileResults && !e.target.closest('#mobile-search-bar') && !e.target.closest('#mobile-search-toggle')) {
+          mobileResults.classList.remove('active');
+        }
+      });
+
+      // Light/Dark Theme Toggle Event
+      const themeBtn = document.getElementById('theme-toggle-btn');
+      if (themeBtn) {
+        themeBtn.addEventListener('click', () => {
+          document.body.classList.toggle('light-mode');
+          const isLight = document.body.classList.contains('light-mode');
+          showToast(`Switched to ${isLight ? 'Light' : 'Dark'} mode`, 'info');
+        });
+      }
+
+      // Logout Event
+      const logoutBtn = document.getElementById('logout-btn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          localStorage.removeItem('access_token');
+          document.cookie = 'access_token=; Max-Age=0; path=/;';
+          showToast('Successfully logged out!', 'success');
+          setTimeout(() => {
+            window.location.href = './anilog-login-register.html';
+          }, 800);
+        });
+      }
     }
-
-    document.addEventListener('click', (event) => {
-      const resultItem = event.target.closest('.search-result-item');
-      if (!resultItem) return;
-      const anime = resultItem.parentElement._animeResults?.[Number(resultItem.dataset.resultIndex)];
-      if (anime) openAnimeReviewFromSearch(anime);
-    });
-
-    document.addEventListener('click', (e) => {
-      if (desktopResults && !e.target.closest('.search')) {
-        desktopResults.classList.remove('active');
-      }
-      if (mobileResults && !e.target.closest('#mobile-search-bar') && !e.target.closest('#mobile-search-toggle')) {
-        mobileResults.classList.remove('active');
-      }
-    });
   </script>
 </body>
 

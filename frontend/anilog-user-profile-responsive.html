@@ -26,6 +26,7 @@
       --muted: #8f8d9d;
       --dim: #676675;
       --danger: #ff2d63;
+      --success: #00e676;
     }
 
     * {
@@ -48,7 +49,9 @@
     }
 
     button,
-    input {
+    input,
+    select,
+    textarea {
       font: inherit;
     }
 
@@ -62,6 +65,59 @@
     img {
       display: block;
       object-fit: cover;
+    }
+
+    /* ---------------- NOTIFICATION POPUP BOX ---------------- */
+    #notification-toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      min-width: 280px;
+      max-width: 380px;
+      padding: 12px 18px;
+      border-radius: 8px;
+      background: #0d0f1a;
+      border: 1px solid var(--purple);
+      color: var(--text);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(-20px);
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    #notification-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    #notification-toast.error {
+      border-color: var(--danger);
+      box-shadow: 0 0 12px rgba(255, 45, 99, 0.4);
+    }
+
+    #notification-toast.success {
+      border-color: var(--success);
+      box-shadow: 0 0 12px rgba(0, 230, 118, 0.4);
+    }
+
+    #notification-toast .toast-icon {
+      font-size: 20px;
+    }
+
+    #notification-toast.error .toast-icon {
+      color: var(--danger);
+    }
+
+    #notification-toast.success .toast-icon {
+      color: var(--success);
     }
 
     /* ---------------- PRELOADER OVERLAY ---------------- */
@@ -106,7 +162,6 @@
       visibility: visible;
     }
 
-    /* ---------------- MATERIAL ICONS ---------------- */
     .material-symbols-outlined {
       font-family: 'Material Symbols Outlined';
       font-weight: normal;
@@ -159,8 +214,6 @@
       clip-path: polygon(0 0, 2% 0, 2.4% 1.5%, 98% 1.5%, 100% 0, 100% 98%, 98.4% 100%, 2% 100%, 0 98%);
     }
 
-    /* ---------------- SIDEBAR & ANIMATIONS ---------------- */
-
     .sidebar {
       position: relative;
       z-index: 10;
@@ -170,53 +223,6 @@
       background: linear-gradient(180deg, rgba(13, 14, 23, .97), rgba(5, 7, 13, .98));
       border-top-left-radius: 9px;
       border-bottom-left-radius: 9px;
-      perspective: 1000px;
-    }
-
-    body.loaded .sidebar {
-      animation: sidebarSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    @keyframes sidebarSlideIn {
-      from {
-        transform: translateX(-100%);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    .side-link {
-      opacity: 0;
-      transform: translateX(-20px);
-    }
-
-    body.loaded .side-link {
-      animation: navItemSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    body.loaded .side-link:nth-child(1) { animation-delay: 0.15s; }
-    body.loaded .side-link:nth-child(2) { animation-delay: 0.20s; }
-    body.loaded .side-link:nth-child(3) { animation-delay: 0.25s; }
-    body.loaded .side-link:nth-child(4) { animation-delay: 0.30s; }
-    body.loaded .side-link:nth-child(5) { animation-delay: 0.35s; }
-    body.loaded .side-link:nth-child(6) { animation-delay: 0.40s; }
-    body.loaded .side-link:nth-child(7) { animation-delay: 0.45s; }
-    body.loaded .side-link:nth-child(8) { animation-delay: 0.50s; }
-    body.loaded .side-link:nth-child(9) { animation-delay: 0.55s; }
-    body.loaded .side-link:nth-child(10) { animation-delay: 0.60s; }
-    body.loaded .side-link:nth-child(11) { animation-delay: 0.65s; }
-    body.loaded .side-link:nth-child(12) { animation-delay: 0.70s; }
-    body.loaded .side-link:nth-child(13) { animation-delay: 0.75s; }
-    body.loaded .side-link:nth-child(14) { animation-delay: 0.80s; }
-
-    @keyframes navItemSlideIn {
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
     }
 
     .sidebar-brand {
@@ -240,20 +246,6 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       display: inline-block;
-      border-right: 2px solid #c65cff;
-      white-space: nowrap;
-      overflow: hidden;
-      animation: typingLoop 5s steps(6, end) infinite, blinkCursor 0.75s step-end infinite;
-    }
-
-    @keyframes typingLoop {
-      0%, 100% { width: 0; }
-      30%, 70% { width: 6.2ch; }
-    }
-
-    @keyframes blinkCursor {
-      from, to { border-color: transparent; }
-      50% { border-color: #c65cff; }
     }
 
     .brand-sub {
@@ -280,9 +272,8 @@
       font-size: 14px;
       text-align: left;
       color: #efedf3;
-      transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      transition: background 0.2s ease, border-color 0.2s ease;
       cursor: pointer;
-      text-decoration: none;
       width: 100%;
     }
 
@@ -294,7 +285,6 @@
     .side-link.active {
       border-color: #a12aff;
       background: linear-gradient(90deg, rgba(118, 22, 183, .43), rgba(67, 17, 102, .22));
-      box-shadow: inset 0 0 20px rgba(155, 34, 246, .09);
     }
 
     .user-card {
@@ -310,25 +300,6 @@
       border: 1px solid #9b31e7;
       border-radius: 7px;
       background: linear-gradient(145deg, rgba(14, 16, 27, .98), rgba(7, 8, 15, .98));
-      clip-path: polygon(4% 0, 96% 0, 100% 7%, 100% 93%, 96% 100%, 4% 100%, 0 93%, 0 7%);
-      backface-visibility: hidden;
-      transform-style: preserve-3d;
-      opacity: 0;
-    }
-
-    body.loaded .user-card {
-      animation: userCardFlip 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s forwards;
-    }
-
-    @keyframes userCardFlip {
-      from {
-        opacity: 0;
-        transform: rotateY(-180deg);
-      }
-      to {
-        opacity: 1;
-        transform: rotateY(0deg);
-      }
     }
 
     .user-avatar {
@@ -349,6 +320,7 @@
       margin: 0 0 4px;
       font-size: 14px;
       font-weight: 700;
+      word-break: break-word;
     }
 
     .user-level {
@@ -377,8 +349,6 @@
       font-size: 9px;
     }
 
-    /* ---------------- MAIN SECTION ---------------- */
-
     .main {
       min-width: 0;
       padding: 0 24px 45px;
@@ -401,38 +371,12 @@
       position: relative;
       width: 300px;
       height: 41px;
-      margin-left: 0;
       padding: 0 14px;
       display: flex;
       align-items: center;
       border: 1px solid #272a39;
       border-radius: 22px;
       background: rgba(16, 18, 28, .88);
-      transition: border-color 0.2s ease;
-      opacity: 0;
-    }
-
-    body.loaded .search {
-      animation: googleSearchExpand 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
-    }
-
-    @keyframes googleSearchExpand {
-      0% {
-        opacity: 0;
-        clip-path: circle(0px at 50% 50%);
-      }
-      10% {
-        opacity: 1;
-        clip-path: circle(12px at 50% 50%);
-      }
-      100% {
-        opacity: 1;
-        clip-path: none;
-      }
-    }
-
-    .search:focus-within {
-      border-color: var(--purple2);
     }
 
     .search input {
@@ -444,87 +388,12 @@
       font-size: 12px;
     }
 
-    .search-results-dropdown {
-      position: absolute;
-      top: 48px;
-      left: 0;
-      right: 0;
-      max-height: 380px;
-      overflow-y: auto;
-      background: #090b14;
-      border: 1px solid var(--purple);
-      border-radius: 8px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
-      z-index: 200;
-      display: none;
-      flex-direction: column;
-    }
-
-    .search-results-dropdown.active {
-      display: flex;
-    }
-
-    .search-result-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 12px;
-      border-bottom: 1px solid #1a1c29;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    .search-result-item:last-child {
-      border-bottom: none;
-    }
-
-    .search-result-item:hover {
-      background: rgba(157, 44, 255, 0.15);
-    }
-
-    .search-result-item img {
-      width: 32px;
-      height: 45px;
-      border-radius: 4px;
-    }
-
-    .search-result-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      overflow: hidden;
-    }
-
-    .search-result-title {
-      font-size: 12px;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-weight: 600;
-    }
-
-    .search-result-meta {
-      font-size: 10px;
-      color: var(--muted);
-    }
-
     .top-actions {
       margin-left: auto;
       display: flex;
       align-items: center;
       gap: 27px;
       padding-right: 16px;
-      opacity: 0;
-    }
-
-    body.loaded .top-actions {
-      animation: topActionsFadeIn 0.6s ease 0.5s forwards;
-    }
-
-    @keyframes topActionsFadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
     }
 
     .top-action-wrap {
@@ -540,11 +409,6 @@
       cursor: pointer;
       padding: 8px;
       border-radius: 6px;
-      transition: background 0.2s ease;
-    }
-
-    .top-action:hover {
-      background: rgba(157, 44, 255, 0.15);
     }
 
     .profile-wrap {
@@ -556,13 +420,6 @@
       align-items: center;
       gap: 6px;
       cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 6px;
-      transition: background 0.2s ease;
-    }
-
-    .profile:hover {
-      background: rgba(157, 44, 255, 0.15);
     }
 
     .avatar {
@@ -572,75 +429,58 @@
       border: 1px solid var(--purple2);
     }
 
+    /* DROPDOWN PANELS */
     .dropdown-panel {
+      display: none;
       position: absolute;
       top: 100%;
       right: 0;
       margin-top: 8px;
-      width: 220px;
-      background: #0d0f1a;
-      border: 1px solid var(--purple);
+      background: #0d0f18;
+      border: 1px solid var(--border);
       border-radius: 8px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-10px);
-      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 150;
+      width: 200px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
       padding: 8px 0;
+      z-index: 1000;
     }
 
     .top-action-wrap:hover .dropdown-panel,
     .profile-wrap:hover .dropdown-panel {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
+      display: block;
     }
 
     .dropdown-panel-header {
       padding: 8px 14px;
       font-size: 11px;
       font-weight: 700;
-      color: var(--purple2);
+      color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
       border-bottom: 1px solid var(--border);
+      margin-bottom: 4px;
     }
 
     .dropdown-item {
+      width: 100%;
+      padding: 8px 14px;
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 10px 14px;
       font-size: 13px;
       color: var(--text);
-      transition: background 0.2s ease, color 0.2s ease;
-      cursor: pointer;
-      width: 100%;
+      transition: background 0.2s ease;
       text-align: left;
     }
 
     .dropdown-item:hover {
-      background: rgba(157, 44, 255, 0.2);
-      color: #ffffff;
-    }
-
-    .dropdown-item .material-symbols-outlined {
-      font-size: 18px;
-      color: var(--muted);
-    }
-
-    .dropdown-item:hover .material-symbols-outlined {
-      color: var(--purple2);
+      background: rgba(157, 44, 255, 0.15);
     }
 
     .dropdown-divider {
       height: 1px;
       background: var(--border);
-      margin: 4px 0;
+      margin: 6px 0;
     }
-
-    /* ---------------- USER PROFILE SPECIFIC LAYOUT ---------------- */
 
     h1.page-title {
       font-size: 24px;
@@ -648,10 +488,12 @@
       font-weight: 700;
     }
 
+    /* ---------------- PROFILE GRID & OVERFLOW FIXES ---------------- */
+
     .profile-grid {
       display: grid;
-      grid-template-columns: 220px minmax(0, 1fr) 240px;
-      grid-template-rows: auto auto auto auto;
+      grid-template-columns: 280px minmax(0, 1fr) 260px;
+      grid-template-rows: auto auto auto;
       gap: 12px;
     }
 
@@ -662,10 +504,12 @@
       border-radius: 8px;
       background: rgba(15, 12, 25, .89);
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
     .info-card .name {
-      padding: 10px 14px;
+      padding: 12px 14px;
       border-bottom: 1px solid #2c203c;
     }
 
@@ -673,7 +517,7 @@
       display: block;
       color: #ad4ed8;
       font-size: 10px;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -681,20 +525,22 @@
     .value {
       font-size: 13px;
       font-weight: 600;
+      word-break: break-all;
     }
 
     .info-bottom {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-direction: column;
     }
 
     .info-bottom>div {
-      padding: 10px 12px;
-      border-right: 1px solid #2c203c;
+      padding: 10px 14px;
+      border-bottom: 1px solid #2c203c;
+      min-height: 58px;
     }
 
     .info-bottom>div:last-child {
-      border: 0;
+      border-bottom: 0;
     }
 
     .card {
@@ -721,7 +567,7 @@
     .appearance img {
       display: block;
       width: calc(100% - 24px);
-      height: 160px;
+      height: 180px;
       margin: 12px;
       border-radius: 6px;
       object-fit: cover;
@@ -733,19 +579,12 @@
     }
 
     .personality-text {
-      padding: 12px;
-      font-size: 11px;
+      padding: 14px;
+      font-size: 12px;
       line-height: 1.6;
       color: #ddd7e3;
-    }
-
-    .personality ul {
-      padding-left: 18px;
-      margin: 8px 0;
-    }
-
-    .personality li {
-      margin: 4px 0;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
     .relationships {
@@ -780,12 +619,11 @@
     }
 
     .rel img {
-      width: 42px;
-      height: 42px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       border: 1px solid #8b50aa;
-      object-fit: cover;
-      flex: 0 0 42px;
+      flex: 0 0 38px;
     }
 
     .rel-info {
@@ -807,123 +645,143 @@
       margin-top: 2px;
     }
 
-    .key {
-      grid-column: 1 / span 2;
-      grid-row: 3;
-    }
-
-    .key-strip {
-      height: 70px;
-      margin: 12px 14px 0;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-
-    .key-strip img {
-      width: 100%;
-      height: 55px;
-      object-fit: cover;
-      border-radius: 4px;
-    }
-
-    .timeline {
-      height: 10px;
-      border-bottom: 2px solid #a33cff;
-      margin: 10px 14px 0;
-      position: relative;
-    }
-
-    .timeline i {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #b03dff;
-      top: 2px;
-    }
-
-    .timeline i:nth-child(1) { left: 0; }
-    .timeline i:nth-child(2) { left: 33%; }
-    .timeline i:nth-child(3) { left: 66%; }
-    .timeline i:nth-child(4) { right: 0; }
-
-    .key-bottom {
-      display: flex;
-      justify-content: space-between;
-      font-size: 10px;
-      color: #ddd7e4;
-      margin: 6px 14px 12px;
-      padding: 0 4px;
-    }
-
     .doodle {
-      grid-column: 3;
+      grid-column: 1 / span 3;
       grid-row: 3;
     }
 
     .doodle-box {
-      height: 130px;
-      margin: 12px;
+      padding: 16px;
       border-radius: 6px;
       background: radial-gradient(circle at center, #1b1428, #0b0a13);
       border: 1px dashed #4b4052;
-      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 13px;
+      margin: 12px;
+    }
+
+    .btn-purple {
+      background: linear-gradient(135deg, var(--purple), #7b1fa2);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 12px;
+      transition: opacity 0.2s ease, filter 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-purple:hover {
+      opacity: 0.9;
+    }
+
+    .btn-purple:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      filter: grayscale(0.4);
+      pointer-events: none;
+    }
+
+    .btn-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* ---------------- MODAL POPUP EDITOR ---------------- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 4, 10, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--muted);
-      font-size: 11px;
-      text-align: center;
-      padding: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
     }
 
-    .doodle-box .material-symbols-outlined {
-      font-size: 32px;
-      color: #4b4052;
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-container {
+      width: min(520px, 92%);
+      background: #0d0f1a;
+      border: 1px solid var(--purple);
+      border-radius: 10px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9);
+      padding: 24px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+    }
+
+    .modal-header h2 {
+      font-size: 18px;
+      color: #fff;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
       display: block;
+      font-size: 11px;
+      color: var(--purple2);
       margin-bottom: 6px;
-    }
-
-    .quotes {
-      grid-column: 1 / span 3;
-      grid-row: 4;
-      margin-top: 4px;
-    }
-
-    .quote-list {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      padding: 12px 14px;
-    }
-
-    .quote {
-      border: 1px solid #2c203e;
-      border-radius: 6px;
-      background: #131020;
-      padding: 14px 16px;
-      font-size: 11px;
-      position: relative;
-      line-height: 1.4;
-    }
-
-    .quote:before {
-      content: "“";
-      color: #9d38ff;
-      font-size: 24px;
-      position: absolute;
-      left: 8px;
-      top: 4px;
-    }
-
-    .quote em {
-      display: block;
-      text-align: right;
-      color: #b64ef1;
-      margin-top: 8px;
-      font-style: normal;
+      text-transform: uppercase;
       font-weight: 600;
+    }
+
+    .form-control {
+      width: 100%;
+      background: #121422;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .form-control:focus {
+      border-color: var(--purple2);
+    }
+
+    .avatar-picker {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar-preview {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 1px solid var(--purple2);
     }
 
     /* ---------------- MOBILE LAYOUT ---------------- */
@@ -941,102 +799,36 @@
         display: block;
         min-height: 100vh;
         background: #05060c;
-      }
-
-      .mobile-shell {
-        position: relative;
-        min-height: 100vh;
-        padding: 0 0 74px;
-        overflow: hidden;
-        background: radial-gradient(circle at 65% 13%, rgba(96, 24, 154, .16), transparent 28%), #05060c;
+        padding-bottom: 80px;
       }
 
       .mobile-topbar {
-        height: 69px;
-        padding: 17px 16px 7px;
+        height: 60px;
+        padding: 0 16px;
         display: flex;
         align-items: center;
-        gap: 17px;
+        justify-content: space-between;
         background: rgba(6, 7, 13, .96);
-        position: relative;
-        z-index: 100;
+        border-bottom: 1px solid var(--border);
       }
 
       .mobile-brand {
-        margin: auto;
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
       }
 
       .mobile-brand img {
-        width: 31px;
-        height: 31px;
-      }
-
-      .mobile-brand .brand-name {
-        font-size: 17px;
-      }
-
-      .mobile-brand .brand-sub {
-        font-size: 6px;
-      }
-
-      .mobile-search-bar {
-        display: none;
-        padding: 10px 16px;
-        background: #090b14;
-        border-bottom: 1px solid var(--border);
-        position: relative;
-      }
-
-      .mobile-search-bar.active {
-        display: block;
-      }
-
-      .mobile-search-input-wrap {
-        display: flex;
-        align-items: center;
-        background: rgba(16, 18, 28, .88);
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 6px 12px;
-      }
-
-      .mobile-search-input-wrap input {
-        width: 100%;
-        background: transparent;
-        border: none;
-        outline: none;
-        color: var(--text);
-        font-size: 13px;
+        width: 28px;
+        height: 28px;
       }
 
       .mobile-content {
-        padding: 14px 13px 0;
-      }
-
-      .mobile-hero {
-        position: relative;
-        padding: 20px;
-        border: 1px solid #202334;
-        border-radius: 7px;
-        background: linear-gradient(135deg, rgba(20, 12, 34, 0.96), rgba(9, 10, 18, 0.98));
-      }
-
-      .mobile-hero h1 {
-        font-size: 20px;
-        margin: 6px 0 4px;
-      }
-
-      .mobile-hero p {
-        font-size: 11px;
-        color: #b94cff;
-        margin: 0;
+        padding: 16px;
       }
 
       .m-card {
-        margin-top: 10px;
+        margin-top: 12px;
         border: 1px solid #48275d;
         border-radius: 8px;
         background: rgba(12, 10, 21, .92);
@@ -1051,12 +843,12 @@
       }
 
       .m-info {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+        display: flex;
+        flex-direction: column;
       }
 
       .m-info div {
-        padding: 8px 12px;
+        padding: 10px 12px;
         border-bottom: 1px solid #292039;
       }
 
@@ -1064,180 +856,20 @@
         display: block;
         color: #ad4ed7;
         font-size: 9px;
+        text-transform: uppercase;
       }
 
       .m-info span {
-        font-size: 11px;
+        font-size: 12px;
         font-weight: 600;
-      }
-
-      .m-appearance {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        padding: 12px;
+        word-break: break-all;
       }
 
       .m-appearance img {
-        width: 100%;
-        height: 120px;
-        object-fit: cover;
+        width: calc(100% - 24px);
+        height: 160px;
+        margin: 12px;
         border-radius: 6px;
-      }
-
-      .m-personality {
-        font-size: 10px;
-        line-height: 1.4;
-        color: #d4cdd9;
-      }
-
-      .m-relations {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        padding: 10px;
-      }
-
-      .m-rel {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background: rgba(16, 12, 26, 0.6);
-        padding: 6px 8px;
-        border-radius: 6px;
-      }
-
-      .m-rel img {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        border: 1px solid #9750b5;
-        flex: 0 0 36px;
-      }
-
-      .m-rel b {
-        font-size: 11px;
-        display: block;
-      }
-
-      .m-rel small {
-        font-size: 9px;
-        color: #918999;
-      }
-
-      .m-quote {
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      .m-quote-box {
-        background: #141120;
-        border: 1px solid #2b203d;
-        border-radius: 5px;
-        padding: 10px 12px;
-        font-size: 11px;
-        line-height: 1.4;
-        position: relative;
-        padding-left: 28px;
-      }
-
-      .m-quote-box:before {
-        content: "“";
-        color: #9d38ff;
-        font-size: 22px;
-        position: absolute;
-        left: 8px;
-        top: 6px;
-      }
-
-      .m-quote-box em {
-        display: block;
-        text-align: right;
-        color: #b04ced;
-        font-style: normal;
-        margin-top: 5px;
-        font-weight: 600;
-      }
-
-      .mobile-bottom-nav {
-        position: fixed;
-        z-index: 50;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        height: 72px;
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        border-top: 1px solid #242636;
-        background: rgba(7, 8, 14, .98);
-        backdrop-filter: blur(14px);
-      }
-
-      .mobile-nav-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-        color: #d5d2dc;
-        font-size: 8px;
-        cursor: pointer;
-        padding: 4px 0;
-        transition: color 0.2s ease;
-      }
-
-      .mobile-nav-item.active {
-        color: #bd43ff;
-      }
-
-      .mobile-nav-item:hover {
-        color: #bd43ff;
-      }
-    }
-
-    @media (min-width: 901px) and (max-width: 1150px) {
-      .desktop-shell {
-        grid-template-columns: 165px minmax(0, 1fr);
-      }
-      .sidebar {
-        padding-left: 8px;
-        padding-right: 8px;
-      }
-      .side-link {
-        font-size: 11px;
-        padding-left: 8px;
-      }
-      .sidebar-brand {
-        margin-left: 7px;
-      }
-      .main {
-        padding: 22px 18px;
-      }
-      .search {
-        width: 180px;
-      }
-      .profile-grid {
-        grid-template-columns: 180px minmax(0, 1fr) 200px;
-        gap: 8px;
-      }
-      .rel img {
-        width: 34px;
-        height: 34px;
-        flex: 0 0 34px;
-      }
-      .rel {
-        padding: 6px 8px;
-      }
-      .rel b {
-        font-size: 11px;
-      }
-      .rel small {
-        font-size: 9px;
-      }
-      .personality-text {
-        font-size: 10px;
       }
     }
   </style>
@@ -1245,20 +877,72 @@
 
 <body>
 
+  <!-- UI TOAST NOTIFICATION POPUP BOX -->
+  <div id="notification-toast">
+    <span class="material-symbols-outlined toast-icon" id="toast-icon">info</span>
+    <span id="toast-message">Notification</span>
+  </div>
+
   <!-- PRELOADER OVERLAY -->
   <div id="preloader">
     <div class="spinner"></div>
   </div>
 
-  <!-- =========================================================
-     DESKTOP PAGE
-     ========================================================= -->
+  <!-- EDIT PROFILE MODAL DIALOG -->
+  <div class="modal-overlay" id="edit-profile-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2>Edit Profile</h2>
+        <button type="button" onclick="closeEditModal()"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <form id="edit-profile-form" onsubmit="handleProfileSubmit(event)">
+        <div class="form-group">
+          <label>Profile Picture</label>
+          <div class="avatar-picker">
+            <img class="avatar-preview" id="edit-avatar-preview" src="" alt="Preview">
+            <select class="form-control" id="edit-avatar-select" onchange="updateAvatarPreview(this.value)">
+              <!-- Options populated dynamically -->
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" class="form-control" id="edit-username" required>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" class="form-control" id="edit-email" required>
+        </div>
+        <div class="form-group">
+          <label>Bio</label>
+          <textarea class="form-control" id="edit-bio" rows="3"></textarea>
+        </div>
+        <hr style="border-color: var(--border); margin: 16px 0;">
+        <div class="form-group">
+          <label>Current Password <span style="color: var(--danger);">* Required</span></label>
+          <input type="password" class="form-control" id="edit-current-password" placeholder="••••••••" required>
+        </div>
+        <div class="form-group">
+          <label>New Password (Optional)</label>
+          <input type="password" class="form-control" id="edit-new-password" placeholder="••••••••">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="form-control" style="width: auto; background: transparent;" onclick="closeEditModal()">Cancel</button>
+          <button type="submit" class="btn-purple" id="save-profile-btn">
+            <span id="btn-text">Save Changes</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DESKTOP PAGE -->
   <div class="desktop-page">
     <main class="desktop-shell">
 
       <aside class="sidebar">
         <div class="sidebar-brand">
-          <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
+          <img src="./logo.png" alt="ANILOG" onerror="this.style.display='none'">
           <div>
             <h1 class="brand-name">ANILOG</h1>
             <div class="brand-sub">アニログ</div>
@@ -1281,454 +965,442 @@
           <button class="side-link" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
         </nav>
 
-
         <div class="user-card">
-          <img class="user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="Avatar">
+          <img class="user-avatar" id="sidebar-user-avatar" src="" alt="Avatar">
           <div class="user-info">
-            <h3 class="user-name">ShadowX</h3>
-            <div class="user-level">Level 27</div>
+            <h3 class="user-name" id="sidebar-user-name">Loading...</h3>
+            <div class="user-level" id="sidebar-user-level">LVL 1 - Otaku Novice</div>
             <div class="xp-track">
-              <div class="xp-fill"></div>
+              <div class="xp-fill" id="sidebar-xp-fill" style="width: 0%;"></div>
             </div>
-            <div class="xp-text">XP 4,250 / 6,800</div>
+            <div class="xp-text" id="sidebar-xp-text">0 / 500 XP</div>
           </div>
         </div>
       </aside>
 
-      <!-- MAIN CONTENT SECTION -->
       <section class="main">
-
         <header class="topbar">
           <div class="search">
             <input type="text" id="desktop-search-input" placeholder="Search anime...">
-            <span class="material-symbols-outlined" style="position: absolute; right: 12px; color: #777184; font-size: 16px;">search</span>
+            <span class="material-symbols-outlined">search</span>
+
+            <!-- Live Search Results Dropdown Panel -->
             <div class="search-results-dropdown" id="desktop-search-results"></div>
           </div>
 
           <div class="top-actions">
             <div class="top-action-wrap">
-              <div class="top-action"><span class="material-symbols-outlined">notifications</span></div>
-            </div>
-
-            <div class="top-action-wrap">
-              <div class="top-action streak">
-                <span class="material-symbols-outlined" style="color: #ca5aff;">local_fire_department</span>
-                <span>12</span>
+              <div class="top-action" onclick="window.location.href='./anilog-notifications.html';">
+                <span class="material-symbols-outlined">notifications</span>
               </div>
             </div>
 
             <div class="top-action-wrap">
-              <div class="top-action"><span class="material-symbols-outlined">settings</span></div>
+              <div class="top-action streak" onclick="window.location.href='./anilog-streak.html';">
+                <span class="material-symbols-outlined" style="color: #ff2d63;">local_fire_department</span>
+                <span id="desktop-streak-count">1</span>
+              </div>
+            </div>
+
+            <!-- SETTINGS HOVER DROPDOWN -->
+            <div class="top-action-wrap">
+              <div class="top-action">
+                <span class="material-symbols-outlined">settings</span>
+              </div>
               <div class="dropdown-panel">
                 <div class="dropdown-panel-header">System Settings</div>
-                <button class="dropdown-item"><span class="material-symbols-outlined">dark_mode</span> App Theme</button>
-                <button class="dropdown-item"><span class="material-symbols-outlined">notifications_active</span> Notifications</button>
-                <button class="dropdown-item"><span class="material-symbols-outlined">subtitles</span> Default Sub/Dub</button>
-                <button class="dropdown-item"><span class="material-symbols-outlined">explicit</span> Content Filter</button>
+                <button class="dropdown-item" id="theme-toggle-btn">
+                  <span class="material-symbols-outlined">dark_mode</span> App Theme
+                </button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-notifications.html';">
+                  <span class="material-symbols-outlined">notifications_active</span> Notifications
+                </button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-sub-dub-settings.html';">
+                  <span class="material-symbols-outlined">subtitles</span> Default Sub/Dub
+                </button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-content-filter.html';">
+                  <span class="material-symbols-outlined">explicit</span> Content Filter
+                </button>
                 <div class="dropdown-divider"></div>
-                <button class="dropdown-item"><span class="material-symbols-outlined">tune</span> Preferences</button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-preferences.html';">
+                  <span class="material-symbols-outlined">tune</span> Preferences
+                </button>
               </div>
             </div>
 
+            <!-- PROFILE HOVER DROPDOWN -->
             <div class="profile-wrap">
               <div class="profile">
-                <img class="avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="User">
+                <img class="avatar" id="desktop-topbar-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Shadow" alt="User">
                 <span class="material-symbols-outlined">expand_more</span>
               </div>
               <div class="dropdown-panel">
                 <div class="dropdown-panel-header">User Profile</div>
-                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span> View Profile</button>
-                <button class="dropdown-item" onclick="window.location.href='./anilog-edit-profile.html';"><span class="material-symbols-outlined">edit</span> Edit Profile</button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';">
+                  <span class="material-symbols-outlined">account_circle</span> View Profile
+                </button>
+                <button class="dropdown-item" onclick="openEditModal();">
+                  <span class="material-symbols-outlined">edit</span> Edit Profile
+                </button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-vip-membership.html';">
+                  <span class="material-symbols-outlined">workspace_premium</span> VIP Membership
+                </button>
                 <div class="dropdown-divider"></div>
-                <button class="dropdown-item" style="color: var(--danger);"><span class="material-symbols-outlined" style="color: var(--danger);">logout</span> Log Out</button>
+                <button class="dropdown-item" id="logout-btn" style="color: var(--danger);">
+                  <span class="material-symbols-outlined" style="color: var(--danger);">logout</span> Log Out
+                </button>
               </div>
             </div>
+
           </div>
         </header>
 
-        <h1 class="page-title">User Profile: <span id="profile-page-name">ShadowX</span></h1>
+        <h1 class="page-title">User Profile: <span id="profile-page-name">...</span></h1>
 
         <div class="profile-grid">
-          <!-- Info Card -->
           <section class="info-card">
             <div class="name">
-                <span class="label">Username</span>
-                <span class="value" id="profile-username">ShadowX</span>
+              <span class="label">Username</span>
+              <span class="value" id="profile-username">...</span>
             </div>
             <div class="info-bottom">
               <div>
                 <span class="label">Email</span>
-                <span class="value" id="profile-email">shadowx@example.com</span>
+                <span class="value" id="profile-email">...</span>
               </div>
               <div>
                 <span class="label">Member Since</span>
-                <span class="value">2026</span>
+                <span class="value" id="profile-member-since">...</span>
               </div>
             </div>
           </section>
 
-          <!-- Appearance -->
           <section class="card appearance">
             <div class="card-title">Profile Photo</div>
-            <img id="profile-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="ShadowX">
+            <img id="profile-avatar" src="" alt="Avatar">
           </section>
 
-          <!-- Personality -->
           <section class="card personality">
             <div class="card-title">Bio</div>
-            <div class="personality-text" id="profile-bio">Tracking. Watching. Reliving.</div>
+            <div class="personality-text" id="profile-bio">...</div>
           </section>
 
-          <!-- Relationships -->
           <section class="card relationships">
             <div class="card-title">Account Details</div>
             <div class="relation-title">ANILOG activity</div>
             <div class="relations">
               <div class="rel">
-                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=watching" alt="Watching">
                 <div class="rel-info">
                   <b>Watching</b>
-                  <small>8 anime in progress</small>
+                  <small id="profile-watching-count">0 anime in progress</small>
                 </div>
               </div>
               <div class="rel">
-                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=completed" alt="Completed">
                 <div class="rel-info">
                   <b>Completed</b>
-                  <small>132 anime finished</small>
+                  <small id="profile-completed-count">0 anime finished</small>
                 </div>
               </div>
               <div class="rel">
-                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=hours" alt="Hours">
                 <div class="rel-info">
-                  <b>Watch time</b>
-                  <small>1,248 hours tracked</small>
+                  <b>Favorites</b>
+                  <small id="profile-favorites-count">0 anime favorited</small>
                 </div>
               </div>
               <div class="rel">
-                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=streak" alt="Streak">
                 <div class="rel-info">
-                  <b>Current streak</b>
-                  <small>23 days active</small>
+                  <b>Current Streak</b>
+                  <small id="profile-streak-count">0 days active</small>
                 </div>
               </div>
             </div>
           </section>
 
-          <!-- Key Moments -->
-          <section class="card key">
-            <div class="card-title">Profile Settings</div>
-            <div class="key-strip">
-              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=privacy" alt="Privacy">
-              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=notifications" alt="Notifications">
-              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=preferences" alt="Preferences">
-            </div>
-            <div class="timeline"><i></i><i></i><i></i><i></i></div>
-            <div class="key-bottom">
-              <span>Privacy</span>
-              <span>Notifications</span>
-              <span>Preferences</span>
-              <span>Account</span>
-            </div>
-          </section>
-
-          <!-- Doodle / Sketch Area -->
           <section class="card doodle">
             <div class="card-title">Edit Profile</div>
             <div class="doodle-box">
-              <div>
-                <span class="material-symbols-outlined">edit_note</span>
-                Update your profile details anytime.
-                <button onclick="window.location.href='./anilog-edit-profile.html';" style="margin-left:8px;color:#c04aff;">Open Editor</button>
-              </div>
-            </div>
-          </section>
-
-          <!-- Quotes -->
-          <section class="card quotes">
-            <div class="card-title">About ANILOG</div>
-            <div class="quote-list">
-              <div class="quote">
-                Track your anime journey, keep your watch history organized, and make every session count.
-                <em>- ANILOG</em>
-              </div>
-              <div class="quote">
-                Your profile is stored locally on this device for now.
-                <em>- System note</em>
-              </div>
+              <span>Update your profile bio, username, email, avatar, or security details.</span>
+              <button class="btn-purple" onclick="openEditModal()">Open Editor</button>
             </div>
           </section>
         </div>
-
       </section>
     </main>
   </div>
 
-  <!-- =========================================================
-     MOBILE PAGE
-     ========================================================= -->
+  <!-- MOBILE PAGE -->
   <div class="mobile-page">
-    <main class="mobile-shell">
+    <header class="mobile-topbar">
+      <div class="mobile-brand">
+        <img src="./logo.png" alt="ANILOG" onerror="this.style.display='none'">
+        <span class="brand-name">ANILOG</span>
+      </div>
+      <button class="btn-purple" onclick="openEditModal()" style="padding: 4px 10px; font-size: 11px;">Edit</button>
+    </header>
 
-      <header class="mobile-topbar">
-        <span class="material-symbols-outlined">menu</span>
-        <div class="mobile-brand">
-          <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
+    <div class="mobile-content">
+      <div class="m-card">
+        <div class="m-title">User Information</div>
+        <div class="m-info">
           <div>
-            <div class="brand-name">ANILOG</div>
-            <div class="brand-sub">アニログ</div>
+            <label>Username</label>
+            <span id="m-profile-username">...</span>
+          </div>
+          <div>
+            <label>Email</label>
+            <span id="m-profile-email">...</span>
+          </div>
+          <div>
+            <label>Member Since</label>
+            <span id="m-profile-member-since">...</span>
           </div>
         </div>
-        <span class="material-symbols-outlined" id="mobile-search-toggle" style="cursor: pointer;">search</span>
-      </header>
-
-      <div class="mobile-search-bar" id="mobile-search-bar">
-        <div class="mobile-search-input-wrap">
-          <input type="text" id="mobile-search-input" placeholder="Search anime...">
-        </div>
-        <div class="search-results-dropdown" id="mobile-search-results"></div>
       </div>
 
-      <div class="mobile-content">
-        <section class="mobile-hero">
-          <p>User Profile</p>
-          <h1 id="mobile-profile-page-name" data-profile-name>ShadowX</h1>
-          <p style="color: var(--muted); font-size: 10px; margin-top: 4px;">Anime tracker profile</p>
-        </section>
-
-        <section class="m-card">
-          <div class="m-title">Information</div>
-          <div class="m-info">
-            <div><label>Username</label><span id="mobile-profile-username">ShadowX</span></div>
-            <div><label>Email</label><span id="mobile-profile-email">shadowx@example.com</span></div>
-            <div><label>Member Since</label><span>2026</span></div>
-            <div><label>Status</label><span>Active</span></div>
-          </div>
-        </section>
-
-        <section class="m-card">
-          <div class="m-title">Bio & Profile Photo</div>
-          <div class="m-appearance">
-            <img id="mobile-profile-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="ShadowX">
-            <div class="m-personality" id="mobile-profile-bio">Tracking. Watching. Reliving.</div>
-          </div>
-        </section>
-
-        <section class="m-card">
-          <div class="m-title">ANILOG Activity</div>
-          <div class="m-relations">
-            <div class="m-rel">
-              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=watching" alt="Watching">
-              <div><b>Watching</b><small>8 anime in progress</small></div>
-            </div>
-            <div class="m-rel">
-              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=completed" alt="Completed">
-              <div><b>Completed</b><small>132 anime finished</small></div>
-            </div>
-            <div class="m-rel">
-              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=hours" alt="Watch time">
-              <div><b>Watch time</b><small>1,248 hours tracked</small></div>
-            </div>
-            <div class="m-rel">
-              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=streak" alt="Streak">
-              <div><b>Current streak</b><small>23 days active</small></div>
-            </div>
-          </div>
-        </section>
-
-        <section class="m-card">
-          <div class="m-title">Profile Actions</div>
-          <div class="m-quote">
-            <div class="m-quote-box">
-              If you win, you live. If you lose, you die. If you don't fight, you can't win!
-              <em><button onclick="window.location.href='./anilog-edit-profile.html';">Edit Profile</button></em>
-            </div>
-            <div class="m-quote-box">
-              You're not a slave, nor are you a god... you're just a person.
-              <em>- System note</em>
-            </div>
-          </div>
-        </section>
+      <div class="m-card m-appearance">
+        <div class="m-title">Profile Photo</div>
+        <img id="m-profile-avatar" src="" alt="Avatar">
       </div>
 
-      <nav class="mobile-bottom-nav">
-        <div class="mobile-nav-item" onclick="window.location.href='./anilog-home.html';">
-          <span class="material-symbols-outlined">home</span>
-          <span>Home</span>
-        </div>
-        <div class="mobile-nav-item" onclick="window.location.href='./anilog-watchlist.html';">
-          <span class="material-symbols-outlined">list_alt</span>
-          <span>Watchlist</span>
-        </div>
-        <div class="mobile-nav-item" onclick="window.location.href='./anilog-currentlywatching.html';">
-          <span class="material-symbols-outlined">play_arrow</span>
-          <span>Watching</span>
-        </div>
-        <div class="mobile-nav-item" onclick="window.location.href='./anilog-completed.html';">
-          <span class="material-symbols-outlined">check_circle</span>
-          <span>Completed</span>
-        </div>
-        <div class="mobile-nav-item">
-          <span class="material-symbols-outlined">more_vert</span>
-          <span>More</span>
-        </div>
-      </nav>
-
-    </main>
+      <div class="m-card">
+        <div class="m-title">Bio</div>
+        <div style="padding: 12px; font-size: 12px;" id="m-profile-bio">...</div>
+      </div>
+    </div>
   </div>
 
   <script>
-    window.addEventListener('load', async () => {
-      if (document.fonts) {
-        await document.fonts.ready;
+    const API_BASE_URL = 'http://localhost:8000'; // Update this if your backend runs on a different port
+    let currentUserData = null;
+    let availableAvatars = [];
+
+    function showNotification(msg, type = 'info') {
+      const toast = document.getElementById('notification-toast');
+      const text = document.getElementById('toast-message');
+      const icon = document.getElementById('toast-icon');
+
+      text.innerText = msg;
+      toast.className = `show ${type}`;
+      icon.innerText = type === 'success' ? 'check_circle' : type === 'error' ? 'error' : 'info';
+
+      setTimeout(() => {
+        toast.className = '';
+      }, 3500);
+    }
+
+    async function fetchUserProfile() {
+      try {
+        const token = localStorage.getItem('access_token');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+        const res = await fetch(`${API_BASE_URL}/api/auth/me`, { headers });
+        if (!res.ok) throw new Error('Failed to fetch profile');
+
+        currentUserData = await res.json();
+        renderProfileData(currentUserData);
+      } catch (err) {
+        showNotification('Error loading live profile data', 'error');
+      } finally {
+        document.body.classList.add('loaded');
+        document.getElementById('preloader').style.display = 'none';
       }
-      const preloader = document.getElementById('preloader');
-      preloader.style.opacity = '0';
-      preloader.style.visibility = 'hidden';
-      document.body.classList.add('loaded');
-      loadProfileData();
-    });
-
-    function loadProfileData() {
-      const profile = JSON.parse(localStorage.getItem('anilogProfile') || '{}');
-      const username = profile.username || 'ShadowX';
-      const email = profile.email || 'shadowx@example.com';
-      const bio = profile.bio || 'Tracking. Watching. Reliving.';
-      const seed = profile.avatarSeed || username;
-      document.title = `ANILOG - ${username} Profile`;
-      document.getElementById('profile-page-name').textContent = username;
-      document.getElementById('mobile-profile-page-name').textContent = username;
-      document.getElementById('profile-username').textContent = username;
-      document.getElementById('mobile-profile-username').textContent = username;
-      document.getElementById('profile-email').textContent = email;
-      document.getElementById('mobile-profile-email').textContent = email;
-      document.getElementById('profile-bio').textContent = bio;
-      document.getElementById('mobile-profile-bio').textContent = bio;
-      const avatar = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(seed)}`;
-      document.getElementById('profile-avatar').src = avatar;
-      document.getElementById('mobile-profile-avatar').src = avatar;
     }
 
-    let searchTimeout = null;
-    let currentAbortController = null;
+    function renderProfileData(user) {
+      document.getElementById('profile-page-name').innerText = user.username;
+      document.getElementById('profile-username').innerText = user.username;
+      document.getElementById('profile-email').innerText = user.email;
 
-    function openAnimeReviewFromSearch(anime) {
-      const attr = anime.attributes || {};
-      const reviewData = {
-        id: anime.id,
-        title: attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled',
-        image: attr.posterImage?.large || attr.posterImage?.medium || attr.posterImage?.original || '',
-        episodes: attr.episodeCount || '',
-        status: attr.status || '',
-        type: attr.showType || '',
-        rating: attr.averageRating || '',
-        synopsis: attr.synopsis || '',
-        startDate: attr.startDate || ''
-      };
-      window.location.href = `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(JSON.stringify(reviewData))}`;
+      const dateObj = new Date(user.created_at);
+      const memberSinceStr = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+      document.getElementById('profile-member-since').innerText = memberSinceStr;
+
+      const avatarUrl = user.avatar_seed || 'https://api.dicebear.com/7.x/bottts/svg?seed=Shadow';
+      document.getElementById('profile-avatar').src = avatarUrl;
+      
+      const topbarAvatar = document.getElementById('desktop-topbar-avatar') || document.getElementById('topbar-user-avatar');
+      if (topbarAvatar) topbarAvatar.src = avatarUrl;
+      
+      document.getElementById('sidebar-user-avatar').src = avatarUrl;
+
+      document.getElementById('sidebar-user-name').innerText = user.username;
+      
+      // Calculate XP & Level dynamically identical to anilog-home.html
+      const currentXP = user.xp_points || 0;
+      const levelObj = calculateUserLevel(currentXP);
+      
+      const sidebarLevel = document.getElementById('sidebar-user-level');
+      if (sidebarLevel) sidebarLevel.innerText = `LVL ${levelObj.level} - ${levelObj.title}`;
+      
+      const sidebarXpFill = document.getElementById('sidebar-xp-fill');
+      if (sidebarXpFill) sidebarXpFill.style.width = `${levelObj.percent}%`;
+
+      const sidebarXpText = document.getElementById('sidebar-xp-text');
+      if (sidebarXpText) sidebarXpText.innerText = `${currentXP.toLocaleString()} / ${levelObj.nextLevelXP.toLocaleString()} XP`;
+
+      const streakVal = document.getElementById('desktop-streak-count') || document.getElementById('streak-counter-val');
+      if (streakVal) streakVal.innerText = user.streak_count || 0;
+
+      document.getElementById('profile-bio').innerText = user.bio || 'No bio provided.';
+
+      document.getElementById('profile-watching-count').innerText = `${user.watching_count || 0} anime in progress`;
+      document.getElementById('profile-completed-count').innerText = `${user.completed_count || 0} anime finished`;
+      document.getElementById('profile-favorites-count').innerText = `${user.favorites_count || 0} anime favorited`;
+      document.getElementById('profile-streak-count').innerText = `${user.streak_count || 0} days active`;
+
+      // Mobile sync
+      if (document.getElementById('m-profile-username')) {
+        document.getElementById('m-profile-username').innerText = user.username;
+        document.getElementById('m-profile-email').innerText = user.email;
+        document.getElementById('m-profile-member-since').innerText = memberSinceStr;
+        document.getElementById('m-profile-avatar').src = avatarUrl;
+        document.getElementById('m-profile-bio').innerText = user.bio || 'No bio provided.';
+      }
     }
 
-    function handleSearch(query, resultsContainer) {
-      const cleanQuery = query.trim();
+    function calculateUserLevel(xp) {
+      const levels = [
+        { level: 1, title: 'Otaku Novice', minXP: 0, nextLevelXP: 500 },
+        { level: 2, title: 'Casual Watcher', minXP: 500, nextLevelXP: 2000 },
+        { level: 3, title: 'Anime Enthusiast', minXP: 1200, nextLevelXP: 3000 },
+        { level: 4, title: 'Seasoned Binger', minXP: 2500, nextLevelXP: 5000 },
+        { level: 5, title: 'Master Otaku', minXP: 5000, nextLevelXP: 10000 },
+        { level: 6, title: 'Anime Scholar', minXP: 10000, nextLevelXP: 20000 },
+        { level: 7, title: 'Supreme Weeb', minXP: 20000, nextLevelXP: 50000 }
+      ];
 
-      if (cleanQuery.length < 3) {
-        resultsContainer.classList.remove('active');
-        resultsContainer.innerHTML = '';
-        if (currentAbortController) currentAbortController.abort();
+      for (let i = levels.length - 1; i >= 0; i--) {
+        if (xp >= levels[i].minXP) {
+          const lvl = levels[i];
+          const range = lvl.nextLevelXP - lvl.minXP;
+          const progress = xp - lvl.minXP;
+          const percent = Math.min(100, Math.max(0, Math.floor((progress / range) * 100)));
+          return {
+            level: lvl.level,
+            title: lvl.title,
+            currentXP: xp,
+            nextLevelXP: lvl.nextLevelXP,
+            percent: percent
+          };
+        }
+      }
+      return { level: 1, title: 'Otaku Novice', currentXP: xp, nextLevelXP: 500, percent: 0 };
+    }
+
+    async function loadAvatars() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/avatars`);
+        if (res.ok) {
+          const data = await res.json();
+          availableAvatars = data.avatars || [];
+          const select = document.getElementById('edit-avatar-select');
+          select.innerHTML = '';
+          availableAvatars.forEach((url, idx) => {
+            const opt = document.createElement('option');
+            opt.value = url;
+            opt.innerText = `Avatar Option ${idx + 1}`;
+            select.appendChild(opt);
+          });
+        }
+      } catch (e) {
+        console.error("Failed to load avatars:", e);
+      }
+    }
+
+    function openEditModal() {
+      if (!currentUserData) return;
+
+      document.getElementById('edit-username').value = currentUserData.username;
+      document.getElementById('edit-email').value = currentUserData.email;
+      document.getElementById('edit-bio').value = currentUserData.bio || '';
+      document.getElementById('edit-current-password').value = '';
+      document.getElementById('edit-new-password').value = '';
+
+      const select = document.getElementById('edit-avatar-select');
+      if (currentUserData.avatar_seed && !availableAvatars.includes(currentUserData.avatar_seed)) {
+        const opt = document.createElement('option');
+        opt.value = currentUserData.avatar_seed;
+        opt.innerText = 'Current Custom Avatar';
+        select.appendChild(opt);
+      }
+      select.value = currentUserData.avatar_seed || availableAvatars[0];
+      updateAvatarPreview(select.value);
+
+      document.getElementById('edit-profile-modal').classList.add('active');
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-profile-modal').classList.remove('active');
+    }
+
+    function updateAvatarPreview(url) {
+      document.getElementById('edit-avatar-preview').src = url;
+    }
+
+    async function handleProfileSubmit(e) {
+      e.preventDefault();
+
+      const saveBtn = document.getElementById('save-profile-btn');
+      const username = document.getElementById('edit-username').value;
+      const email = document.getElementById('edit-email').value;
+      const bio = document.getElementById('edit-bio').value;
+      const avatar_seed = document.getElementById('edit-avatar-select').value;
+      const current_password = document.getElementById('edit-current-password').value;
+      const new_password = document.getElementById('edit-new-password').value;
+
+      if (!current_password) {
+        showNotification('Current password is required to save changes', 'error');
         return;
       }
 
-      clearTimeout(searchTimeout);
+      const payload = {
+        username,
+        email,
+        bio,
+        avatar_seed,
+        current_password
+      };
 
-      searchTimeout = setTimeout(async () => {
-        if (currentAbortController) {
-          currentAbortController.abort();
-        }
-        currentAbortController = new AbortController();
-
-        resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">Searching...</div>`;
-        resultsContainer.classList.add('active');
-
-        try {
-          const targetUrl = `https://kitsu.io/api/edge/anime?filter[text]=${encodeURIComponent(cleanQuery)}&page[limit]=6`;
-          const response = await fetch(targetUrl, {
-            signal: currentAbortController.signal,
-            headers: {
-              'Accept': 'application/vnd.api+json',
-              'Content-Type': 'application/vnd.api+json'
-            }
-          });
-
-          if (!response.ok) throw new Error(`HTTP_${response.status}`);
-          const data = await response.json();
-          const results = data.data || [];
-          resultsContainer._animeResults = results;
-
-          resultsContainer.innerHTML = '';
-
-          if (results.length === 0) {
-            resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">No anime found</div>`;
-          } else {
-            results.forEach(anime => {
-              const attr = anime.attributes || {};
-              const title = attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled';
-              const img = attr.posterImage?.tiny || attr.posterImage?.small || '';
-              const rating = attr.averageRating ? `★ ${(parseFloat(attr.averageRating) / 10).toFixed(1)}` : 'N/A';
-              const type = attr.showType ? attr.showType.toUpperCase() : 'ANIME';
-
-              const itemHTML = `
-              <div class="search-result-item" data-result-index="${results.indexOf(anime)}" role="button" tabindex="0">
-                <img src="${img}" alt="${title}">
-                <div class="search-result-info">
-                  <div class="search-result-title">${title}</div>
-                  <div class="search-result-meta">${type} • ${rating}</div>
-                </div>
-              </div>
-            `;
-              resultsContainer.insertAdjacentHTML('beforeend', itemHTML);
-            });
-          }
-        } catch (err) {
-          if (err.name === 'AbortError') return;
-          resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--danger); text-align: center;">Search failed. Try typing again.</div>`;
-        }
-      }, 400);
-    }
-
-    const desktopInput = document.getElementById('desktop-search-input');
-    const desktopResults = document.getElementById('desktop-search-results');
-    if (desktopInput) {
-      desktopInput.addEventListener('input', (e) => handleSearch(e.target.value, desktopResults));
-    }
-
-    const mobileInput = document.getElementById('mobile-search-input');
-    const mobileResults = document.getElementById('mobile-search-results');
-    if (mobileInput) {
-      mobileInput.addEventListener('input', (e) => handleSearch(e.target.value, mobileResults));
-    }
-
-    const mobileSearchToggle = document.getElementById('mobile-search-toggle');
-    const mobileSearchBar = document.getElementById('mobile-search-bar');
-    if (mobileSearchToggle && mobileSearchBar) {
-      mobileSearchToggle.addEventListener('click', () => {
-        mobileSearchBar.classList.toggle('active');
-      });
-    }
-
-    document.addEventListener('click', (event) => {
-      const resultItem = event.target.closest('.search-result-item');
-      if (!resultItem) return;
-      const anime = resultItem.parentElement._animeResults?.[Number(resultItem.dataset.resultIndex)];
-      if (anime) openAnimeReviewFromSearch(anime);
-    });
-
-    document.addEventListener('click', (e) => {
-      if (desktopResults && !e.target.closest('.search')) {
-        desktopResults.classList.remove('active');
+      if (new_password) {
+        payload.new_password = new_password;
       }
-      if (mobileResults && !e.target.closest('#mobile-search-bar') && !e.target.closest('#mobile-search-toggle')) {
-        mobileResults.classList.remove('active');
+
+      // UI Feedback: Show loading animation and disable button to avoid duplicate requests
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<span class="btn-spinner"></span> Saving...';
+
+      try {
+        const token = localStorage.getItem('access_token');
+        const res = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.detail || 'Failed to update profile');
+        }
+
+        currentUserData = await res.json();
+        renderProfileData(currentUserData);
+        closeEditModal();
+        showNotification('Profile updated successfully!', 'success');
+      } catch (err) {
+        showNotification(err.message, 'error');
+      } finally {
+        // Reset button state
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<span id="btn-text">Save Changes</span>';
       }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadAvatars();
+      fetchUserProfile();
     });
   </script>
 </body>

@@ -412,26 +412,6 @@
       border: 1px solid #9b31e7;
       border-radius: 7px;
       background: linear-gradient(145deg, rgba(14, 16, 27, .98), rgba(7, 8, 15, .98));
-      clip-path: polygon(4% 0, 96% 0, 100% 7%, 100% 93%, 96% 100%, 4% 100%, 0 93%, 0 7%);
-      backface-visibility: hidden;
-      transform-style: preserve-3d;
-      opacity: 0;
-    }
-
-    body.loaded .user-card {
-      animation: userCardFlip 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s forwards;
-    }
-
-    @keyframes userCardFlip {
-      from {
-        opacity: 0;
-        transform: rotateY(-180deg);
-      }
-
-      to {
-        opacity: 1;
-        transform: rotateY(0deg);
-      }
     }
 
     .user-avatar {
@@ -452,6 +432,7 @@
       margin: 0 0 4px;
       font-size: 14px;
       font-weight: 700;
+      word-break: break-word;
     }
 
     .user-level {
@@ -472,7 +453,6 @@
       width: 63%;
       height: 100%;
       background: #9c2cff;
-      transition: width 0.4s ease;
     }
 
     .xp-text {
@@ -1271,15 +1251,14 @@
         </nav>
 
         <div class="user-card">
-          <img class="user-avatar" id="sidebar-user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX"
-            alt="Avatar">
+          <img class="user-avatar" id="sidebar-user-avatar" src="" alt="Avatar">
           <div class="user-info">
-            <h3 class="user-name" id="sidebar-user-name">ShadowX</h3>
-            <div class="user-level" id="sidebar-user-level">Level 1</div>
+            <h3 class="user-name" id="sidebar-user-name">Loading...</h3>
+            <div class="user-level" id="sidebar-user-level">LVL 1 - Otaku Novice</div>
             <div class="xp-track">
-              <div class="xp-fill" id="sidebar-xp-fill"></div>
+              <div class="xp-fill" id="sidebar-xp-fill" style="width: 0%;"></div>
             </div>
-            <div class="xp-text" id="sidebar-xp-text">XP 0 / 1000</div>
+            <div class="xp-text" id="sidebar-xp-text">0 / 500 XP</div>
           </div>
         </div>
       </aside>
@@ -1494,6 +1473,55 @@
       return token;
     }
 
+    // Helper function to calculate user level and progress percentage
+    function calculateUserLevel(xp) {
+      const levels = [
+        { level: 1, title: 'Otaku Novice', minXP: 0, nextLevelXP: 500 },
+        { level: 2, title: 'Casual Watcher', minXP: 500, nextLevelXP: 2000 },
+        { level: 3, title: 'Anime Enthusiast', minXP: 1200, nextLevelXP: 3000 },
+        { level: 4, title: 'Seasoned Binger', minXP: 2500, nextLevelXP: 5000 },
+        { level: 5, title: 'Master Otaku', minXP: 5000, nextLevelXP: 10000 },
+        { level: 6, title: 'Anime Scholar', minXP: 10000, nextLevelXP: 20000 },
+        { level: 7, title: 'Supreme Weeb', minXP: 20000, nextLevelXP: 50000 }
+      ];
+
+      for (let i = levels.length - 1; i >= 0; i--) {
+        if (xp >= levels[i].minXP) {
+          const lvl = levels[i];
+          const range = lvl.nextLevelXP - lvl.minXP;
+          const progress = xp - lvl.minXP;
+          const percent = Math.min(100, Math.max(0, Math.floor((progress / range) * 100)));
+          return {
+            level: lvl.level,
+            title: lvl.title,
+            currentXP: xp,
+            nextLevelXP: lvl.nextLevelXP,
+            percent: percent
+          };
+        }
+      }
+      return { level: 1, title: 'Otaku Novice', currentXP: xp, nextLevelXP: 500, percent: 0 };
+    }
+
+    // Logic to populate and render data into the user-card component
+    function renderUserCard(user) {
+      const avatarUrl = user.avatar_seed || 'https://api.dicebear.com/7.x/bottts/svg?seed=Shadow';
+      document.getElementById('sidebar-user-avatar').src = avatarUrl;
+      document.getElementById('sidebar-user-name').innerText = user.username;
+
+      const currentXP = user.xp_points || 0;
+      const levelObj = calculateUserLevel(currentXP);
+
+      const sidebarLevel = document.getElementById('sidebar-user-level');
+      if (sidebarLevel) sidebarLevel.innerText = `LVL ${levelObj.level} - ${levelObj.title}`;
+
+      const sidebarXpFill = document.getElementById('sidebar-xp-fill');
+      if (sidebarXpFill) sidebarXpFill.style.width = `${levelObj.percent}%`;
+
+      const sidebarXpText = document.getElementById('sidebar-xp-text');
+      if (sidebarXpText) sidebarXpText.innerText = `${currentXP.toLocaleString()} / ${levelObj.nextLevelXP.toLocaleString()} XP`;
+    }
+
     async function fetchUserData(token) {
       try {
         const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
@@ -1504,18 +1532,11 @@
         if (!res.ok) throw new Error("Failed to authenticate user session");
         const user = await res.json();
 
-        document.getElementById('sidebar-user-name').innerText = user.username;
-        document.getElementById('sidebar-user-level').innerText = `Level ${user.level || 1}`;
+        renderUserCard(user);
 
         const avatarUrl = user.avatar_seed ? `https://api.dicebear.com/7.x/bottts/svg?seed=${user.avatar_seed}` : "https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX";
-        document.getElementById('sidebar-user-avatar').src = avatarUrl;
-        document.getElementById('header-user-avatar').src = avatarUrl;
-
-        const xp = user.xp_points || 0;
-        const maxXp = (user.level || 1) * 1000;
-        const pct = Math.min(100, Math.round((xp / maxXp) * 100));
-        document.getElementById('sidebar-xp-fill').style.width = `${pct}%`;
-        document.getElementById('sidebar-xp-text').innerText = `XP ${xp} / ${maxXp}`;
+        const headerAvatar = document.getElementById('header-user-avatar');
+        if (headerAvatar) headerAvatar.src = avatarUrl;
 
       } catch (err) {
         console.error("User profile fetch error:", err);

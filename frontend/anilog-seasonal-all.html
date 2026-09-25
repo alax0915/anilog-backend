@@ -65,6 +65,58 @@
       object-fit: cover;
     }
 
+    /* ---------------- SKELETON LOADING ANIMATION ---------------- */
+    @keyframes skeletonPulse {
+      0% {
+        background-color: rgba(37, 40, 58, 0.4);
+      }
+      50% {
+        background-color: rgba(157, 44, 255, 0.18);
+      }
+      100% {
+        background-color: rgba(37, 40, 58, 0.4);
+      }
+    }
+
+    .skeleton-box {
+      display: inline-block;
+      height: 1em;
+      border-radius: 4px;
+      animation: skeletonPulse 1.4s ease-in-out infinite;
+      vertical-align: middle;
+    }
+
+    .skeleton-title-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .skeleton-thumb {
+      width: 45px;
+      height: 52px;
+      border-radius: 4px;
+      animation: skeletonPulse 1.4s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    .skeleton-card {
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr);
+      gap: 10px;
+      padding: 8px;
+      border: 1px solid #302342;
+      border-radius: 6px;
+      background: rgba(11, 13, 21, .9);
+    }
+
+    .skeleton-mobile-thumb {
+      width: 48px;
+      height: 64px;
+      border-radius: 4px;
+      animation: skeletonPulse 1.4s ease-in-out infinite;
+    }
+
     /* ---------------- NOTIFICATION / POP BOX UI ---------------- */
     #anilog-toast-container {
       position: fixed;
@@ -257,57 +309,19 @@
       animation: navItemSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    body.loaded .side-link:nth-child(1) {
-      animation-delay: 0.15s;
-    }
-
-    body.loaded .side-link:nth-child(2) {
-      animation-delay: 0.20s;
-    }
-
-    body.loaded .side-link:nth-child(3) {
-      animation-delay: 0.25s;
-    }
-
-    body.loaded .side-link:nth-child(4) {
-      animation-delay: 0.30s;
-    }
-
-    body.loaded .side-link:nth-child(5) {
-      animation-delay: 0.35s;
-    }
-
-    body.loaded .side-link:nth-child(6) {
-      animation-delay: 0.40s;
-    }
-
-    body.loaded .side-link:nth-child(7) {
-      animation-delay: 0.45s;
-    }
-
-    body.loaded .side-link:nth-child(8) {
-      animation-delay: 0.50s;
-    }
-
-    body.loaded .side-link:nth-child(9) {
-      animation-delay: 0.55s;
-    }
-
-    body.loaded .side-link:nth-child(10) {
-      animation-delay: 0.60s;
-    }
-
-    body.loaded .side-link:nth-child(11) {
-      animation-delay: 0.65s;
-    }
-
-    body.loaded .side-link:nth-child(12) {
-      animation-delay: 0.70s;
-    }
-
-    body.loaded .side-link:nth-child(13) {
-      animation-delay: 0.75s;
-    }
+    body.loaded .side-link:nth-child(1) { animation-delay: 0.15s; }
+    body.loaded .side-link:nth-child(2) { animation-delay: 0.20s; }
+    body.loaded .side-link:nth-child(3) { animation-delay: 0.25s; }
+    body.loaded .side-link:nth-child(4) { animation-delay: 0.30s; }
+    body.loaded .side-link:nth-child(5) { animation-delay: 0.35s; }
+    body.loaded .side-link:nth-child(6) { animation-delay: 0.40s; }
+    body.loaded .side-link:nth-child(7) { animation-delay: 0.45s; }
+    body.loaded .side-link:nth-child(8) { animation-delay: 0.50s; }
+    body.loaded .side-link:nth-child(9) { animation-delay: 0.55s; }
+    body.loaded .side-link:nth-child(10) { animation-delay: 0.60s; }
+    body.loaded .side-link:nth-child(11) { animation-delay: 0.65s; }
+    body.loaded .side-link:nth-child(12) { animation-delay: 0.70s; }
+    body.loaded .side-link:nth-child(13) { animation-delay: 0.75s; }
 
     @keyframes navItemSlideIn {
       to {
@@ -344,28 +358,13 @@
     }
 
     @keyframes typingLoop {
-
-      0%,
-      100% {
-        width: 0;
-      }
-
-      30%,
-      70% {
-        width: 6.2ch;
-      }
+      0%, 100% { width: 0; }
+      30%, 70% { width: 6.2ch; }
     }
 
     @keyframes blinkCursor {
-
-      from,
-      to {
-        border-color: transparent;
-      }
-
-      50% {
-        border-color: #c65cff;
-      }
+      from, to { border-color: transparent; }
+      50% { border-color: #c65cff; }
     }
 
     .brand-sub {
@@ -419,26 +418,6 @@
       border: 1px solid #9b31e7;
       border-radius: 7px;
       background: linear-gradient(145deg, rgba(14, 16, 27, .98), rgba(7, 8, 15, .98));
-      clip-path: polygon(4% 0, 96% 0, 100% 7%, 100% 93%, 96% 100%, 4% 100%, 0 93%, 0 7%);
-      backface-visibility: hidden;
-      transform-style: preserve-3d;
-      opacity: 0;
-    }
-
-    body.loaded .user-card {
-      animation: userCardFlip 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s forwards;
-    }
-
-    @keyframes userCardFlip {
-      from {
-        opacity: 0;
-        transform: rotateY(-180deg);
-      }
-
-      to {
-        opacity: 1;
-        transform: rotateY(0deg);
-      }
     }
 
     .user-avatar {
@@ -459,6 +438,7 @@
       margin: 0 0 4px;
       font-size: 14px;
       font-weight: 700;
+      word-break: break-word;
     }
 
     .user-level {
@@ -476,10 +456,9 @@
     }
 
     .xp-fill {
-      width: 0%;
+      width: 63%;
       height: 100%;
       background: #9c2cff;
-      transition: width 0.4s ease;
     }
 
     .xp-text {
@@ -1304,46 +1283,30 @@
         </div>
 
         <nav class="sidebar-nav">
-          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span
-              class="material-symbols-outlined">home</span>Home</button>
-          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';"><span
-              class="material-symbols-outlined">list_alt</span>Watchlist</button>
-          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span
-              class="material-symbols-outlined">play_circle</span>Currently Watching</button>
-          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span
-              class="material-symbols-outlined">check_circle</span>Completed</button>
-          <button class="side-link active" onclick="window.location.href='./anilog-seasonal-all.html';"><span
-              class="material-symbols-outlined">calendar_month</span>Seasonal</button>
-          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span
-              class="material-symbols-outlined">rate_review</span>Reviews</button>
-          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span
-              class="material-symbols-outlined">account_circle</span>Profile</button>
-          <button class="side-link" onclick="window.location.href='./anilog-favorites.html';"><span
-              class="material-symbols-outlined">bookmark</span>Favorites</button>
-          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span
-              class="material-symbols-outlined">leaderboard</span>Top Lists</button>
-          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span
-              class="material-symbols-outlined">shopping_bag</span>Merch</button>
-          <button class="side-link"
-            onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span
-              class="material-symbols-outlined">history</span>Logs</button>
-          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span
-              class="material-symbols-outlined">target</span>Goals</button>
-          <button class="side-link"
-            onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span
-              class="material-symbols-outlined">history</span>Year view</button>
+          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span class="material-symbols-outlined">home</span>Home</button>
+          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';"><span class="material-symbols-outlined">list_alt</span>Watchlist</button>
+          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span class="material-symbols-outlined">play_circle</span>Currently Watching</button>
+          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span class="material-symbols-outlined">check_circle</span>Completed</button>
+          <button class="side-link active" onclick="window.location.href='./anilog-seasonal-all.html';"><span class="material-symbols-outlined">calendar_month</span>Seasonal</button>
+          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span class="material-symbols-outlined">rate_review</span>Reviews</button>
+          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span>Profile</button>
+          <button class="side-link" onclick="window.location.href='./anilog-favorites.html';"><span class="material-symbols-outlined">bookmark</span>Favorites</button>
+          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span class="material-symbols-outlined">leaderboard</span>Top Lists</button>
+          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span class="material-symbols-outlined">shopping_bag</span>Merch</button>
+          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span class="material-symbols-outlined">history</span>Logs</button>
+          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span class="material-symbols-outlined">target</span>Goals</button>
+          <button class="side-link" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
         </nav>
 
         <div class="user-card">
-          <img class="user-avatar" id="sidebar-user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX"
-            alt="Avatar">
+          <img class="user-avatar" id="sidebar-user-avatar" src="" alt="Avatar">
           <div class="user-info">
             <h3 class="user-name" id="sidebar-user-name">Loading...</h3>
-            <div class="user-level" id="sidebar-user-level">Level --</div>
+            <div class="user-level" id="sidebar-user-level">LVL 1 - Otaku Novice</div>
             <div class="xp-track">
-              <div class="xp-fill" id="sidebar-xp-fill"></div>
+              <div class="xp-fill" id="sidebar-xp-fill" style="width: 0%;"></div>
             </div>
-            <div class="xp-text" id="sidebar-xp-text">XP -- / --</div>
+            <div class="xp-text" id="sidebar-xp-text">0 / 500 XP</div>
           </div>
         </div>
       </aside>
@@ -1392,7 +1355,7 @@
                 <button class="dropdown-item"
                   onclick="window.location.href='./anilog-user-profile-responsive.html';"><span
                     class="material-symbols-outlined">account_circle</span> View Profile</button>
-                <button class="dropdown-item" onclick="window.location.href='./anilog-edit-profile.html';"><span
+                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span
                     class="material-symbols-outlined">edit</span> Edit Profile</button>
                 <div class="dropdown-divider"></div>
                 <button class="dropdown-item" id="logout-btn" style="color: var(--danger);"><span
@@ -1548,6 +1511,50 @@
       }[character]));
     }
 
+    function renderSkeletonLoading() {
+      const tableBody = document.getElementById('tableBody');
+      if (tableBody) {
+        let rows = '';
+        for (let i = 0; i < pageSize; i++) {
+          rows += `<tr>
+            <td>
+              <div class="skeleton-title-cell">
+                <div class="skeleton-thumb"></div>
+                <div style="display:flex; flex-direction:column; gap:6px; flex:1;">
+                  <span class="skeleton-box" style="width: 70%;"></span>
+                  <span class="skeleton-box" style="width: 40%; height: 0.8em;"></span>
+                </div>
+              </div>
+            </td>
+            <td><span class="skeleton-box" style="width: 60%;"></span></td>
+            <td><span class="skeleton-box" style="width: 30%;"></span></td>
+            <td><span class="skeleton-box" style="width: 50%;"></span></td>
+            <td><span class="skeleton-box" style="width: 55%;"></span></td>
+            <td><span class="skeleton-box" style="width: 80%;"></span></td>
+            <td><span class="skeleton-box" style="width: 20px;"></span></td>
+          </tr>`;
+        }
+        tableBody.innerHTML = rows;
+      }
+
+      const mobileList = document.getElementById('mobile-anime-list');
+      if (mobileList) {
+        let cards = '';
+        for (let i = 0; i < pageSize; i++) {
+          cards += `<div class="skeleton-card">
+            <div class="skeleton-mobile-thumb"></div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <span class="skeleton-box" style="width: 80%;"></span>
+              <span class="skeleton-box" style="width: 50%; height: 0.8em;"></span>
+              <span class="skeleton-box" style="width: 60%; height: 0.8em;"></span>
+              <span class="skeleton-box" style="width: 90%; height: 0.8em;"></span>
+            </div>
+          </div>`;
+        }
+        mobileList.innerHTML = cards;
+      }
+    }
+
     function animeDetails(anime, included) {
       const attr = anime.attributes || {};
       const genreIds = anime.relationships?.genres?.data?.map(genre => genre.id) || [];
@@ -1654,40 +1661,39 @@
       document.getElementById("preference-modal").classList.remove("active");
     }
 
-    async function checkUserPreference() {
+    async function checkAndLoadSavedPreference() {
       const token = getAuthToken();
-      const heroBtn = document.getElementById("heroAction");
-
+      renderSkeletonLoading();
       try {
-        const response = await fetch(`${API_BASE_URL}/api/anime/check-preference`, {
+        const response = await fetch(`${API_BASE_URL}/api/anime/user-preference`, {
           headers: { "Authorization": `Bearer ${token}` }
         });
 
-        if (!response.ok) throw new Error("Failed to check preference");
+        if (!response.ok) throw new Error("Failed to load user preference");
 
-        const resData = await response.json();
+        const json = await response.json();
+        if (json.has_preference && json.data && json.data.length > 0) {
+          seasonalAnime = (json.data || []).map(anime => animeDetails(anime, json.included || []));
+          currentPage = 1;
 
-        if (resData.has_preference) {
-          heroBtn.textContent = "⚙ Change Preferences";
-          seasonalAnime = (resData.data || []).map(anime => animeDetails(anime, resData.included || []));
+          const genreName = json.primary_genre || "Saved Preference";
+          document.getElementById('desktopTitle').textContent = `${genreName} Recommendations`;
+          document.getElementById('mobileTitle').innerHTML = `${genreName}`;
+          document.getElementById('desktopSubtitle').textContent = `Loaded ${seasonalAnime.length} recommendations based on your saved preference (${genreName}).`;
+          document.getElementById('mobileSubtitle').textContent = `Loaded ${seasonalAnime.length} results for ${genreName}.`;
 
-          const genre = resData.preference.primary_genre;
-          const cat = resData.preference.category.toUpperCase();
-
-          document.getElementById('desktopTitle').textContent = `${genre} (${cat}) Recommendations`;
-          document.getElementById('mobileTitle').innerHTML = `${genre}<br>${cat}`;
-          document.getElementById('desktopSubtitle').textContent = `${seasonalAnime.length} results saved for ${genre}.`;
-          document.getElementById('mobileSubtitle').textContent = `Fetched ${seasonalAnime.length} results for ${genre}.`;
+          document.getElementById("heroAction").textContent = "⚙ Change Preferences";
+          renderAnimePage();
         } else {
-          heroBtn.textContent = "+ Add Preference";
           seasonalAnime = [];
-          document.getElementById('desktopTitle').textContent = "Seasonal Overview";
-          document.getElementById('desktopSubtitle').textContent = "Add your preference to generate recommendations.";
+          renderAnimePage();
+          openPreferenceModal();
         }
-
-        renderAnimePage();
       } catch (err) {
-        console.error("Preference check error:", err);
+        console.error("User preference load error:", err);
+        seasonalAnime = [];
+        renderAnimePage();
+        openPreferenceModal();
       }
     }
 
@@ -1712,26 +1718,28 @@
         genreSelect.innerHTML = genres.map(g => `<option value="${escapeHTML(g)}">${escapeHTML(g)}</option>`).join('');
       } catch (err) {
         console.error("Failed to load genres:", err);
-        genreSelect.innerHTML = `<option value="" disabled>Error loading genres</option>`;
+        genreSelect.innerHTML = `<option value="Action">Action</option><option value="Adventure">Adventure</option><option value="Romance">Romance</option>`;
       }
     }
 
-    // ---------------- FORM SUBMISSION HANDLER ----------------
-    document.getElementById("preference-form").addEventListener("submit", async function (e) {
+    async function handlePreferenceSubmit(e) {
       e.preventDefault();
-
-      const submitBtn = document.getElementById("modal-submit-btn");
-      const category = document.getElementById("modal-category").value;
-      const genre = document.getElementById("modal-genre").value;
       const token = getAuthToken();
+      const category = document.getElementById("modal-category").value;
+      const primary_genre = document.getElementById("modal-genre").value;
+      const submitBtn = document.getElementById("modal-submit-btn");
 
-      if (!genre) {
+      if (!primary_genre) {
         showToast("Please select a genre", "warning");
         return;
       }
 
       submitBtn.disabled = true;
       submitBtn.textContent = "Saving & Fetching...";
+      closePreferenceModal();
+      renderSkeletonLoading();
+
+      const todayStr = new Date().toISOString().split("T")[0];
 
       try {
         const response = await fetch(`${API_BASE_URL}/api/anime/watch-activity`, {
@@ -1741,300 +1749,260 @@
             "Authorization": `Bearer ${token}`
           },
           body: JSON.stringify({
-            category: category,
-            primary_genre: genre,
+            category,
+            primary_genre,
             episodes_count: 1,
-            watch_time_mins: 24
+            watch_time_mins: 24,
+            activity_date: todayStr
           })
         });
 
         if (!response.ok) {
-          throw new Error("Failed to save preference");
+          throw new Error("Failed to submit preference activity");
         }
 
-        const resData = await response.json();
-
-        // Map returned anime data from Kitsu
-        seasonalAnime = (resData.data || []).map(anime => animeDetails(anime, resData.included || []));
+        const json = await response.json();
+        seasonalAnime = (json.data || []).map(anime => animeDetails(anime, json.included || []));
         currentPage = 1;
 
-        // Update UI headers
-        const categoryUpper = category.toUpperCase();
-        document.getElementById('desktopTitle').textContent = `${genre} (${categoryUpper}) Recommendations`;
-        document.getElementById('mobileTitle').innerHTML = `${genre}<br>${categoryUpper}`;
-        document.getElementById('desktopSubtitle').textContent = `${seasonalAnime.length} results saved for ${genre}.`;
-        document.getElementById('mobileSubtitle').textContent = `Fetched ${seasonalAnime.length} results for ${genre}.`;
+        document.getElementById('desktopTitle').textContent = `${primary_genre} (${category.toUpperCase()}) Recommendations`;
+        document.getElementById('mobileTitle').innerHTML = `${primary_genre}<br>${category.toUpperCase()}`;
+        document.getElementById('desktopSubtitle').textContent = `${seasonalAnime.length} results fetched for ${primary_genre}.`;
+        document.getElementById('mobileSubtitle').textContent = `Fetched ${seasonalAnime.length} results for ${primary_genre}.`;
 
-        // Update hero button label
         document.getElementById("heroAction").textContent = "⚙ Change Preferences";
 
-        // Render table rows
         renderAnimePage();
-        closePreferenceModal();
-        showToast("Preferences saved successfully!", "success");
-
+        showToast("Preference saved and anime list updated!", "success");
       } catch (err) {
-        console.error("Save preference error:", err);
-        showToast("Failed to save preference. Please try again.", "error");
+        console.error("Watch activity submission error:", err);
+        showToast(err.message || "Failed to process request", "error");
+        renderAnimePage();
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = "Next & Fetch Anime";
       }
-    });
+    }
 
-    // ---------------- INITIALIZATION ----------------
+    // ---------------- USER LEVEL & CARD RENDER LOGIC ----------------
+    function calculateUserLevel(xp) {
+      const levels = [
+        { level: 1, title: 'Otaku Novice', minXP: 0, nextLevelXP: 500 },
+        { level: 2, title: 'Casual Watcher', minXP: 500, nextLevelXP: 2000 },
+        { level: 3, title: 'Anime Enthusiast', minXP: 1200, nextLevelXP: 3000 },
+        { level: 4, title: 'Seasoned Binger', minXP: 2500, nextLevelXP: 5000 },
+        { level: 5, title: 'Master Otaku', minXP: 5000, nextLevelXP: 10000 },
+        { level: 6, title: 'Anime Scholar', minXP: 10000, nextLevelXP: 20000 },
+        { level: 7, title: 'Supreme Weeb', minXP: 20000, nextLevelXP: 50000 }
+      ];
+
+      for (let i = levels.length - 1; i >= 0; i--) {
+        if (xp >= levels[i].minXP) {
+          const lvl = levels[i];
+          const range = lvl.nextLevelXP - lvl.minXP;
+          const progress = xp - lvl.minXP;
+          const percent = Math.min(100, Math.max(0, Math.floor((progress / range) * 100)));
+          return {
+            level: lvl.level,
+            title: lvl.title,
+            currentXP: xp,
+            nextLevelXP: lvl.nextLevelXP,
+            percent: percent
+          };
+        }
+      }
+      return { level: 1, title: 'Otaku Novice', currentXP: xp, nextLevelXP: 500, percent: 0 };
+    }
+
+    function renderUserCard(user) {
+      const avatarUrl = user.avatar_seed || 'https://api.dicebear.com/7.x/bottts/svg?seed=Shadow';
+      document.getElementById('sidebar-user-avatar').src = avatarUrl;
+      document.getElementById('sidebar-user-name').innerText = user.username;
+
+      const currentXP = user.xp_points || 0;
+      const levelObj = calculateUserLevel(currentXP);
+
+      const sidebarLevel = document.getElementById('sidebar-user-level');
+      if (sidebarLevel) sidebarLevel.innerText = `LVL ${levelObj.level} - ${levelObj.title}`;
+
+      const sidebarXpFill = document.getElementById('sidebar-xp-fill');
+      if (sidebarXpFill) sidebarXpFill.style.width = `${levelObj.percent}%`;
+
+      const sidebarXpText = document.getElementById('sidebar-xp-text');
+      if (sidebarXpText) sidebarXpText.innerText = `${currentXP.toLocaleString()} / ${levelObj.nextLevelXP.toLocaleString()} XP`;
+    }
+
+    // ---------------- USER PROFILE LOAD ----------------
+    async function loadUserProfile() {
+      const token = getAuthToken();
+      if (!token) return;
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          currentUserData = await response.json();
+          renderUserCard(currentUserData);
+
+          const avatarUrl = currentUserData.avatar_seed || `https://api.dicebear.com/7.x/bottts/svg?seed=${currentUserData.username}`;
+          document.getElementById("topbar-user-avatar").src = avatarUrl;
+
+          const streakEl = document.getElementById("topbar-streak-count");
+          if (streakEl) streakEl.textContent = currentUserData.streak_count || 1;
+        }
+      } catch (err) {
+        console.error("User profile load error:", err);
+      }
+    }
+
+    // ---------------- SEARCH CONTROLLER LOGIC ----------------
+    function initSearchController() {
+      let desktopAbortController = null;
+      let mobileAbortController = null;
+      let desktopDebounceTimer = null;
+      let mobileDebounceTimer = null;
+
+      const desktopInput = document.getElementById("desktop-search-input");
+      const desktopDropdown = document.getElementById("desktop-search-results");
+      const mobileInput = document.getElementById("mobile-search-input");
+      const mobileDropdown = document.getElementById("mobile-search-results");
+
+      async function performSearch(query, dropdownEl, abortControllerRef, setAbortController) {
+        const token = getAuthToken();
+        if (!query.trim()) {
+          dropdownEl.innerHTML = "";
+          dropdownEl.classList.remove("active");
+          return;
+        }
+
+        if (abortControllerRef) {
+          abortControllerRef.abort();
+        }
+
+        const newAbortController = new AbortController();
+        setAbortController(newAbortController);
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/anime/kitsu-search?q=${encodeURIComponent(query)}`, {
+            headers: {
+              "Authorization": `Bearer ${token}`
+            },
+            signal: newAbortController.signal
+          });
+
+          if (!response.ok) {
+            throw new Error("Search request failed");
+          }
+
+          const result = await response.json();
+          const items = result.data || [];
+
+          if (items.length === 0) {
+            dropdownEl.innerHTML = `<div class="search-result-item"><span>No anime found</span></div>`;
+          } else {
+            dropdownEl.innerHTML = items.map(item => {
+              const attrs = item.attributes || {};
+              const title = attrs.canonicalTitle || attrs.titles?.en || "Unknown";
+              const poster = attrs.posterImage?.tiny || attrs.posterImage?.small || "";
+              const rating = attrs.averageRating ? `${(parseFloat(attrs.averageRating) / 10).toFixed(1)}` : "N/A";
+              const subtype = attrs.subtype || attrs.kind || "Anime";
+
+              return `
+                <div class="search-result-item" onclick="navigateToReview('${item.id}')">
+                  ${poster ? `<img src="${escapeHTML(poster)}" alt="${escapeHTML(title)}">` : ''}
+                  <div class="search-result-info">
+                    <b>${escapeHTML(title)}</b>
+                    <small>${escapeHTML(subtype.toUpperCase())} • ★ ${escapeHTML(rating)}</small>
+                  </div>
+                </div>
+              `;
+            }).join("");
+          }
+
+          dropdownEl.classList.add("active");
+        } catch (err) {
+          if (err.name !== "AbortError") {
+            console.error("Search error:", err);
+            showToast("Error searching anime", "error");
+          }
+        }
+      }
+
+      if (desktopInput && desktopDropdown) {
+        desktopInput.addEventListener("input", (e) => {
+          clearTimeout(desktopDebounceTimer);
+          const val = e.target.value;
+          desktopDebounceTimer = setTimeout(() => {
+            performSearch(val, desktopDropdown, desktopAbortController, (ac) => desktopAbortController = ac);
+          }, 400);
+        });
+      }
+
+      if (mobileInput && mobileDropdown) {
+        mobileInput.addEventListener("input", (e) => {
+          clearTimeout(mobileDebounceTimer);
+          const val = e.target.value;
+          mobileDebounceTimer = setTimeout(() => {
+            performSearch(val, mobileDropdown, mobileAbortController, (ac) => mobileAbortController = ac);
+          }, 400);
+        });
+      }
+
+      document.addEventListener("click", (e) => {
+        if (desktopDropdown && !e.target.closest(".search")) {
+          desktopDropdown.classList.remove("active");
+        }
+        if (mobileDropdown && !e.target.closest("#mobile-search-bar")) {
+          mobileDropdown.classList.remove("active");
+        }
+      });
+    }
+
+    // ---------------- EVENT HANDLERS & INITIALIZATION ----------------
     document.addEventListener("DOMContentLoaded", async () => {
-      await checkUserPreference();
+      const tableHead = document.getElementById('tableHead');
+      if (tableHead) {
+        tableHead.innerHTML = `<tr>
+          <th>TITLE</th>
+          <th>GENRE</th>
+          <th>EPISODES</th>
+          <th>STARS</th>
+          <th>STATUS</th>
+          <th>NOTES</th>
+          <th></th>
+        </tr>`;
+      }
+
+      await loadUserProfile();
       await loadGenresToModal();
+      await checkAndLoadSavedPreference();
+      initSearchController();
+
+      const prefForm = document.getElementById("preference-form");
+      if (prefForm) {
+        prefForm.addEventListener("submit", handlePreferenceSubmit);
+      }
+
+      const themeBtn = document.getElementById("theme-toggle-btn");
+      if (themeBtn) {
+        themeBtn.addEventListener("click", () => {
+          showToast("Theme toggled!", "info");
+        });
+      }
+
+      const logoutBtn = document.getElementById("logout-btn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+          localStorage.clear();
+          sessionStorage.clear();
+          window.location.href = "anilog-login-register.html";
+        });
+      }
     });
-  </script>
-  } catch (err) {
-  console.error("Genre fetch error:", err);
-  showToast("Failed to load genre list", "error");
-  genreSelect.innerHTML = `<option value="Action">Action</option>
-  <option value="Adventure">Adventure</option>
-  <option value="Romance">Romance</option>`;
-  }
-  }
-
-  async function handlePreferenceSubmit(e) {
-  e.preventDefault();
-  const token = getAuthToken();
-  const category = document.getElementById("modal-category").value;
-  const primary_genre = document.getElementById("modal-genre").value;
-  const submitBtn = document.getElementById("modal-submit-btn");
-
-  if (!primary_genre) {
-  showToast("Please select a genre", "warning");
-  return;
-  }
-
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Saving & Fetching...";
-
-  const todayStr = new Date().toISOString().split("T")[0];
-
-  try {
-  const response = await fetch(`${API_BASE_URL}/api/anime/watch-activity`, {
-  method: "POST",
-  headers: {
-  "Content-Type": "application/json",
-  "Authorization": `Bearer ${token}`
-  },
-  body: JSON.stringify({
-  category,
-  primary_genre,
-  user_data: currentUserData ? currentUserData.username : "guest",
-  episodes_count: 1,
-  watch_time_mins: 24,
-  activity_date: todayStr
-  })
-  });
-
-  if (!response.ok) {
-  throw new Error("Failed to submit preference activity");
-  }
-
-  const json = await response.json();
-  seasonalAnime = (json.data || []).map(anime => animeDetails(anime, json.included || []));
-  currentPage = 1;
-
-  document.getElementById('desktopTitle').textContent = `${primary_genre} (${category.toUpperCase()}) Recommendations`;
-  document.getElementById('mobileTitle').innerHTML = `${primary_genre}<br>${category.toUpperCase()}`;
-  document.getElementById('desktopSubtitle').textContent = `${seasonalAnime.length} results fetched for
-  ${primary_genre}.`;
-  document.getElementById('mobileSubtitle').textContent = `Fetched ${seasonalAnime.length} results for
-  ${primary_genre}.`;
-
-  document.getElementById("heroAction").textContent = "⚙ Change Preferences";
-
-  renderAnimePage();
-  closePreferenceModal();
-  showToast("Preference saved and anime list updated!", "success");
-  } catch (err) {
-  console.error("Watch activity submission error:", err);
-  showToast(err.message || "Failed to process request", "error");
-  } finally {
-  submitBtn.disabled = false;
-  submitBtn.textContent = "Next & Fetch Anime";
-  }
-  }
-
-  // Fetch User Profile from Backend
-  async function loadUserProfile() {
-  const token = getAuthToken();
-  if (!token) return;
-
-  try {
-  const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
-  headers: {
-  "Authorization": `Bearer ${token}`
-  }
-  });
-
-  if (response.ok) {
-  currentUserData = await response.json();
-  const avatarUrl = currentUserData.avatar_seed ||
-  `https://api.dicebear.com/7.x/bottts/svg?seed=${currentUserData.username}`;
-
-  document.getElementById("sidebar-user-name").textContent = currentUserData.username;
-  document.getElementById("sidebar-user-level").textContent = `Level ${currentUserData.level || 1}`;
-  document.getElementById("sidebar-user-avatar").src = avatarUrl;
-  document.getElementById("topbar-user-avatar").src = avatarUrl;
-
-  const currentXp = currentUserData.xp_points || 0;
-  const nextLevelXp = (currentUserData.level || 1) * 1000;
-  const xpPercent = Math.min(100, Math.floor((currentXp / nextLevelXp) * 100));
-
-  document.getElementById("sidebar-xp-fill").style.width = `${xpPercent}%`;
-  document.getElementById("sidebar-xp-text").textContent = `XP ${currentXp.toLocaleString()} /
-  ${nextLevelXp.toLocaleString()}`;
-
-  const streakEl = document.getElementById("topbar-streak-count");
-  if (streakEl) streakEl.textContent = currentUserData.streak_count || 1;
-  }
-  } catch (err) {
-  console.error("User profile load error:", err);
-  }
-  }
-
-  // ---------------- SEARCH CONTROLLER LOGIC ----------------
-  function initSearchController() {
-  let desktopAbortController = null;
-  let mobileAbortController = null;
-  let desktopDebounceTimer = null;
-  let mobileDebounceTimer = null;
-
-  const desktopInput = document.getElementById("desktop-search-input");
-  const desktopDropdown = document.getElementById("desktop-search-results");
-  const mobileInput = document.getElementById("mobile-search-input");
-  const mobileDropdown = document.getElementById("mobile-search-results");
-
-  async function performSearch(query, dropdownEl, abortControllerRef, setAbortController) {
-  const token = getAuthToken();
-  if (!query.trim()) {
-  dropdownEl.innerHTML = "";
-  dropdownEl.classList.remove("active");
-  return;
-  }
-
-  if (abortControllerRef) {
-  abortControllerRef.abort();
-  }
-
-  const newAbortController = new AbortController();
-  setAbortController(newAbortController);
-
-  try {
-  const response = await fetch(`${API_BASE_URL}/api/anime/kitsu-search?q=${encodeURIComponent(query)}`, {
-  headers: {
-  "Authorization": `Bearer ${token}`
-  },
-  signal: newAbortController.signal
-  });
-
-  if (!response.ok) {
-  throw new Error("Search request failed");
-  }
-
-  const result = await response.json();
-  const items = result.data || [];
-
-  if (items.length === 0) {
-  dropdownEl.innerHTML = `<div class="search-result-item"><span>No anime found</span></div>`;
-  } else {
-  dropdownEl.innerHTML = items.map(item => {
-  const attrs = item.attributes || {};
-  const title = attrs.canonicalTitle || attrs.titles?.en || "Unknown";
-  const poster = attrs.posterImage?.tiny || attrs.posterImage?.small || "";
-  const rating = attrs.averageRating ? `${(parseFloat(attrs.averageRating) / 10).toFixed(1)}` : "N/A";
-  const subtype = attrs.subtype || attrs.kind || "Anime";
-
-  return `
-  <div class="search-result-item" onclick="navigateToReview('${item.id}')">
-    ${poster ? `<img src="${escapeHTML(poster)}" alt="${escapeHTML(title)}">` : ''}
-    <div class="search-result-info">
-      <b>${escapeHTML(title)}</b>
-      <small>${escapeHTML(subtype.toUpperCase())} • ★ ${escapeHTML(rating)}</small>
-    </div>
-  </div>
-  `;
-  }).join("");
-  }
-
-  dropdownEl.classList.add("active");
-  } catch (err) {
-  if (err.name !== "AbortError") {
-  console.error("Search error:", err);
-  showToast("Error searching anime", "error");
-  }
-  }
-  }
-
-  if (desktopInput && desktopDropdown) {
-  desktopInput.addEventListener("input", (e) => {
-  clearTimeout(desktopDebounceTimer);
-  const val = e.target.value;
-  desktopDebounceTimer = setTimeout(() => {
-  performSearch(val, desktopDropdown, desktopAbortController, (ac) => desktopAbortController = ac);
-  }, 400);
-  });
-  }
-
-  if (mobileInput && mobileDropdown) {
-  mobileInput.addEventListener("input", (e) => {
-  clearTimeout(mobileDebounceTimer);
-  const val = e.target.value;
-  mobileDebounceTimer = setTimeout(() => {
-  performSearch(val, mobileDropdown, mobileAbortController, (ac) => mobileAbortController = ac);
-  }, 400);
-  });
-  }
-
-  document.addEventListener("click", (e) => {
-  if (desktopDropdown && !e.target.closest(".search")) {
-  desktopDropdown.classList.remove("active");
-  }
-  if (mobileDropdown && !e.target.closest("#mobile-search-bar")) {
-  mobileDropdown.classList.remove("active");
-  }
-  });
-  }
-
-  // ---------------- EVENT HANDLERS & INITIALIZATION ----------------
-  document.addEventListener("DOMContentLoaded", async () => {
-  const tableHead = document.getElementById('tableHead');
-  if (tableHead) {
-  tableHead.innerHTML = '<tr>
-    <th>TITLE</th>
-    <th>GENRE</th>
-    <th>EPISODES</th>
-    <th>STARS</th>
-    <th>STATUS</th>
-    <th>NOTES</th>
-    <th></th>
-  </tr>';
-  }
-
-  await loadUserProfile();
-  await checkUserPreference();
-  await loadGenresToModal();
-  initSearchController();
-
-  const prefForm = document.getElementById("preference-form");
-  if (prefForm) {
-  prefForm.addEventListener("submit", handlePreferenceSubmit);
-  }
-
-  const logoutBtn = document.getElementById("logout-btn");
-  if (logoutBtn) {
-  logoutBtn.addEventListener("click", () => {
-  localStorage.clear();
-  sessionStorage.clear();
-  window.location.href = "anilog-login-register.html";
-  });
-  }
-  });
   </script>
 </body>
 

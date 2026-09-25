@@ -83,4 +83,153 @@ i want you to update navigation bar on the html code i sent you like the html st
           <button class="side-link" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
         </nav>
 
+
+Act as an expert frontend developer. I need to update the existing user card component on the page to match my new, redesigned user card layout. 
+
+Please scan the provided file, locate the old user card code across HTML, CSS, and JavaScript, and replace it with the updated version below.
+
+---
+
+### 1. HTML Replacement
+Locate the existing user card block (usually in the sidebar) and replace its structure with:
+
+<div class="user-card">
+  <img class="user-avatar" id="sidebar-user-avatar" src="" alt="Avatar">
+  <div class="user-info">
+    <h3 class="user-name" id="sidebar-user-name">Loading...</h3>
+    <div class="user-level" id="sidebar-user-level">LVL 1 - Otaku Novice</div>
+    <div class="xp-track">
+      <div class="xp-fill" id="sidebar-xp-fill" style="width: 0%;"></div>
+    </div>
+    <div class="xp-text" id="sidebar-xp-text">0 / 500 XP</div>
+  </div>
+</div>
+
+---
+
+### 2. CSS Replacement
+Locate and replace all CSS classes related to the old user card (`.user-card`, `.user-avatar`, `.user-info`, `.user-name`, `.user-level`, `.xp-track`, `.xp-fill`, `.xp-text`) with the following styles:
+
+.user-card {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 46px;
+  height: 125px;
+  padding: 18px 14px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border: 1px solid #9b31e7;
+  border-radius: 7px;
+  background: linear-gradient(145deg, rgba(14, 16, 27, .98), rgba(7, 8, 15, .98));
+}
+
+.user-avatar {
+  width: 49px;
+  height: 49px;
+  flex: 0 0 49px;
+  border: 1px solid #a42df2;
+  border-radius: 50%;
+  padding: 3px;
+}
+
+.user-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.user-name {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.user-level {
+  color: #9996a5;
+  font-size: 9px;
+  margin-bottom: 9px;
+}
+
+.xp-track {
+  width: 100%;
+  height: 4px;
+  background: #252633;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.xp-fill {
+  width: 63%;
+  height: 100%;
+  background: #9c2cff;
+}
+
+.xp-text {
+  margin-top: 7px;
+  color: #9c99a7;
+  font-size: 9px;
+}
+
+---
+
+### 3. JavaScript Integration
+Replace or update the page's level/XP calculation and card rendering logic with the following functions, ensuring `renderUserCard(user)` is called after fetching user data:
+
+// Helper function to calculate user level and progress percentage
+function calculateUserLevel(xp) {
+  const levels = [
+    { level: 1, title: 'Otaku Novice', minXP: 0, nextLevelXP: 500 },
+    { level: 2, title: 'Casual Watcher', minXP: 500, nextLevelXP: 2000 },
+    { level: 3, title: 'Anime Enthusiast', minXP: 1200, nextLevelXP: 3000 },
+    { level: 4, title: 'Seasoned Binger', minXP: 2500, nextLevelXP: 5000 },
+    { level: 5, title: 'Master Otaku', minXP: 5000, nextLevelXP: 10000 },
+    { level: 6, title: 'Anime Scholar', minXP: 10000, nextLevelXP: 20000 },
+    { level: 7, title: 'Supreme Weeb', minXP: 20000, nextLevelXP: 50000 }
+  ];
+
+  for (let i = levels.length - 1; i >= 0; i--) {
+    if (xp >= levels[i].minXP) {
+      const lvl = levels[i];
+      const range = lvl.nextLevelXP - lvl.minXP;
+      const progress = xp - lvl.minXP;
+      const percent = Math.min(100, Math.max(0, Math.floor((progress / range) * 100)));
+      return {
+        level: lvl.level,
+        title: lvl.title,
+        currentXP: xp,
+        nextLevelXP: lvl.nextLevelXP,
+        percent: percent
+      };
+    }
+  }
+  return { level: 1, title: 'Otaku Novice', currentXP: xp, nextLevelXP: 500, percent: 0 };
+}
+
+// Logic to populate and render data into the user-card component
+function renderUserCard(user) {
+  const avatarUrl = user.avatar_seed || 'https://api.dicebear.com/7.x/bottts/svg?seed=Shadow';
+  document.getElementById('sidebar-user-avatar').src = avatarUrl;
+  document.getElementById('sidebar-user-name').innerText = user.username;
+
+  const currentXP = user.xp_points || 0;
+  const levelObj = calculateUserLevel(currentXP);
+
+  const sidebarLevel = document.getElementById('sidebar-user-level');
+  if (sidebarLevel) sidebarLevel.innerText = `LVL ${levelObj.level} - ${levelObj.title}`;
+
+  const sidebarXpFill = document.getElementById('sidebar-xp-fill');
+  if (sidebarXpFill) sidebarXpFill.style.width = `${levelObj.percent}%`;
+
+  const sidebarXpText = document.getElementById('sidebar-xp-text');
+  if (sidebarXpText) sidebarXpText.innerText = `${currentXP.toLocaleString()} / ${levelObj.nextLevelXP.toLocaleString()} XP`;
+}
+
+---
+
+Please output the complete updated code file while keeping all other existing functionality, layout structures, and scripts intact. 
+
+
+
 after finishing send full updated code
