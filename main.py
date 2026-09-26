@@ -43,7 +43,7 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-key-change-this")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ACCESS_TOKEN_EXPIRE_MINUTES = 1440
 REFRESH_TOKEN_EXPIRE_DAYS = 7
 MAX_FAILED_ATTEMPTS = 5
 LOCKOUT_MINUTES = 15
@@ -1615,3 +1615,301 @@ async def get_overrated_episodes(anime_id: str):
             pass
 
         return {"overrated_episodes": episodes}
+
+@app.post("/api/user/toggle-favorite")
+async def toggle_favorite(
+    payload: FavoriteToggleRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    anime_id_str = str(payload.anime_id)
+
+    result = await db.execute(select(Anime).where(Anime.id == anime_id_str))
+    anime = result.scalars().first()
+
+    if not anime:
+        async with httpx.AsyncClient(timeout=HTTP_TIMEOUT) as client:
+            try:
+                res = await client.get(
+                    f"{ANIME_SOURCE_URL}/anime/{anime_id_str}",
+                    headers={
+                        "Accept": "application/vnd.api+json",
+                        "Content-Type": "application/vnd.api+json",
+                    },
+                )
+            except httpx.RequestError:
+                raise HTTPException(
+                    status_code=504, detail="External anime lookup timed out"
+                )
+
+        if res.status_code != 200:
+            raise HTTPException(
+                status_code=404, detail="Anime not found on external provider"
+            )
+
+        anime_json = res.json().get("data", {})
+        attrs = anime_json.get("attributes", {})
+        titles = attrs.get("titles", {})
+
+        poster_img = attrs.get("posterImage") or {}
+        poster_url = (
+            poster_img.get("original")
+            or poster_img.get("large")
+            or poster_img.get("medium")
+        )
+
+        canonical_title = (
+            attrs.get("canonicalTitle")
+            or titles.get("en")
+            or titles.get("en_jp")
+            or f"Anime {anime_id_str}"
+        )
+
+        avg_rating = attrs.get("averageRating")
+        score_val = float(avg_rating) / 10.0 if avg_rating else None
+
+        anime = Anime(
+            id=anime_id_str,
+            title=canonical_title,
+            title_english=titles.get("en"),
+            title_japanese=titles.get("ja_jp") or titles.get("en_jp"),
+            type=attrs.get("showType") or attrs.get("subtype"),
+            subtype=attrs.get("subtype"),
+            age_rating=attrs.get("ageRating"),
+            user_count=attrs.get("userCount"),
+            start_date=attrs.get("startDate"),
+            synopsis=attrs.get("synopsis"),
+            poster_image=poster_url,
+            episode_count=attrs.get("episodeCount"),
+            score=score_val,
+        )
+        db.add(anime)
+        await db.commit()
+        await db.refresh(anime)
+
+    ul_res = await db.execute(
+        select(UserAnimeList).where(
+            UserAnimeList.user_id == current_user.id,
+            UserAnimeList.anime_id == anime_id_str,
+        )
+    )
+    item = ul_res.scalars().first()
+
+    if not item:
+        item = UserAnimeList(
+            id=str(uuid.uuid4()),
+            user_id=current_user.id,
+            anime_id=anime_id_str,
+            status="Watching",
+            episodes_watched=0,
+            is_favorite=True,
+        )
+        db.add(item)
+        current_user.favorites_count = (current_user.favorites_count or 0) + 1
+    else:
+        item.is_favorite = not item.is_favorite
+        if item.is_favorite:
+            current_user.favorites_count = (current_user.favorites_count or 0) + 1
+        else:
+            current_user.favorites_count = max(0, (current_user.favorites_count or 1) - 1)
+
+    current_user.updated_at = datetime.now(timezone.utc)
+    await db.commit()
+    await db.refresh(current_user)
+
+    return {
+        "message": "Favorite status updated",
+        "is_favorite": item.is_favorite,
+        "favorites_count": current_user.favorites_count,
+    }
+    
+@app.get("/api/anime/top-lists")
+async def get_top_lists(
+    tag: Optional[str] = Query(None),
+    current_user: User = Depends(get_current_user),
+):
+    headers = {
+        "Accept": "application/vnd.api+json",
+        "Content-Type": "application/vnd.api+json",
+    }
+
+    top_anime = []
+    top_openings = []
+    top_fights = []
+    top_endings = []
+
+    async with httpx.AsyncClient(timeout=HTTP_TIMEOUT) as client:
+        # 1. Top Anime
+        try:
+            anime_params = {"sort": "-averageRating", "page[limit]": "6"}
+            if tag:
+                anime_params["filter[categories]"] = tag.lower()
+            res = await client.get(
+                f"{ANIME_SOURCE_URL}/anime", params=anime_params, headers=headers
+            )
+            if res.status_code == 200:
+                for item in res.json().get("data", []):
+                    attrs = item.get("attributes", {})
+                    poster = attrs.get("posterImage") or {}
+                    rating = attrs.get("averageRating")
+                    score = f"{float(rating) / 10.0:.1f}" if rating else "9.5"
+                    top_anime.append(
+                        {
+                            "id": item.get("id"),
+                            "title": attrs.get("canonicalTitle") or "Anime Title",
+                            "poster": poster.get("medium")
+                            or poster.get("small")
+                            or poster.get("original")
+                            or "",
+                            "rating": score,
+                        }
+                    )
+        except Exception:
+            pass
+
+        # 2. Top Openings
+        try:
+            op_params = {"sort": "-userCount", "page[limit]": "4"}
+            if tag:
+                op_params["filter[categories]"] = tag.lower()
+            op_res = await client.get(
+                f"{ANIME_SOURCE_URL}/anime", params=op_params, headers=headers
+            )
+            if op_res.status_code == 200:
+                for item in op_res.json().get("data", []):
+                    attrs = item.get("attributes", {})
+                    cover = attrs.get("coverImage") or {}
+                    poster = attrs.get("posterImage") or {}
+                    top_openings.append(
+                        {
+                            "id": item.get("id"),
+                            "title": attrs.get("canonicalTitle"),
+                            "song": f"{attrs.get('canonicalTitle')} - Opening Theme",
+                            "cover": cover.get("large")
+                            or cover.get("original")
+                            or poster.get("medium")
+                            or "",
+                        }
+                    )
+        except Exception:
+            pass
+
+        # 3. Top Fights
+        try:
+            fight_params = {
+                "filter[categories]": tag.lower() if tag else "action",
+                "sort": "-userCount",
+                "page[limit]": "4",
+            }
+            fight_res = await client.get(
+                f"{ANIME_SOURCE_URL}/anime", params=fight_params, headers=headers
+            )
+            if fight_res.status_code == 200:
+                for item in fight_res.json().get("data", []):
+                    attrs = item.get("attributes", {})
+                    poster = attrs.get("posterImage") or {}
+                    cover = attrs.get("coverImage") or {}
+                    top_fights.append(
+                        {
+                            "id": item.get("id"),
+                            "title": attrs.get("canonicalTitle"),
+                            "fight_name": f"{attrs.get('canonicalTitle')} Climax Battle",
+                            "episode": "Epic Showdown",
+                            "image": cover.get("medium")
+                            or poster.get("medium")
+                            or "",
+                        }
+                    )
+        except Exception:
+            pass
+
+        # 4. Top Endings
+        try:
+            end_params = {"sort": "-favoriteCount", "page[limit]": "4"}
+            if tag:
+                end_params["filter[categories]"] = tag.lower()
+            end_res = await client.get(
+                f"{ANIME_SOURCE_URL}/anime", params=end_params, headers=headers
+            )
+            if end_res.status_code == 200:
+                for item in end_res.json().get("data", []):
+                    attrs = item.get("attributes", {})
+                    poster = attrs.get("posterImage") or {}
+                    cover = attrs.get("coverImage") or {}
+                    top_endings.append(
+                        {
+                            "id": item.get("id"),
+                            "title": attrs.get("canonicalTitle"),
+                            "song": f"{attrs.get('canonicalTitle')} - Ending Theme",
+                            "cover": cover.get("large")
+                            or cover.get("original")
+                            or poster.get("medium")
+                            or "",
+                        }
+                    )
+        except Exception:
+            pass
+
+    top_studios = [
+        {"name": "MAPPA", "projects": "Jujutsu Kaisen, AOT Final"},
+        {"name": "Ufotable", "projects": "Demon Slayer, Fate Series"},
+        {"name": "Wit Studio", "projects": "Spy x Family, Vinland Saga"},
+        {"name": "CloverWorks", "projects": "Bocchi the Rock, My Dress-Up Darling"},
+    ]
+
+    top_soundtracks = [
+        {
+            "title": "You See Big Girl",
+            "anime": "Attack on Titan",
+            "composer": "Hiroyuki Sawano",
+        },
+        {"title": "Gurenge", "anime": "Demon Slayer", "composer": "LiSA"},
+        {"title": "Kaikai Kitan", "anime": "Jujutsu Kaisen", "composer": "Eve"},
+        {"title": "TANK!", "anime": "Cowboy Bebop", "composer": "Yoko Kanno"},
+    ]
+
+    top_voice_actors = [
+        {
+            "name": "Mamoru M.",
+            "role": "Light Yagami, Okabe",
+            "image": "https://api.dicebear.com/7.x/bottts/svg?seed=Mamoru",
+        },
+        {
+            "name": "Yuki Kaji",
+            "role": "Eren Yeager, Todoroki",
+            "image": "https://api.dicebear.com/7.x/bottts/svg?seed=Yuki",
+        },
+        {
+            "name": "Rie T.",
+            "role": "Megumin, Emilia",
+            "image": "https://api.dicebear.com/7.x/bottts/svg?seed=Rie",
+        },
+        {
+            "name": "Kenjiro T.",
+            "role": "Nanami, Overhaul",
+            "image": "https://api.dicebear.com/7.x/bottts/svg?seed=Kenjiro",
+        },
+    ]
+
+    popular_tags = [
+        "Action",
+        "Shonen",
+        "Fantasy",
+        "Psychological",
+        "Romance",
+        "Sci-Fi",
+        "Slice of Life",
+        "Isekai",
+    ]
+
+    return {
+        "top_anime": top_anime,
+        "top_openings": top_openings,
+        "top_fights": top_fights,
+        "top_endings": top_endings,
+        "top_studios": top_studios,
+        "top_soundtracks": top_soundtracks,
+        "top_voice_actors": top_voice_actors,
+        "popular_tags": popular_tags,
+        "active_tag": tag,
+    }

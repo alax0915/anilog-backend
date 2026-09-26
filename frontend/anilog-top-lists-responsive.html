@@ -28,6 +28,18 @@
       --danger: #ff2d63;
     }
 
+    /* Light Theme Overrides */
+    body.light-mode {
+      --bg: #f4f5f9;
+      --panel: #ffffff;
+      --panel2: #eaecef;
+      --panel3: #e0e3e9;
+      --border: #d0d4e4;
+      --text: #12131a;
+      --muted: #5a5d6e;
+      --dim: #828699;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -38,9 +50,10 @@
     body {
       width: 100%;
       min-height: 100%;
-      background: #03040a;
+      background: var(--bg);
       color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
     body {
@@ -62,6 +75,84 @@
     img {
       display: block;
       object-fit: cover;
+    }
+
+    /* ---------------- TOAST NOTIFICATION POPUP ---------------- */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      pointer-events: auto;
+      min-width: 280px;
+      max-width: 380px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      background: rgba(13, 15, 26, 0.95);
+      border: 1px solid var(--purple);
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      backdrop-filter: blur(8px);
+      animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .toast.success {
+      border-color: #20c997;
+    }
+
+    .toast.error {
+      border-color: #ff2d63;
+    }
+
+    .toast.info {
+      border-color: #3b82f6;
+    }
+
+    .toast-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .toast.success .toast-icon {
+      color: #20c997;
+    }
+
+    .toast.error .toast-icon {
+      color: #ff2d63;
+    }
+
+    .toast.info .toast-icon {
+      color: #3b82f6;
+    }
+
+    .toast-message {
+      flex: 1;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     /* ---------------- PRELOADER OVERLAY ---------------- */
@@ -149,6 +240,12 @@
       backdrop-filter: blur(20px);
     }
 
+    body.light-mode .desktop-shell {
+      background: linear-gradient(115deg, #ffffff, #f7f8fc 58%, #eef0f8);
+      border-color: #d0d4e4;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    }
+
     .desktop-shell::before {
       content: "";
       position: absolute;
@@ -173,6 +270,11 @@
       perspective: 1000px;
     }
 
+    body.light-mode .sidebar {
+      background: linear-gradient(180deg, #ffffff, #f4f5f9);
+      border-right-color: #d0d4e4;
+    }
+
     body.loaded .sidebar {
       animation: sidebarSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
@@ -182,6 +284,7 @@
         transform: translateX(-100%);
         opacity: 0;
       }
+
       to {
         transform: translateX(0);
         opacity: 1;
@@ -245,6 +348,12 @@
       animation: typingLoop 5s steps(6, end) infinite, blinkCursor 0.75s step-end infinite;
     }
 
+    body.light-mode .brand-name {
+      background: linear-gradient(135deg, #12131a, #9d2cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
     @keyframes typingLoop {
       0%, 100% { width: 0; }
       30%, 70% { width: 6.2ch; }
@@ -278,7 +387,7 @@
       background: transparent;
       font-size: 14px;
       text-align: left;
-      color: #efedf3;
+      color: var(--text);
       transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
       width: 100%;
     }
@@ -294,6 +403,7 @@
       box-shadow: inset 0 0 20px rgba(155, 34, 246, .09);
     }
 
+    /* REDESIGNED USER CARD CSS */
     .user-card {
       position: absolute;
       left: 14px;
@@ -307,25 +417,10 @@
       border: 1px solid #9b31e7;
       border-radius: 7px;
       background: linear-gradient(145deg, rgba(14, 16, 27, .98), rgba(7, 8, 15, .98));
-      clip-path: polygon(4% 0, 96% 0, 100% 7%, 100% 93%, 96% 100%, 4% 100%, 0 93%, 0 7%);
-      backface-visibility: hidden;
-      transform-style: preserve-3d;
-      opacity: 0;
     }
 
-    body.loaded .user-card {
-      animation: userCardFlip 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s forwards;
-    }
-
-    @keyframes userCardFlip {
-      from {
-        opacity: 0;
-        transform: rotateY(-180deg);
-      }
-      to {
-        opacity: 1;
-        transform: rotateY(0deg);
-      }
+    body.light-mode .user-card {
+      background: linear-gradient(145deg, #ffffff, #f0e6ff);
     }
 
     .user-avatar {
@@ -346,6 +441,7 @@
       margin: 0 0 4px;
       font-size: 14px;
       font-weight: 700;
+      word-break: break-word;
     }
 
     .user-level {
@@ -406,6 +502,11 @@
       opacity: 0;
     }
 
+    body.light-mode .search {
+      background: #ffffff;
+      border-color: #d0d4e4;
+    }
+
     body.loaded .search {
       animation: googleSearchExpand 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
     }
@@ -415,10 +516,12 @@
         opacity: 0;
         clip-path: circle(0px at 50% 50%);
       }
+
       10% {
         opacity: 1;
         clip-path: circle(12px at 50% 50%);
       }
+
       100% {
         opacity: 1;
         clip-path: none;
@@ -434,7 +537,7 @@
       border: 0;
       outline: 0;
       background: transparent;
-      color: #eee;
+      color: var(--text);
       font-size: 12px;
     }
 
@@ -452,6 +555,12 @@
       z-index: 200;
       display: none;
       flex-direction: column;
+    }
+
+    body.light-mode .search-results-dropdown {
+      background: #ffffff;
+      border-color: var(--purple);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     }
 
     .search-results-dropdown.active {
@@ -529,7 +638,7 @@
       display: flex;
       align-items: center;
       gap: 7px;
-      color: #f2edf5;
+      color: var(--text);
       font-size: 13px;
       cursor: pointer;
       padding: 8px;
@@ -584,6 +693,11 @@
       padding: 8px 0;
     }
 
+    body.light-mode .dropdown-panel {
+      background: #ffffff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
     .top-action-wrap:hover .dropdown-panel,
     .profile-wrap:hover .dropdown-panel {
       opacity: 1;
@@ -616,7 +730,7 @@
 
     .dropdown-item:hover {
       background: rgba(157, 44, 255, 0.2);
-      color: #ffffff;
+      color: var(--purple2);
     }
 
     .dropdown-item .material-symbols-outlined {
@@ -660,6 +774,12 @@
       overflow: hidden;
     }
 
+    body.light-mode .card {
+      background: #ffffff;
+      border-color: #d0d4e4;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
     .card-title {
       height: 39px;
       padding: 0 14px;
@@ -683,11 +803,18 @@
       display: flex;
       gap: 8px;
       padding: 10px;
+      overflow-x: auto;
     }
 
     .anime {
       flex: 1;
-      min-width: 0;
+      min-width: 95px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .anime:hover {
+      transform: translateY(-3px);
     }
 
     .poster {
@@ -695,9 +822,8 @@
       height: 110px;
       border-radius: 6px;
       border: 1px solid #452061;
-      background:
-        linear-gradient(145deg, #322040, #0c0915 70%),
-        radial-gradient(circle at 70% 35%, #a33cff, transparent 35%);
+      background-size: cover;
+      background-position: center;
       position: relative;
       overflow: hidden;
     }
@@ -733,11 +859,10 @@
       height: 90px;
       border: 1px solid #492366;
       border-radius: 6px;
-      background:
-        radial-gradient(circle at 30% 45%, rgba(255, 140, 70, .38), transparent 28%),
-        radial-gradient(circle at 70% 60%, rgba(115, 45, 210, .55), transparent 35%),
-        linear-gradient(135deg, #32251f, #110b18 55%, #3d154d);
+      background-size: cover;
+      background-position: center;
       position: relative;
+      cursor: pointer;
     }
 
     .play {
@@ -765,19 +890,28 @@
       display: flex;
       gap: 8px;
       padding: 10px;
+      overflow-x: auto;
     }
 
     .fight {
       flex: 1;
+      min-width: 120px;
       border: 1px solid #2e2140;
       border-radius: 6px;
       overflow: hidden;
       background: #0d0d18;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .fight:hover {
+      transform: translateY(-2px);
     }
 
     .fight-img {
       height: 70px;
-      background: linear-gradient(135deg, #55201f, #171326 52%, #4e1874);
+      background-size: cover;
+      background-position: center;
     }
 
     .fight:first-child {
@@ -808,23 +942,33 @@
       display: flex;
       gap: 10px;
       padding: 10px;
+      overflow-x: auto;
     }
 
     .studio {
       flex: 1;
+      min-width: 90px;
       height: 75px;
       border: 1px solid #472263;
       border-radius: 7px;
-      display: grid;
-      place-items: center;
-      font-size: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
       font-weight: 800;
       background: linear-gradient(145deg, #1a1429, #0b0b14);
       color: #43d7a0;
+      text-align: center;
+      padding: 4px;
     }
 
-    .studio:nth-child(2) { color: #fff; }
-    .studio:nth-child(3) { color: #ddd; }
+    .studio .studio-desc {
+      font-size: 8px;
+      font-weight: 400;
+      color: #8f8d9d;
+      margin-top: 4px;
+    }
 
     .sound .wave {
       height: 64px;
@@ -839,6 +983,12 @@
       border-radius: 3px;
       background: #9c36ff;
       display: block;
+      animation: soundPulse 1.2s infinite ease-in-out alternate;
+    }
+
+    @keyframes soundPulse {
+      0% { transform: scaleY(0.3); }
+      100% { transform: scaleY(1.1); }
     }
 
     .actor-list {
@@ -860,7 +1010,8 @@
       margin: 0 auto 4px;
       border-radius: 50%;
       border: 1px solid #9c32ff;
-      background: radial-gradient(circle, #706070, #171322);
+      background-size: cover;
+      background-position: center;
     }
 
     .tags {
@@ -877,12 +1028,15 @@
       border: 1px solid #3b264d;
       border-radius: 4px;
       color: #ddd;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
     }
 
+    .tag:hover,
     .tag.active {
       border-color: #b72eff;
       color: #fff;
-      background: rgba(183, 46, 255, 0.1);
+      background: rgba(183, 46, 255, 0.25);
     }
 
     /* ---------------- MOBILE LAYOUT & ANIMATIONS ---------------- */
@@ -898,7 +1052,7 @@
       .mobile-page {
         display: block;
         min-height: 100vh;
-        background: #05060c;
+        background: var(--bg);
       }
 
       .mobile-shell {
@@ -906,7 +1060,7 @@
         min-height: 100vh;
         padding: 0 0 74px;
         overflow: hidden;
-        background: radial-gradient(circle at 65% 13%, rgba(96, 24, 154, .16), transparent 28%), #05060c;
+        background: radial-gradient(circle at 65% 13%, rgba(96, 24, 154, .16), transparent 28%), var(--bg);
       }
 
       .mobile-topbar {
@@ -918,6 +1072,10 @@
         background: rgba(6, 7, 13, .96);
         position: relative;
         z-index: 100;
+      }
+
+      body.light-mode .mobile-topbar {
+        background: #ffffff;
       }
 
       .mobile-brand {
@@ -999,6 +1157,11 @@
         overflow: hidden;
       }
 
+      body.light-mode .m-card {
+        background: #ffffff;
+        border-color: #d0d4e4;
+      }
+
       .m-head {
         height: 42px;
         padding: 0 12px;
@@ -1045,20 +1208,6 @@
         height: 65px;
       }
 
-      .m-wave {
-        height: 50px;
-        margin: 10px 14px;
-        display: flex;
-        align-items: center;
-        gap: 3px;
-      }
-
-      .m-wave i {
-        width: 3px;
-        background: #a438ff;
-        border-radius: 3px;
-      }
-
       .mobile-bottom-nav {
         position: fixed;
         z-index: 50;
@@ -1079,7 +1228,7 @@
         align-items: center;
         justify-content: center;
         gap: 4px;
-        color: #d5d2dc;
+        color: var(--muted);
         font-size: 8px;
         cursor: pointer;
       }
@@ -1093,6 +1242,9 @@
 
 <body>
 
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-container" id="toast-container"></div>
+
   <!-- PRELOADER OVERLAY -->
   <div id="preloader">
     <div class="spinner"></div>
@@ -1104,7 +1256,7 @@
   <div class="desktop-page">
     <main class="desktop-shell">
 
-      <!-- UPDATED LEFT NAVIGATION BAR MATCHING HOMEPAGE -->
+      <!-- NAVIGATION BAR -->
       <aside class="sidebar">
         <div class="sidebar-brand">
           <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
@@ -1115,37 +1267,53 @@
         </div>
 
         <nav class="sidebar-nav">
-          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span class="material-symbols-outlined">home</span>Home</button>
-          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';"><span class="material-symbols-outlined">list_alt</span>Watchlist</button>
-          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span class="material-symbols-outlined">play_circle</span>Currently Watching</button>
-          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span class="material-symbols-outlined">check_circle</span>Completed</button>
-          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span class="material-symbols-outlined">calendar_month</span>Seasonal</button>
-          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span class="material-symbols-outlined">rate_review</span>Reviews</button>
-          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span>Profile</button>
-          <button class="side-link" onclick="window.location.href='./anilog-favorites.html';"><span class="material-symbols-outlined">bookmark</span>Favorites</button>
-          <button class="side-link active" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span class="material-symbols-outlined">leaderboard</span>Top Lists</button>
-          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span class="material-symbols-outlined">shopping_bag</span>Merch</button>
-          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span class="material-symbols-outlined">history</span>Logs</button>
-          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span class="material-symbols-outlined">target</span>Goals</button>
-          <button class="side-link" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
+          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span
+              class="material-symbols-outlined">home</span>Home</button>
+          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';"><span
+              class="material-symbols-outlined">list_alt</span>Watchlist</button>
+          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span
+              class="material-symbols-outlined">play_circle</span>Currently Watching</button>
+          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span
+              class="material-symbols-outlined">check_circle</span>Completed</button>
+          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span
+              class="material-symbols-outlined">calendar_month</span>Seasonal</button>
+          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span
+              class="material-symbols-outlined">rate_review</span>Reviews</button>
+          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span
+              class="material-symbols-outlined">account_circle</span>Profile</button>
+          <button class="side-link" onclick="window.location.href='./anilog-favorites.html';"><span
+              class="material-symbols-outlined">bookmark</span>Favorites</button>
+          <button class="side-link active" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span
+              class="material-symbols-outlined">leaderboard</span>Top Lists</button>
+          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span
+              class="material-symbols-outlined">shopping_bag</span>Merch</button>
+          <button class="side-link"
+            onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span
+              class="material-symbols-outlined">history</span>Logs</button>
+          <button class="side-link" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span
+              class="material-symbols-outlined">target</span>Goals</button>
+          <button class="side-link"
+            onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span
+              class="material-symbols-outlined">history</span>Year view</button>
         </nav>
 
+        <!-- USER CARD COMPONENT -->
         <div class="user-card">
-          <img class="user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="Avatar">
+          <img class="user-avatar" id="sidebar-user-avatar" src="" alt="Avatar">
           <div class="user-info">
-            <h3 class="user-name">ShadowX</h3>
-            <div class="user-level">Level 27</div>
+            <h3 class="user-name" id="sidebar-user-name">Loading...</h3>
+            <div class="user-level" id="sidebar-user-level">LVL 1 - Otaku Novice</div>
             <div class="xp-track">
-              <div class="xp-fill"></div>
+              <div class="xp-fill" id="sidebar-xp-fill" style="width: 0%;"></div>
             </div>
-            <div class="xp-text">XP 4,250 / 6,800</div>
+            <div class="xp-text" id="sidebar-xp-text">0 / 500 XP</div>
           </div>
         </div>
       </aside>
 
       <section class="main">
 
-        <!-- EXACT TOP NAVIGATION BAR FROM ANILOG HOME -->
+        <!-- TOP NAVIGATION BAR -->
         <header class="topbar">
           <div class="search">
             <input type="text" id="desktop-search-input" placeholder="Search anime...">
@@ -1155,197 +1323,155 @@
 
           <div class="top-actions">
             <div class="top-action-wrap">
-              <div class="top-action"><span class="material-symbols-outlined">notifications</span></div>
-            </div>
-
-            <div class="top-action-wrap">
-              <div class="top-action streak">
-                <span class="material-symbols-outlined" style="color: #ff2d63;">local_fire_department</span>
-                <span>12</span>
+              <div class="top-action">
+                <span class="material-symbols-outlined" style="color: red;">local_fire_department</span>
+                <span id="streak-counter">1</span>
               </div>
             </div>
 
-            <!-- SETTINGS HOVER DROPDOWN -->
+            <div class="top-action-wrap">
+              <div class="top-action" onclick="window.location.href='./anilog-notifications.html';">
+                <span class="material-symbols-outlined">notifications</span>
+              </div>
+            </div>
+
             <div class="top-action-wrap">
               <div class="top-action">
                 <span class="material-symbols-outlined">settings</span>
               </div>
               <div class="dropdown-panel">
-                <div class="dropdown-panel-header">System Settings</div>
-                <button class="dropdown-item">
-                  <span class="material-symbols-outlined">dark_mode</span> App Theme
+                <div class="dropdown-panel-header">App Settings</div>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-notifications.html';">
+                  <span class="material-symbols-outlined">notifications</span> Notifications
                 </button>
-                <button class="dropdown-item">
-                  <span class="material-symbols-outlined">notifications_active</span> Notifications
+                <button class="dropdown-item" onclick="window.location.href='./anilog-sub-dub-settings.html';">
+                  <span class="material-symbols-outlined">subtitles</span> Dub / Sub Preferences
                 </button>
-                <button class="dropdown-item">
-                  <span class="material-symbols-outlined">subtitles</span> Default Sub/Dub
-                </button>
-                <button class="dropdown-item">
-                  <span class="material-symbols-outlined">explicit</span> Content Filter
+                <button class="dropdown-item" onclick="window.location.href='./anilog-content-filter.html';">
+                  <span class="material-symbols-outlined">filter_alt</span> Content Filter
                 </button>
                 <div class="dropdown-divider"></div>
-                <button class="dropdown-item">
-                  <span class="material-symbols-outlined">tune</span> Preferences
+                <button class="dropdown-item" id="theme-toggle-btn">
+                  <span class="material-symbols-outlined">dark_mode</span> Toggle Dark / Light
                 </button>
               </div>
             </div>
 
-            <!-- PROFILE HOVER DROPDOWN -->
             <div class="profile-wrap">
-              <div class="profile">
-                <img class="avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="User">
+              <div class="profile" onclick="window.location.href='./anilog-user-profile-responsive.html';">
+                <img class="avatar" id="topbar-user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Shadow"
+                  alt="User Avatar">
                 <span class="material-symbols-outlined">expand_more</span>
               </div>
               <div class="dropdown-panel">
-                <div class="dropdown-panel-header">User Profile</div>
+                <div class="dropdown-panel-header" id="dropdown-username">User Account</div>
                 <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';">
                   <span class="material-symbols-outlined">account_circle</span> View Profile
                 </button>
-                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';">
-                  <span class="material-symbols-outlined">edit</span> Edit Profile
-                </button>
-                <button class="dropdown-item">
-                  <span class="material-symbols-outlined">workspace_premium</span> VIP Membership
+                <button class="dropdown-item" onclick="window.location.href='./anilog-watchlist.html';">
+                  <span class="material-symbols-outlined">list_alt</span> My Watchlist
                 </button>
                 <div class="dropdown-divider"></div>
-                <button class="dropdown-item" style="color: var(--danger);">
-                  <span class="material-symbols-outlined" style="color: var(--danger);">logout</span> Log Out
+                <button class="dropdown-item" id="logout-btn">
+                  <span class="material-symbols-outlined" style="color: var(--danger);">logout</span>
+                  <span style="color: var(--danger);">Logout</span>
                 </button>
               </div>
             </div>
-
           </div>
         </header>
 
-        <h1 class="title">Top Lists</h1>
+        <h1 class="title">ANILOG TOP LISTS</h1>
 
         <div class="content-grid">
-          <section class="card top-anime">
-            <div class="card-title"><span class="purple"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">military_tech</span></span> Top 10 Anime</div>
-            <div class="anime-list">
-              <div class="anime">
-                <div class="poster"></div>
-                <div class="anime-name">Attack on Titan</div>
-                <div class="rating">★ 9.8</div>
-              </div>
-              <div class="anime">
-                <div class="poster"></div>
-                <div class="anime-name">Chainsaw Man</div>
-                <div class="rating">★ 4.5</div>
-              </div>
-              <div class="anime">
-                <div class="poster"></div>
-                <div class="anime-name">Chainsaw Man</div>
-                <div class="rating">★ 7.8</div>
-              </div>
-              <div class="anime">
-                <div class="poster"></div>
-                <div class="anime-name">Attack on Titan</div>
-                <div class="rating">★ 7.5</div>
-              </div>
-              <div class="anime">
-                <div class="poster"></div>
-                <div class="anime-name">Chainsaw Man</div>
-                <div class="rating">★ 7.5</div>
-              </div>
+          <!-- Top Anime -->
+          <div class="card top-anime">
+            <div class="card-title">
+              <span>Top Anime Series</span>
+              <span class="purple" id="desktop-active-tag-label">Overall</span>
             </div>
-          </section>
+            <div class="anime-list" id="desktop-top-anime-container">
+              <!-- Dynamically Loaded -->
+            </div>
+          </div>
 
-          <section class="card media-card">
-            <div class="card-title"><span class="purple"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">queue_music</span></span> Top Openings</div>
-            <div class="media-art">
-              <div class="play">▶</div>
+          <!-- Top Openings -->
+          <div class="card media-card">
+            <div class="card-title">
+              <span>Top Openings</span>
             </div>
-          </section>
+            <div class="media-art" id="desktop-top-openings-art">
+              <div class="play"><span class="material-symbols-outlined">play_arrow</span></div>
+            </div>
+          </div>
 
-          <section class="card media-card">
-            <div class="card-title"><span class="purple"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">queue_music</span></span> Top Endings</div>
-            <div class="media-art">
-              <div class="play">▶</div>
+          <!-- Top Fights -->
+          <div class="card fights">
+            <div class="card-title">
+              <span>Top Anime Fights</span>
+              <span class="purple">Community Choice</span>
             </div>
-          </section>
+            <div class="fight-list" id="desktop-top-fights-container">
+              <!-- Dynamically Loaded -->
+            </div>
+          </div>
 
-          <section class="card media-card">
-            <div class="card-title"><span class="purple"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">queue_music</span></span> Top Endings</div>
-            <div class="media-art">
-              <div class="play">▶</div>
+          <!-- Top Endings -->
+          <div class="card media-card">
+            <div class="card-title">
+              <span>Top Endings</span>
             </div>
-          </section>
+            <div class="media-art" id="desktop-top-endings-art">
+              <div class="play"><span class="material-symbols-outlined">play_arrow</span></div>
+            </div>
+          </div>
 
-          <section class="card fights">
-            <div class="card-title"><span class="purple"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">swords</span></span> Best Fights</div>
-            <div class="fight-list">
-              <div class="fight">
-                <div class="fight-img"></div>
-                <div class="fight-name">Jujutsu Kaisen</div>
-                <div class="fight-ep">EP 18 / 23</div>
-              </div>
-              <div class="fight">
-                <div class="fight-img"></div>
-                <div class="fight-name">Demon Slayer</div>
-                <div class="fight-ep">EP 7 / 23</div>
-              </div>
-              <div class="fight">
-                <div class="fight-img"></div>
-                <div class="fight-name">Chainsaw Man</div>
-                <div class="fight-ep">EP 7 / 11</div>
-              </div>
-              <div class="fight">
-                <div class="fight-img"></div>
-                <div class="fight-name">Frieren</div>
-                <div class="fight-ep">EP 9 / 12</div>
-              </div>
+          <!-- Top Animation Studios -->
+          <div class="card studios">
+            <div class="card-title">
+              <span>Top Animation Studios</span>
             </div>
-          </section>
+            <div class="studio-list" id="desktop-studios-container">
+              <!-- Dynamically Loaded -->
+            </div>
+          </div>
 
-          <section class="card sound">
-            <div class="card-title"><span class="purple"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">music_note</span></span> Best Soundtracks</div>
-            <div class="wave">
-              <i style="height:8px"></i><i style="height:18px"></i><i style="height:11px"></i><i style="height:28px"></i><i style="height:15px"></i><i style="height:42px"></i><i style="height:23px"></i><i style="height:36px"></i><i style="height:19px"></i><i style="height:50px"></i><i style="height:27px"></i><i style="height:39px"></i><i style="height:18px"></i><i style="height:31px"></i><i style="height:44px"></i><i style="height:25px"></i><i style="height:12px"></i><i style="height:30px"></i><i style="height:16px"></i><i style="height:8px"></i><i style="height:22px"></i><i style="height:36px"></i><i style="height:15px"></i><i style="height:10px"></i><i style="height:25px"></i><i style="height:18px"></i><i style="height:9px"></i><i style="height:28px"></i><i style="height:13px"></i><i style="height:7px"></i>
+          <!-- Top Soundtracks -->
+          <div class="card sound">
+            <div class="card-title">
+              <span>Top Soundtracks</span>
             </div>
-          </section>
+            <div class="wave" id="desktop-soundtracks-container">
+              <i style="height: 30%"></i>
+              <i style="height: 70%"></i>
+              <i style="height: 100%"></i>
+              <i style="height: 50%"></i>
+              <i style="height: 80%"></i>
+              <i style="height: 40%"></i>
+              <i style="height: 90%"></i>
+              <i style="height: 60%"></i>
+            </div>
+          </div>
 
-          <section class="card studios">
-            <div class="card-title"><span class="purple"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">domain</span></span> Best Studios</div>
-            <div class="studio-list">
-              <div class="studio">MAPPA</div>
-              <div class="studio">ufotable</div>
-              <div class="studio">TOEI</div>
+          <!-- Top Voice Actors -->
+          <div class="card">
+            <div class="card-title">
+              <span>Top Voice Actors</span>
             </div>
-          </section>
+            <div class="actor-list" id="desktop-actors-container">
+              <!-- Dynamically Loaded -->
+            </div>
+          </div>
 
-          <section class="card">
-            <div class="card-title"><span class="purple"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">label</span></span> Categories</div>
-            <div class="tags">
-              <div class="tag active">BST</div>
-              <div class="tag">MAP</div>
-              <div class="tag">NPI</div>
-              <div class="tag">UFO</div>
-              <div class="tag">BET</div>
-              <div class="tag">NBN</div>
-              <div class="tag">WAO</div>
-              <div class="tag">VIPS</div>
+          <!-- Popular Genre Tags -->
+          <div class="card">
+            <div class="card-title">
+              <span>Popular Tags</span>
             </div>
-          </section>
-
-          <section class="card">
-            <div class="card-title"><span class="purple"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">mic</span></span> Best Voice Actors</div>
-            <div class="actor-list">
-              <div class="actor">
-                <div class="actor-face"></div>Menan Aouchi
-              </div>
-              <div class="actor">
-                <div class="actor-face"></div>Tomo Roma
-              </div>
-              <div class="actor">
-                <div class="actor-face"></div>Honie Aorino
-              </div>
-              <div class="actor">
-                <div class="actor-face"></div>Rete Atnai
-              </div>
+            <div class="tags" id="desktop-tags-container">
+              <!-- Dynamically Loaded -->
             </div>
-          </section>
+          </div>
         </div>
 
       </section>
@@ -1356,10 +1482,9 @@
      MOBILE PAGE
      ========================================================= -->
   <div class="mobile-page">
-    <main class="mobile-shell">
+    <div class="mobile-shell">
 
       <header class="mobile-topbar">
-        <span class="material-symbols-outlined">menu</span>
         <div class="mobile-brand">
           <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
           <div>
@@ -1367,13 +1492,14 @@
             <div class="brand-sub">アニログ</div>
           </div>
         </div>
-        <span class="material-symbols-outlined" id="mobile-search-toggle" style="cursor: pointer;">search</span>
+        <button id="mobile-search-toggle">
+          <span class="material-symbols-outlined">search</span>
+        </button>
       </header>
 
-      <!-- Mobile Expandable Search Bar -->
       <div class="mobile-search-bar" id="mobile-search-bar">
         <div class="mobile-search-input-wrap">
-          <input type="text" id="mobile-search-input" placeholder="Search anime...">
+          <input type="text" id="mobile-search-input" placeholder="Search anime dynamic...">
         </div>
         <div class="search-results-dropdown" id="mobile-search-results"></div>
       </div>
@@ -1382,57 +1508,37 @@
         <h1 class="mobile-title">Top Lists</h1>
 
         <div class="mobile-cards">
-          <section class="m-card">
-            <div class="m-head"><span>Top 10 Anime</span><span>▼</span></div>
-            <div class="m-anime">
-              <div class="anime">
-                <div class="poster"></div>
-                <div class="anime-name">Attack on Titan</div>
-                <div class="rating">★ 9.8</div>
-              </div>
-              <div class="anime">
-                <div class="poster"></div>
-                <div class="anime-name">Chainsaw Man</div>
-                <div class="rating">★ 4.5</div>
-              </div>
-              <div class="anime">
-                <div class="poster"></div>
-                <div class="anime-name">Jujutsu Kaisen</div>
-                <div class="rating">★ 7.8</div>
-              </div>
+          <div class="m-card">
+            <div class="m-head">
+              <span>Top Anime Series</span>
+              <span id="mobile-active-tag-label">Overall</span>
             </div>
-          </section>
-
-          <section class="m-card">
-            <div class="m-head"><span>Top Openings</span><span>▼</span></div>
-          </section>
-          
-          <section class="m-card">
-            <div class="m-head"><span>Top Endings</span><span>▼</span></div>
-          </section>
-
-          <section class="m-card">
-            <div class="m-head"><span>Best Fights</span><span>▼</span></div>
-          </section>
-
-          <section class="m-card">
-            <div class="m-head"><span>Best Soundtracks</span><span>▲</span></div>
-            <div class="m-wave">
-              <i style="height:8px"></i><i style="height:18px"></i><i style="height:11px"></i><i style="height:28px"></i><i style="height:15px"></i><i style="height:42px"></i><i style="height:23px"></i><i style="height:36px"></i><i style="height:19px"></i><i style="height:50px"></i><i style="height:27px"></i><i style="height:39px"></i><i style="height:18px"></i><i style="height:31px"></i><i style="height:44px"></i><i style="height:25px"></i><i style="height:12px"></i><i style="height:30px"></i><i style="height:16px"></i><i style="height:8px"></i><i style="height:22px"></i><i style="height:36px"></i><i style="height:15px"></i><i style="height:10px"></i><i style="height:25px"></i><i style="height:18px"></i><i style="height:9px"></i><i style="height:28px"></i><i style="height:13px"></i><i style="height:7px"></i>
+            <div class="m-anime" id="mobile-top-anime-container">
+              <!-- Dynamically Loaded -->
             </div>
-          </section>
+          </div>
 
-          <section class="m-card">
-            <div class="m-head"><span>Best Studios</span><span>▲</span></div>
-            <div class="m-studio">
-              <div class="studio">MAPPA</div>
-              <div class="studio">ufotable</div>
+          <div class="m-card m-media">
+            <div class="m-head">
+              <span>Top Openings</span>
             </div>
-          </section>
+            <div class="media-art" id="mobile-top-openings-art">
+              <div class="play"><span class="material-symbols-outlined">play_arrow</span></div>
+            </div>
+          </div>
+
+          <div class="m-card">
+            <div class="m-head">
+              <span>Top Animation Studios</span>
+            </div>
+            <div class="m-studio" id="mobile-studios-container">
+              <!-- Dynamically Loaded -->
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- EXACT MOBILE BOTTOM NAVIGATION FROM ANILOG HOME -->
+      <!-- MOBILE BOTTOM NAVIGATION -->
       <nav class="mobile-bottom-nav">
         <div class="mobile-nav-item" onclick="window.location.href='./anilog-home.html';">
           <span class="material-symbols-outlined">home</span>
@@ -1442,155 +1548,475 @@
           <span class="material-symbols-outlined">list_alt</span>
           <span>Watchlist</span>
         </div>
-        <div class="mobile-nav-item" onclick="window.location.href='./anilog-currentlywatching.html';">
-          <span class="material-symbols-outlined">play_arrow</span>
-          <span>Watching</span>
+        <div class="mobile-nav-item active" onclick="window.location.href='./anilog-top-lists-responsive.html';">
+          <span class="material-symbols-outlined">leaderboard</span>
+          <span>Top Lists</span>
         </div>
-        <div class="mobile-nav-item" onclick="window.location.href='./anilog-completed.html';">
-          <span class="material-symbols-outlined">check_circle</span>
-          <span>Completed</span>
+        <div class="mobile-nav-item" onclick="window.location.href='./anilog-notifications.html';">
+          <span class="material-symbols-outlined">notifications</span>
+          <span>Alerts</span>
         </div>
-        <div class="mobile-nav-item active">
-          <span class="material-symbols-outlined">more_vert</span>
-          <span>More</span>
+        <div class="mobile-nav-item" onclick="window.location.href='./anilog-user-profile-responsive.html';">
+          <span class="material-symbols-outlined">account_circle</span>
+          <span>Profile</span>
         </div>
       </nav>
 
-    </main>
+    </div>
   </div>
 
+  <!-- JavaScript Logic -->
   <script>
-    // Preloader and Animation Sequence Trigger
-    window.addEventListener('load', async () => {
-      if (document.fonts) {
-        await document.fonts.ready;
-      }
-      const preloader = document.getElementById('preloader');
-      preloader.style.opacity = '0';
-      preloader.style.visibility = 'hidden';
-      document.body.classList.add('loaded');
-    });
+    const API_BASE_URL = "http://127.0.0.1:8000";
+    let activeTagFilter = null;
 
-    // Kitsu Live Search Logic for Top Lists page
-    let searchTimeout = null;
-    let currentAbortController = null;
+    // ---------------- UI POPUP TOAST NOTIFICATION ----------------
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
 
-    function openAnimeReviewFromSearch(anime) {
-      const attr = anime.attributes || {};
-      const reviewData = {
-        id: anime.id,
-        title: attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled',
-        image: attr.posterImage?.large || attr.posterImage?.medium || attr.posterImage?.original || '',
-        episodes: attr.episodeCount || '',
-        status: attr.status || '',
-        type: attr.showType || '',
-        rating: attr.averageRating || '',
-        synopsis: attr.synopsis || '',
-        startDate: attr.startDate || ''
-      };
-      window.location.href = `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(JSON.stringify(reviewData))}`;
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+
+      let iconName = 'info';
+      if (type === 'success') iconName = 'check_circle';
+      if (type === 'error') iconName = 'error';
+
+      toast.innerHTML = `
+        <span class="material-symbols-outlined toast-icon">${iconName}</span>
+        <div class="toast-message">${message}</div>
+      `;
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-10px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
     }
 
-    function handleSearch(query, resultsContainer) {
-      const cleanQuery = query.trim();
-
-      if (cleanQuery.length < 3) {
-        resultsContainer.classList.remove('active');
-        resultsContainer.innerHTML = '';
-        if (currentAbortController) currentAbortController.abort();
-        return;
-      }
-
-      clearTimeout(searchTimeout);
-
-      searchTimeout = setTimeout(async () => {
-        if (currentAbortController) {
-          currentAbortController.abort();
-        }
-        currentAbortController = new AbortController();
-
-        resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">Searching...</div>`;
-        resultsContainer.classList.add('active');
-
-        try {
-          const targetUrl = `https://kitsu.io/api/edge/anime?filter[text]=${encodeURIComponent(cleanQuery)}&page[limit]=6`;
-          const response = await fetch(targetUrl, {
-            signal: currentAbortController.signal,
-            headers: {
-              'Accept': 'application/vnd.api+json',
-              'Content-Type': 'application/vnd.api+json'
-            }
-          });
-
-          if (!response.ok) throw new Error(`HTTP_${response.status}`);
-          const data = await response.json();
-          const results = data.data || [];
-          resultsContainer._animeResults = results;
-
-          resultsContainer.innerHTML = '';
-
-          if (results.length === 0) {
-            resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">No anime found</div>`;
-          } else {
-            results.forEach(anime => {
-              const attr = anime.attributes || {};
-              const title = attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled';
-              const img = attr.posterImage?.tiny || attr.posterImage?.small || '';
-              const rating = attr.averageRating ? `★ ${(parseFloat(attr.averageRating) / 10).toFixed(1)}` : 'N/A';
-              const type = attr.showType ? attr.showType.toUpperCase() : 'ANIME';
-
-              const itemHTML = `
-              <div class="search-result-item" data-result-index="${results.indexOf(anime)}" role="button" tabindex="0">
-                <img src="${img}" alt="${title}">
-                <div class="search-result-info">
-                  <div class="search-result-title">${title}</div>
-                  <div class="search-result-meta">${type} • ${rating}</div>
-                </div>
-              </div>
-            `;
-              resultsContainer.insertAdjacentHTML('beforeend', itemHTML);
-            });
+    // ---------------- AUTHENTICATION & SESSION CHECK ----------------
+    function getAuthToken() {
+      let token = localStorage.getItem('access_token') || localStorage.getItem('token');
+      if (!token) {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+          const [name, val] = cookie.trim().split('=');
+          if (name === 'access_token' || name === 'token') {
+            token = decodeURIComponent(val).replace('Bearer ', '');
+            break;
           }
-        } catch (err) {
-          if (err.name === 'AbortError') return;
-          resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--danger); text-align: center;">Search failed.</div>`;
         }
-      }, 400);
+      }
+      return token;
     }
 
-    const desktopInput = document.getElementById('desktop-search-input');
-    const desktopResults = document.getElementById('desktop-search-results');
-    if (desktopInput) {
-      desktopInput.addEventListener('input', (e) => handleSearch(e.target.value, desktopResults));
+    function verifyAuthAndRedirect() {
+      const token = getAuthToken();
+      if (!token) {
+        window.location.href = './anilog-login-register.html';
+        return false;
+      }
+      return token;
     }
 
-    const mobileInput = document.getElementById('mobile-search-input');
-    const mobileResults = document.getElementById('mobile-search-results');
-    if (mobileInput) {
-      mobileInput.addEventListener('input', (e) => handleSearch(e.target.value, mobileResults));
+    // ---------------- USER LEVEL & XP CALCULATION ----------------
+    function calculateUserLevel(xp) {
+      const levels = [
+        { level: 1, title: 'Otaku Novice', minXP: 0, nextLevelXP: 500 },
+        { level: 2, title: 'Casual Watcher', minXP: 500, nextLevelXP: 2000 },
+        { level: 3, title: 'Anime Enthusiast', minXP: 1200, nextLevelXP: 3000 },
+        { level: 4, title: 'Seasoned Binger', minXP: 2500, nextLevelXP: 5000 },
+        { level: 5, title: 'Master Otaku', minXP: 5000, nextLevelXP: 10000 },
+        { level: 6, title: 'Anime Scholar', minXP: 10000, nextLevelXP: 20000 },
+        { level: 7, title: 'Supreme Weeb', minXP: 20000, nextLevelXP: 50000 }
+      ];
+
+      for (let i = levels.length - 1; i >= 0; i--) {
+        if (xp >= levels[i].minXP) {
+          const lvl = levels[i];
+          const range = lvl.nextLevelXP - lvl.minXP;
+          const progress = xp - lvl.minXP;
+          const percent = Math.min(100, Math.max(0, Math.floor((progress / range) * 100)));
+          return {
+            level: lvl.level,
+            title: lvl.title,
+            currentXP: xp,
+            nextLevelXP: lvl.nextLevelXP,
+            percent: percent
+          };
+        }
+      }
+      return { level: 1, title: 'Otaku Novice', currentXP: xp, nextLevelXP: 500, percent: 0 };
     }
 
-    const mobileSearchToggle = document.getElementById('mobile-search-toggle');
-    const mobileSearchBar = document.getElementById('mobile-search-bar');
-    if (mobileSearchToggle && mobileSearchBar) {
-      mobileSearchToggle.addEventListener('click', () => {
-        mobileSearchBar.classList.toggle('active');
+    function renderUserCard(user) {
+      const avatarUrl = user.avatar_seed || 'https://api.dicebear.com/7.x/bottts/svg?seed=Shadow';
+      const avatarImg = document.getElementById('sidebar-user-avatar');
+      if (avatarImg) avatarImg.src = avatarUrl;
+
+      const topbarAvatar = document.getElementById('topbar-user-avatar');
+      if (topbarAvatar) topbarAvatar.src = avatarUrl;
+
+      const nameElem = document.getElementById('sidebar-user-name');
+      if (nameElem) nameElem.innerText = user.username || 'Anime Fan';
+
+      const dropdownName = document.getElementById('dropdown-username');
+      if (dropdownName) dropdownName.innerText = user.username || 'User Account';
+
+      const currentXP = user.xp_points || 0;
+      const levelObj = calculateUserLevel(currentXP);
+
+      const sidebarLevel = document.getElementById('sidebar-user-level');
+      if (sidebarLevel) sidebarLevel.innerText = `LVL ${levelObj.level} - ${levelObj.title}`;
+
+      const sidebarXpFill = document.getElementById('sidebar-xp-fill');
+      if (sidebarXpFill) sidebarXpFill.style.width = `${levelObj.percent}%`;
+
+      const sidebarXpText = document.getElementById('sidebar-xp-text');
+      if (sidebarXpText) sidebarXpText.innerText = `${currentXP.toLocaleString()} / ${levelObj.nextLevelXP.toLocaleString()} XP`;
+
+      const streakElem = document.getElementById('streak-counter');
+      if (streakElem) streakElem.innerText = `${user.streak_count || 1}`;
+    }
+
+    async function fetchUserData(token) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.status === 401) {
+          showToast('Session expired. Please log in again.', 'error');
+          localStorage.removeItem('access_token');
+          setTimeout(() => {
+            window.location.href = './anilog-login-register.html';
+          }, 1200);
+          return;
+        }
+
+        if (!response.ok) {
+          showToast('Failed to fetch user data', 'error');
+          return;
+        }
+
+        const userData = await response.json();
+        renderUserCard(userData);
+      } catch (err) {
+        showToast('Network error connecting to backend server', 'error');
+      }
+    }
+
+    // ---------------- DYNAMIC TOP LISTS DATA FETCHING ----------------
+    async function loadTopListsData(tag = null) {
+      const token = getAuthToken();
+      if (!token) return;
+
+      try {
+        let url = `${API_BASE_URL}/api/anime/top-lists`;
+        if (tag) {
+          url += `?tag=${encodeURIComponent(tag)}`;
+        }
+
+        const res = await fetch(url, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!res.ok) {
+          showToast('Failed to load top lists data', 'error');
+          return;
+        }
+
+        const data = await res.json();
+        renderTopListsUI(data);
+      } catch (err) {
+        console.error("Top lists load error:", err);
+      }
+    }
+
+    function renderTopListsUI(data) {
+      // 1. Top Anime
+      const topAnimeList = data.top_anime || [];
+      const desktopAnimeContainer = document.getElementById('desktop-top-anime-container');
+      const mobileAnimeContainer = document.getElementById('mobile-top-anime-container');
+
+      const activeTagLabel = data.active_tag ? data.active_tag : "Overall";
+      const dtLabel = document.getElementById('desktop-active-tag-label');
+      const mbLabel = document.getElementById('mobile-active-tag-label');
+      if (dtLabel) dtLabel.innerText = activeTagLabel;
+      if (mbLabel) mbLabel.innerText = activeTagLabel;
+
+      let animeHTML = '';
+      topAnimeList.forEach(anime => {
+        const posterUrl = anime.poster || 'https://via.placeholder.com/100x120?text=No+Poster';
+        animeHTML += `
+          <div class="anime" onclick="window.location.href='./anilog-anime-review-responsive.html?id=${anime.id}';">
+            <div class="poster" style="background-image: url('${posterUrl}');"></div>
+            <div class="anime-name">${anime.title}</div>
+            <div class="rating">★ ${anime.rating} / 10</div>
+          </div>
+        `;
+      });
+
+      if (desktopAnimeContainer) desktopAnimeContainer.innerHTML = animeHTML || '<div style="font-size:12px; padding:10px;">No anime found</div>';
+      if (mobileAnimeContainer) mobileAnimeContainer.innerHTML = animeHTML || '<div style="font-size:12px; padding:10px;">No anime found</div>';
+
+      // 2. Top Openings
+      const topOpenings = data.top_openings || [];
+      if (topOpenings.length > 0) {
+        const opCover = topOpenings[0].cover || 'https://via.placeholder.com/300x150';
+        const opId = topOpenings[0].id;
+
+        const dtOp = document.getElementById('desktop-top-openings-art');
+        const mbOp = document.getElementById('mobile-top-openings-art');
+
+        if (dtOp) {
+          dtOp.style.backgroundImage = `url('${opCover}')`;
+          dtOp.onclick = () => window.location.href = `./anilog-anime-review-responsive.html?id=${opId}`;
+        }
+        if (mbOp) {
+          mbOp.style.backgroundImage = `url('${opCover}')`;
+          mbOp.onclick = () => window.location.href = `./anilog-anime-review-responsive.html?id=${opId}`;
+        }
+      }
+
+      // 3. Top Fights
+      const topFights = data.top_fights || [];
+      const fightContainer = document.getElementById('desktop-top-fights-container');
+      if (fightContainer) {
+        let fightHTML = '';
+        topFights.forEach(fight => {
+          const fightImg = fight.image || 'https://via.placeholder.com/150x80';
+          fightHTML += `
+            <div class="fight" onclick="window.location.href='./anilog-anime-review-responsive.html?id=${fight.id}';">
+              <div class="fight-img" style="background-image: url('${fightImg}');"></div>
+              <div class="fight-name">${fight.fight_name}</div>
+              <div class="fight-ep">${fight.episode}</div>
+            </div>
+          `;
+        });
+        fightContainer.innerHTML = fightHTML;
+      }
+
+      // 4. Top Endings
+      const topEndings = data.top_endings || [];
+      if (topEndings.length > 0) {
+        const endCover = topEndings[0].cover || 'https://via.placeholder.com/300x150';
+        const endId = topEndings[0].id;
+        const dtEnd = document.getElementById('desktop-top-endings-art');
+        if (dtEnd) {
+          dtEnd.style.backgroundImage = `url('${endCover}')`;
+          dtEnd.onclick = () => window.location.href = `./anilog-anime-review-responsive.html?id=${endId}`;
+        }
+      }
+
+      // 5. Animation Studios
+      const studios = data.top_studios || [];
+      const dtStudioContainer = document.getElementById('desktop-studios-container');
+      const mbStudioContainer = document.getElementById('mobile-studios-container');
+      let studioHTML = '';
+      studios.forEach(st => {
+        studioHTML += `
+          <div class="studio">
+            <div>${st.name}</div>
+            <div class="studio-desc">${st.projects}</div>
+          </div>
+        `;
+      });
+      if (dtStudioContainer) dtStudioContainer.innerHTML = studioHTML;
+      if (mbStudioContainer) mbStudioContainer.innerHTML = studioHTML;
+
+      // 6. Voice Actors
+      const actors = data.top_voice_actors || [];
+      const actorContainer = document.getElementById('desktop-actors-container');
+      if (actorContainer) {
+        let actorHTML = '';
+        actors.forEach(act => {
+          actorHTML += `
+            <div class="actor">
+              <div class="actor-face" style="background-image: url('${act.image}');"></div>
+              <div style="font-weight: bold; color: var(--text);">${act.name}</div>
+              <div style="font-size: 8px; color: var(--muted);">${act.role}</div>
+            </div>
+          `;
+        });
+        actorContainer.innerHTML = actorHTML;
+      }
+
+      // 7. Popular Tags
+      const tags = data.popular_tags || [];
+      const tagsContainer = document.getElementById('desktop-tags-container');
+      if (tagsContainer) {
+        let tagsHTML = '';
+        tags.forEach(tg => {
+          const isActive = (data.active_tag && data.active_tag.toLowerCase() === tg.toLowerCase()) ? 'active' : '';
+          tagsHTML += `<div class="tag ${isActive}" onclick="filterByTag('${tg}')">${tg}</div>`;
+        });
+        tagsContainer.innerHTML = tagsHTML;
+      }
+    }
+
+    function filterByTag(tagName) {
+      if (activeTagFilter === tagName) {
+        activeTagFilter = null;
+      } else {
+        activeTagFilter = tagName;
+      }
+      loadTopListsData(activeTagFilter);
+    }
+
+    // ---------------- SEARCH CONTROLLER LOGIC ----------------
+    function setupSearchController(inputId, dropdownId) {
+      const input = document.getElementById(inputId);
+      const dropdown = document.getElementById(dropdownId);
+      if (!input || !dropdown) return;
+
+      let abortController = null;
+      let debounceTimeout = null;
+
+      input.addEventListener('input', (e) => {
+        const query = e.target.value.trim();
+
+        if (debounceTimeout) clearTimeout(debounceTimeout);
+        if (abortController) abortController.abort();
+
+        if (!query) {
+          dropdown.classList.remove('active');
+          dropdown.innerHTML = '';
+          return;
+        }
+
+        debounceTimeout = setTimeout(async () => {
+          abortController = new AbortController();
+          const token = getAuthToken();
+
+          try {
+            const res = await fetch(`${API_BASE_URL}/api/anime/kitsu-search?q=${encodeURIComponent(query)}`, {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              signal: abortController.signal
+            });
+
+            if (!res.ok) {
+              dropdown.classList.remove('active');
+              return;
+            }
+
+            const json = await res.json();
+            const data = json.data || [];
+
+            dropdown.innerHTML = '';
+
+            if (data.length === 0) {
+              dropdown.innerHTML = `<div class="search-result-item" style="cursor:default;"><span class="search-result-title">No anime found</span></div>`;
+            } else {
+              data.forEach(item => {
+                const attrs = item.attributes || {};
+                const poster = (attrs.posterImage && (attrs.posterImage.small || attrs.posterImage.tiny)) || 'https://via.placeholder.com/32x45';
+                const title = attrs.canonicalTitle || (attrs.titles && attrs.titles.en) || 'Unknown Anime';
+                const mediaType = attrs.subtype || attrs.showType || 'TV';
+                const rating = attrs.averageRating ? `★ ${(parseFloat(attrs.averageRating) / 10).toFixed(1)}` : 'N/A';
+
+                const resultItem = document.createElement('div');
+                resultItem.className = 'search-result-item';
+                resultItem.innerHTML = `
+                  <img src="${poster}" alt="${title}">
+                  <div class="search-result-info">
+                    <div class="search-result-title">${title}</div>
+                    <div class="search-result-meta">${mediaType} • ${rating}</div>
+                  </div>
+                `;
+
+                resultItem.addEventListener('click', () => {
+                  window.location.href = `./anilog-anime-review-responsive.html?id=${item.id}`;
+                });
+
+                dropdown.appendChild(resultItem);
+              });
+            }
+
+            dropdown.classList.add('active');
+          } catch (err) {
+            if (err.name !== 'AbortError') {
+              console.error('Search error:', err);
+            }
+          }
+        }, 400);
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+          dropdown.classList.remove('active');
+        }
       });
     }
 
-    document.addEventListener('click', (event) => {
-      const resultItem = event.target.closest('.search-result-item');
-      if (!resultItem) return;
-      const anime = resultItem.parentElement._animeResults?.[Number(resultItem.dataset.resultIndex)];
-      if (anime) openAnimeReviewFromSearch(anime);
-    });
+    // ---------------- INITIALIZATION & EVENT LISTENERS ----------------
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Verify Authentication First
+      const token = verifyAuthAndRedirect();
+      if (!token) return;
 
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.search')) {
-        if (desktopResults) desktopResults.classList.remove('active');
+      // 2. Fetch User Profile & Top Lists
+      fetchUserData(token);
+      loadTopListsData();
+
+      // 3. Preloader dismiss
+      setTimeout(() => {
+        document.body.classList.add('loaded');
+        const preloader = document.getElementById('preloader');
+        if (preloader) {
+          preloader.style.opacity = '0';
+          setTimeout(() => preloader.style.display = 'none', 500);
+        }
+      }, 300);
+
+      // 4. Setup Search Controllers
+      setupSearchController('desktop-search-input', 'desktop-search-results');
+      setupSearchController('mobile-search-input', 'mobile-search-results');
+
+      // 5. Mobile search bar toggle
+      const mobileSearchToggle = document.getElementById('mobile-search-toggle');
+      const mobileSearchBar = document.getElementById('mobile-search-bar');
+      if (mobileSearchToggle && mobileSearchBar) {
+        mobileSearchToggle.addEventListener('click', () => {
+          mobileSearchBar.classList.toggle('active');
+        });
       }
-      if (!e.target.closest('#mobile-search-bar') && !e.target.closest('#mobile-search-toggle')) {
-        if (mobileResults) mobileResults.classList.remove('active');
+
+      // 6. Theme Toggle Handler
+      const themeToggleBtn = document.getElementById('theme-toggle-btn');
+      if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+          document.body.classList.toggle('light-mode');
+          const isLight = document.body.classList.contains('light-mode');
+          showToast(`Switched to ${isLight ? 'Light' : 'Dark'} Mode`, 'info');
+        });
+      }
+
+      // 7. Logout Handler
+      const logoutBtn = document.getElementById('logout-btn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('token');
+          document.cookie = "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          showToast('Logged out successfully', 'success');
+          setTimeout(() => {
+            window.location.href = './anilog-login-register.html';
+          }, 1000);
+        });
       }
     });
   </script>
