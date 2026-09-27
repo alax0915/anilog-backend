@@ -1754,14 +1754,22 @@
       if (dtLabel) dtLabel.innerText = activeTagLabel;
       if (mbLabel) mbLabel.innerText = activeTagLabel;
 
+      window.anilogTopAnime = Object.fromEntries(
+        topAnimeList.map(anime => [String(anime.id), anime])
+      );
+
       let animeHTML = '';
       topAnimeList.forEach(anime => {
-        const posterUrl = anime.poster || 'https://via.placeholder.com/100x120?text=No+Poster';
+        const posterUrl = anime.poster || anime.image || anime.cover ||
+          'https://via.placeholder.com/100x120?text=No+Poster';
+        const title = anime.title || anime.name || 'Untitled';
+        const rating = anime.rating ?? anime.averageRating ?? 'N/A';
+
         animeHTML += `
-          <div class="anime" onclick="window.location.href='./anilog-anime-review-responsive.html?id=${anime.id}';">
-            <div class="poster" style="background-image: url('${posterUrl}');"></div>
-            <div class="anime-name">${anime.title}</div>
-            <div class="rating">★ ${anime.rating} / 10</div>
+          <div class="anime" data-top-anime-id="${escapeHTML(anime.id)}" role="button" tabindex="0">
+            <div class="poster" style="background-image: url('${escapeHTML(posterUrl)}');"></div>
+            <div class="anime-name">${escapeHTML(title)}</div>
+            <div class="rating">★ ${escapeHTML(rating)} / 10</div>
           </div>
         `;
       });
@@ -1769,22 +1777,36 @@
       if (desktopAnimeContainer) desktopAnimeContainer.innerHTML = animeHTML || '<div style="font-size:12px; padding:10px;">No anime found</div>';
       if (mobileAnimeContainer) mobileAnimeContainer.innerHTML = animeHTML || '<div style="font-size:12px; padding:10px;">No anime found</div>';
 
+      document.querySelectorAll('[data-top-anime-id]').forEach(card => {
+        const openTopAnime = (event) => {
+          if (event && event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') return;
+          if (event && event.type === 'keydown') event.preventDefault();
+
+          const animeId = String(card.dataset.topAnimeId || '');
+          const animeObj = window.anilogTopAnime?.[animeId];
+          if (animeObj) {
+            openAnimeReview(animeObj);
+          }
+        };
+
+        card.addEventListener('click', openTopAnime);
+        card.addEventListener('keydown', openTopAnime);
+      });
+
       // 2. Top Openings
       const topOpenings = data.top_openings || [];
       if (topOpenings.length > 0) {
         const opCover = topOpenings[0].cover || 'https://via.placeholder.com/300x150';
-        const opId = topOpenings[0].id;
-
         const dtOp = document.getElementById('desktop-top-openings-art');
         const mbOp = document.getElementById('mobile-top-openings-art');
 
         if (dtOp) {
-          dtOp.style.backgroundImage = `url('${opCover}')`;
-          dtOp.onclick = () => window.location.href = `./anilog-anime-review-responsive.html?id=${opId}`;
+          dtOp.style.backgroundImage = `url('${escapeHTML(opCover)}')`;
+          dtOp.onclick = () => openAnimeReview(topOpenings[0]);
         }
         if (mbOp) {
-          mbOp.style.backgroundImage = `url('${opCover}')`;
-          mbOp.onclick = () => window.location.href = `./anilog-anime-review-responsive.html?id=${opId}`;
+          mbOp.style.backgroundImage = `url('${escapeHTML(opCover)}')`;
+          mbOp.onclick = () => openAnimeReview(topOpenings[0]);
         }
       }
 
@@ -1793,15 +1815,40 @@
       const fightContainer = document.getElementById('desktop-top-fights-container');
       if (fightContainer) {
         let fightHTML = '';
+        window.anilogTopFights = Object.fromEntries(
+          topFights.map(fight => [String(fight.id), fight])
+        );
+
         topFights.forEach(fight => {
-          const fightImg = fight.image || 'https://via.placeholder.com/150x80';
+          const fightImg = fight.image || fight.poster || fight.cover ||
+            'https://via.placeholder.com/150x80';
+          const fightName = fight.fight_name || fight.title || fight.name || 'Top Fight';
+          const fightEpisode = fight.episode || '';
+
           fightHTML += `
-            <div class="fight" onclick="window.location.href='./anilog-anime-review-responsive.html?id=${fight.id}';">
-              <div class="fight-img" style="background-image: url('${fightImg}');"></div>
-              <div class="fight-name">${fight.fight_name}</div>
-              <div class="fight-ep">${fight.episode}</div>
+            <div class="fight" data-top-fight-id="${escapeHTML(fight.id)}" role="button" tabindex="0">
+              <div class="fight-img" style="background-image: url('${escapeHTML(fightImg)}');"></div>
+              <div class="fight-name">${escapeHTML(fightName)}</div>
+              <div class="fight-ep">${escapeHTML(fightEpisode)}</div>
             </div>
           `;
+        });
+        fightContainer.innerHTML = fightHTML;
+
+        fightContainer.querySelectorAll('[data-top-fight-id]').forEach(card => {
+          const openTopFight = (event) => {
+            if (event && event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') return;
+            if (event && event.type === 'keydown') event.preventDefault();
+
+            const fightId = String(card.dataset.topFightId || '');
+            const fight = window.anilogTopFights?.[fightId];
+            if (fight) {
+              openAnimeReview(fight);
+            }
+          };
+
+          card.addEventListener('click', openTopFight);
+          card.addEventListener('keydown', openTopFight);
         });
         fightContainer.innerHTML = fightHTML;
       }
@@ -1810,11 +1857,10 @@
       const topEndings = data.top_endings || [];
       if (topEndings.length > 0) {
         const endCover = topEndings[0].cover || 'https://via.placeholder.com/300x150';
-        const endId = topEndings[0].id;
         const dtEnd = document.getElementById('desktop-top-endings-art');
         if (dtEnd) {
-          dtEnd.style.backgroundImage = `url('${endCover}')`;
-          dtEnd.onclick = () => window.location.href = `./anilog-anime-review-responsive.html?id=${endId}`;
+          dtEnd.style.backgroundImage = `url('${escapeHTML(endCover)}')`;
+          dtEnd.onclick = () => openAnimeReview(topEndings[0]);
         }
       }
 
@@ -1871,6 +1917,52 @@
         activeTagFilter = tagName;
       }
       loadTopListsData(activeTagFilter);
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? '').replace(/[&<>'"]/g, character => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[character]));
+    }
+
+    // ---------------- ANIME REVIEW NAVIGATION (MATCHES HOME PAGE) ----------------
+    // Home sends the full anime payload through ?anime=... instead of ?id=...
+    // Top Lists data can be either simplified objects or Kitsu-style { attributes: {...} } objects,
+    // so this helper normalizes both forms into the same review payload used by Home.
+    function openAnimeReview(anime) {
+      if (!anime) return;
+
+      const attr = anime.attributes || anime;
+      const reviewData = {
+        id: anime.id ?? attr.id ?? '',
+        title: attr.canonicalTitle ||
+               attr.titles?.en ||
+               attr.titles?.en_jp ||
+               attr.title ||
+               attr.name ||
+               attr.anime_title ||
+               attr.fight_name ||
+               'Untitled',
+        image: attr.posterImage?.large ||
+               attr.posterImage?.medium ||
+               attr.posterImage?.original ||
+               attr.poster ||
+               attr.image ||
+               attr.cover ||
+               '',
+        episodes: attr.episodeCount ?? attr.episodes ?? '',
+        status: attr.status || '',
+        type: attr.showType || attr.type || '',
+        rating: attr.averageRating ?? attr.rating ?? '',
+        synopsis: attr.synopsis || attr.description || '',
+        startDate: attr.startDate || attr.airDate || attr.releaseDate || ''
+      };
+
+      window.location.href = `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(JSON.stringify(reviewData))}`;
     }
 
     // ---------------- SEARCH CONTROLLER LOGIC ----------------
@@ -1931,17 +2023,26 @@
                 const resultItem = document.createElement('div');
                 resultItem.className = 'search-result-item';
                 resultItem.innerHTML = `
-                  <img src="${poster}" alt="${title}">
+                  <img src="${escapeHTML(poster)}" alt="${escapeHTML(title)}">
                   <div class="search-result-info">
-                    <div class="search-result-title">${title}</div>
-                    <div class="search-result-meta">${mediaType} • ${rating}</div>
+                    <div class="search-result-title">${escapeHTML(title)}</div>
+                    <div class="search-result-meta">${escapeHTML(mediaType)} • ${escapeHTML(rating)}</div>
                   </div>
                 `;
 
                 resultItem.addEventListener('click', () => {
-                  window.location.href = `./anilog-anime-review-responsive.html?id=${item.id}`;
+                  openAnimeReview(item);
                 });
 
+                resultItem.addEventListener('keydown', (event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    openAnimeReview(item);
+                  }
+                });
+
+                resultItem.setAttribute('role', 'button');
+                resultItem.setAttribute('tabindex', '0');
                 dropdown.appendChild(resultItem);
               });
             }
