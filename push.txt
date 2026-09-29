@@ -66,6 +66,11 @@ I want to change how my frontend and backend handle  data different for differen
 below on the left side there is a profile box like "<div class="user-info">"name of the box let it load the actual live data of the user from backend see on the backend and you will understand 
 
 
+
+for any loading event on frotend add a skeleton animation till it loads for user ux 
+
+
+
 i want you to update navigation bar on the html code i sent you like the html structure html tag class may not be same but their ui are same so i dont want you to touch the original html tag and class of the thml code in the html file i sent u but add the missing nav bar parts to it bbecause it is different from the homepage below i will send you the nav code html of the home page
 <nav class="sidebar-nav">
           <button class="side-link active" onclick="window.location.href='./anilog-home.html';"><span class="material-symbols-outlined">home</span>Home</button>
