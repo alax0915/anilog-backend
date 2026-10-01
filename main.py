@@ -1,4 +1,5 @@
 import os
+import asyncio
 import random
 import uuid
 from datetime import datetime, date, timedelta, timezone
@@ -24,6 +25,7 @@ from sqlalchemy import (
     ForeignKey,
     update as sql_update,
     delete as sql_delete,
+    UniqueConstraint,
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import (
@@ -63,6 +65,7 @@ ALLOWED_ORIGINS = [
 ]
 
 HTTP_TIMEOUT = httpx.Timeout(20.0, connect=10.0)
+GOAL_CATALOG_LOCK = asyncio.Lock()
 
 # ==================================================
 # 2. SECURITY & AUTHENTICATION
@@ -189,6 +192,63 @@ class DailyWatchActivity(Base):
     activity_date: Mapped[date] = mapped_column(
         Date, default=date.today, nullable=False
     )
+
+
+class WatchHistory(Base):
+    __tablename__ = "watch_history"
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    anime_id: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    episodes_count: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    xp_earned: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    activity_date: Mapped[date] = mapped_column(Date, default=date.today, nullable=False, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+
+
+class GoalDefinition(Base):
+    __tablename__ = "goal_definitions"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    year: Mapped[int] = mapped_column(Integer, index=True, nullable=False)
+    kind: Mapped[str] = mapped_column(String(20), nullable=False, default="yearly")
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    icon: Mapped[str] = mapped_column(String(50), default="flag")
+    metric: Mapped[str] = mapped_column(String(50), nullable=False)
+    target: Mapped[int] = mapped_column(Integer, nullable=False)
+    reward_xp: Mapped[int] = mapped_column(Integer, default=100, nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    sort_order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+
+
+class UserGoal(Base):
+    __tablename__ = "user_goals"
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    goal_id: Mapped[int] = mapped_column(Integer, ForeignKey("goal_definitions.id"), nullable=False)
+    period_key: Mapped[str] = mapped_column(String(20), nullable=False)
+    completed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    __table_args__ = (UniqueConstraint("user_id", "goal_id", "period_key", name="uq_user_goal_period"),)
+
+
+class GoalNote(Base):
+    __tablename__ = "goal_notes"
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    note: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+
+
+class XPEvent(Base):
+    __tablename__ = "xp_events"
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    event_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    reference_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    xp: Mapped[int] = mapped_column(Integer, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    __table_args__ = (UniqueConstraint("user_id", "event_type", "reference_id", name="uq_xp_event"),)
 
 
 class User(Base):
@@ -342,6 +402,14 @@ class WatchActivityRequest(BaseModel):
     episodes_count: Optional[int] = 1
     watch_time_mins: Optional[int] = 24
     activity_date: Optional[str] = None
+
+
+class GoalNoteRequest(BaseModel):
+    note: str
+
+
+class GoalActionRequest(BaseModel):
+    goal_id: int
 
 
 # ==================================================
@@ -711,6 +779,327 @@ async def update_user_profile(
     return current_user
 
 
+# ==================================================
+# GOALS / XP / PROGRESS API
+# ==================================================
+
+LEVELS = [
+    (1, "Otaku Novice", 0, 500),
+    (2, "Casual Watcher", 500, 2000),
+    (3, "Anime Enthusiast", 1200, 3000),
+    (4, "Seasoned Binger", 2500, 5000),
+    (5, "Master Otaku", 5000, 10000),
+    (6, "Anime Scholar", 10000, 20000),
+    (7, "Supreme Weeb", 20000, 50000),
+]
+
+
+def level_for_xp(xp: int):
+    xp = max(0, int(xp or 0))
+    chosen = LEVELS[0]
+    for item in LEVELS:
+        if xp >= item[2]:
+            chosen = item
+    return {"level": chosen[0], "title": chosen[1], "min_xp": chosen[2], "next_xp": chosen[3], "progress_percent": min(100, max(0, int((xp - chosen[2]) / max(1, chosen[3] - chosen[2]) * 100)))}
+
+
+def default_yearly_goals(year: int):
+    base = [
+        ("Watch 10 new anime", "play_circle", "completed_anime", 10, 100),
+        ("Watch 25 new anime", "play_circle", "completed_anime", 25, 150),
+        ("Watch 50 new anime", "play_circle", "completed_anime", 50, 250),
+        ("Watch 100 new anime", "play_circle", "completed_anime", 100, 500),
+        ("Watch 250 anime episodes", "movie", "episodes", 250, 150),
+        ("Watch 500 anime episodes", "movie", "episodes", 500, 300),
+        ("Watch 1000 anime episodes", "movie", "episodes", 1000, 600),
+        ("Earn 1000 XP", "bolt", "xp", 1000, 100),
+        ("Earn 2500 XP", "bolt", "xp", 2500, 250),
+        ("Earn 5000 XP", "bolt", "xp", 5000, 500),
+        ("Complete 5 anime", "task_alt", "completed_anime", 5, 75),
+        ("Complete 15 anime", "task_alt", "completed_anime", 15, 150),
+        ("Complete 30 anime", "task_alt", "completed_anime", 30, 300),
+        ("Finish an anime you paused", "play_arrow", "completed_anime", 1, 75),
+        ("Complete 3 long anime", "all_inclusive", "long_completed", 3, 200),
+    ]
+    icons = ["flag", "stars", "local_fire_department", "auto_awesome", "favorite", "grade", "rocket", "bolt", "military_tech", "emoji_events"]
+    rows = list(base)
+    while len(rows) < 100:
+        n = len(rows) + 1
+        target = 5 + ((n * 7) % 90)
+        metric = ["completed_anime", "episodes", "xp"][n % 3]
+        if metric == "completed_anime":
+            target = max(3, target // 2)
+            title = f"Complete {target} anime"
+        elif metric == "episodes":
+            target = max(25, target * 10)
+            title = f"Watch {target} episodes"
+        else:
+            target = max(500, target * 100)
+            title = f"Earn {target} XP"
+        rows.append((title, icons[n % len(icons)], metric, target, max(50, min(500, target // 2))))
+    return rows[:100]
+
+
+async def ensure_goal_catalog(db: AsyncSession, year: int):
+    count = await db.scalar(select(func.count(GoalDefinition.id)).where(GoalDefinition.year == year, GoalDefinition.kind == "yearly"))
+    if count and count >= 100:
+        return
+    rows = default_yearly_goals(year)
+    for idx, (title, icon, metric, target, reward_xp) in enumerate(rows):
+        exists = await db.scalar(select(GoalDefinition.id).where(GoalDefinition.year == year, GoalDefinition.kind == "yearly", GoalDefinition.sort_order == idx))
+        if not exists:
+            db.add(GoalDefinition(year=year, kind="yearly", title=title, icon=icon, metric=metric, target=target, reward_xp=reward_xp, sort_order=idx))
+    monthly = [
+        ("Complete 2 anime this month", "task_alt", "monthly_completed", 2, 100),
+        ("Watch 24 episodes this month", "movie", "monthly_episodes", 24, 100),
+        ("Earn 500 XP this month", "bolt", "monthly_xp", 500, 100),
+        ("Complete 5 anime this month", "military_tech", "monthly_completed", 5, 200),
+        ("Watch 50 episodes this month", "local_fire_department", "monthly_episodes", 50, 250),
+        ("Earn 1000 XP this month", "stars", "monthly_xp", 1000, 250),
+    ]
+    for idx, (title, icon, metric, target, reward_xp) in enumerate(monthly):
+        exists = await db.scalar(select(GoalDefinition.id).where(GoalDefinition.year == year, GoalDefinition.kind == "monthly", GoalDefinition.sort_order == idx))
+        if not exists:
+            db.add(GoalDefinition(year=year, kind="monthly", title=title, icon=icon, metric=metric, target=target, reward_xp=reward_xp, sort_order=idx))
+    await db.commit()
+
+
+async def award_xp(db: AsyncSession, user: User, amount: int, event_type: str, reference_id: str):
+    if amount <= 0:
+        return 0
+    existing = await db.scalar(select(XPEvent.id).where(XPEvent.user_id == user.id, XPEvent.event_type == event_type, XPEvent.reference_id == str(reference_id)))
+    if existing:
+        return 0
+    db.add(XPEvent(user_id=user.id, event_type=event_type, reference_id=str(reference_id), xp=amount))
+    user.xp_points = int(user.xp_points or 0) + amount
+    user.level = level_for_xp(user.xp_points)["level"]
+    user.updated_at = datetime.now(timezone.utc)
+    return amount
+
+
+async def goal_metrics(db: AsyncSession, user_id: int, year: int, month: int):
+    completed_year = await db.scalar(select(func.count(UserAnimeList.id)).where(UserAnimeList.user_id == user_id, UserAnimeList.status.ilike("completed"), UserAnimeList.completed_at >= datetime(year, 1, 1, tzinfo=timezone.utc), UserAnimeList.completed_at < datetime(year + 1, 1, 1, tzinfo=timezone.utc))) or 0
+    completed_month = await db.scalar(select(func.count(UserAnimeList.id)).where(UserAnimeList.user_id == user_id, UserAnimeList.status.ilike("completed"), UserAnimeList.completed_at >= datetime(year, month, 1, tzinfo=timezone.utc), UserAnimeList.completed_at < (datetime(year + (1 if month == 12 else 0), 1 if month == 12 else month + 1, 1, tzinfo=timezone.utc)))) or 0
+    episodes = await db.scalar(select(func.coalesce(func.sum(UserAnimeList.episodes_watched), 0)).where(UserAnimeList.user_id == user_id)) or 0
+    year_xp = await db.scalar(select(func.coalesce(func.sum(XPEvent.xp), 0)).where(XPEvent.user_id == user_id, XPEvent.created_at >= datetime(year, 1, 1, tzinfo=timezone.utc), XPEvent.created_at < datetime(year + 1, 1, 1, tzinfo=timezone.utc))) or 0
+    month_xp = await db.scalar(select(func.coalesce(func.sum(XPEvent.xp), 0)).where(XPEvent.user_id == user_id, XPEvent.created_at >= datetime(year, month, 1, tzinfo=timezone.utc), XPEvent.created_at < (datetime(year + (1 if month == 12 else 0), 1 if month == 12 else month + 1, 1, tzinfo=timezone.utc)))) or 0
+    return {"completed_year": int(completed_year), "completed_month": int(completed_month), "episodes": int(episodes), "year_xp": int(year_xp), "month_xp": int(month_xp)}
+
+
+@app.get("/api/goals/dashboard")
+async def get_goals_dashboard(
+    section: Optional[str] = Query(None),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    now = datetime.now(timezone.utc)
+    year, month = now.year, now.month
+
+    # Multiple dashboard sections are requested in parallel by the frontend.
+    # Protect first-time catalog creation so concurrent requests cannot seed duplicates.
+    async with GOAL_CATALOG_LOCK:
+        await ensure_goal_catalog(db, year)
+
+    metrics = await goal_metrics(db, current_user.id, year, month)
+
+    async def current_for_goal(d):
+        if d.metric == "completed_anime":
+            return metrics["completed_year"]
+        if d.metric == "episodes":
+            return metrics["episodes"]
+        if d.metric == "xp":
+            return int(current_user.xp_points or 0)
+        if d.metric == "monthly_completed":
+            return metrics["completed_month"]
+        if d.metric == "monthly_episodes":
+            return int(await db.scalar(select(func.coalesce(func.sum(WatchHistory.episodes_count), 0)).where(
+                WatchHistory.user_id == current_user.id,
+                WatchHistory.activity_date >= date(year, month, 1),
+            )) or 0)
+        if d.metric == "monthly_xp":
+            return metrics["month_xp"]
+        return 0
+
+    async def build_section_goals(kind):
+        defs = (await db.execute(
+            select(GoalDefinition)
+            .where(GoalDefinition.year == year, GoalDefinition.kind == kind)
+            .order_by(GoalDefinition.sort_order)
+        )).scalars().all()
+        result = []
+        period = str(year) if kind == "yearly" else f"{year}-{month:02d}"
+        for d in defs:
+            current = int(await current_for_goal(d))
+            if current >= d.target:
+                ug = await db.scalar(select(UserGoal).where(
+                    UserGoal.user_id == current_user.id,
+                    UserGoal.goal_id == d.id,
+                    UserGoal.period_key == period,
+                ))
+                if not ug or not ug.completed:
+                    if not ug:
+                        db.add(UserGoal(
+                            user_id=current_user.id, goal_id=d.id, period_key=period,
+                            completed=True, completed_at=now,
+                        ))
+                    else:
+                        ug.completed = True
+                        ug.completed_at = now
+                    await award_xp(db, current_user, d.reward_xp, "goal_completion", f"{d.id}:{period}")
+            result.append({
+                "id": d.id, "title": d.title, "icon": d.icon, "metric": d.metric,
+                "target": d.target, "current": current,
+                "progress": min(100, int(current / max(1, d.target) * 100)),
+                "reward_xp": d.reward_xp,
+            })
+        result.sort(key=lambda x: (x["current"] >= x["target"], x["id"]))
+        return result[:3] if kind == "yearly" else result[:4]
+
+    async def build_months():
+        months = []
+        for m in range(1, 13):
+            start = datetime(year, m, 1, tzinfo=timezone.utc)
+            end = datetime(year + 1, 1, 1, tzinfo=timezone.utc) if m == 12 else datetime(year, m + 1, 1, tzinfo=timezone.utc)
+            xp = await db.scalar(select(func.coalesce(func.sum(XPEvent.xp), 0)).where(
+                XPEvent.user_id == current_user.id, XPEvent.created_at >= start, XPEvent.created_at < end
+            )) or 0
+            done = await db.scalar(select(func.count(UserAnimeList.id)).where(
+                UserAnimeList.user_id == current_user.id,
+                UserAnimeList.status.ilike("completed"),
+                UserAnimeList.completed_at >= start,
+                UserAnimeList.completed_at < end,
+            )) or 0
+            months.append({"month": m, "xp": int(xp), "completed": int(done)})
+        return months
+
+    valid_sections = {"yearly", "monthly", "rewards", "notes", "progress", "store", "profile"}
+    if section:
+        if section not in valid_sections:
+            raise HTTPException(status_code=400, detail=f"Unknown dashboard section: {section}")
+
+        if section == "yearly":
+            data = {"year": year, "yearly_goals": await build_section_goals("yearly")}
+        elif section == "monthly":
+            data = {"year": year, "month": month, "monthly_challenges": await build_section_goals("monthly")}
+        elif section == "rewards":
+            data = {"rewards": [
+                {"title": "Anime Starter", "requirement": "Complete 5 anime", "required": 5, "current": metrics["completed_year"], "xp": 75},
+                {"title": "The Veteran", "requirement": "Complete 50 anime", "required": 50, "current": metrics["completed_year"], "xp": 500},
+                {"title": "Episode Hunter", "requirement": "Watch 1000 episodes", "required": 1000, "current": metrics["episodes"], "xp": 750},
+                {"title": "XP Ascension", "requirement": "Earn 5000 XP", "required": 5000, "current": int(current_user.xp_points or 0), "xp": 500},
+            ]}
+        elif section == "notes":
+            notes = (await db.execute(select(GoalNote).where(GoalNote.user_id == current_user.id).order_by(GoalNote.created_at.desc()).limit(20))).scalars().all()
+            data = {"notes": [{"id": str(n.id), "note": n.note, "created_at": n.created_at.isoformat()} for n in notes]}
+        elif section == "progress":
+            data = {"year": year, "months": await build_months()}
+        else:
+            level = level_for_xp(current_user.xp_points)
+            user_data = {"id": current_user.id, "username": current_user.username, "avatar": current_user.avatar_seed, "xp": int(current_user.xp_points or 0), "level": level}
+            if section == "store":
+                data = {"store": {"xp": int(current_user.xp_points or 0), "level": level["level"]}}
+            else:
+                data = {"user": user_data}
+
+        await db.commit()
+        return data
+    yearly_defs = (await db.execute(select(GoalDefinition).where(GoalDefinition.year == year, GoalDefinition.kind == "yearly").order_by(GoalDefinition.sort_order))).scalars().all()
+    monthly_defs = (await db.execute(select(GoalDefinition).where(GoalDefinition.year == year, GoalDefinition.kind == "monthly").order_by(GoalDefinition.sort_order))).scalars().all()
+
+    async def build_goals(defs, period_key):
+        result = []
+        for d in defs:
+            if d.kind == "yearly":
+                if d.metric == "completed_anime": current = metrics["completed_year"]
+                elif d.metric == "episodes": current = metrics["episodes"]
+                elif d.metric == "xp": current = int(current_user.xp_points or 0)
+                else: current = 0
+            else:
+                if d.metric == "monthly_completed": current = metrics["completed_month"]
+                elif d.metric == "monthly_episodes": current = await db.scalar(select(func.coalesce(func.sum(WatchHistory.episodes_count), 0)).where(WatchHistory.user_id == current_user.id, WatchHistory.activity_date >= date(year, month, 1))) or 0
+                elif d.metric == "monthly_xp": current = metrics["month_xp"]
+                else: current = 0
+            current = int(current)
+            period = str(year) if d.kind == "yearly" else f"{year}-{month:02d}"
+            if current >= d.target:
+                ug = await db.scalar(select(UserGoal).where(UserGoal.user_id == current_user.id, UserGoal.goal_id == d.id, UserGoal.period_key == period))
+                if not ug or not ug.completed:
+                    if not ug:
+                        db.add(UserGoal(user_id=current_user.id, goal_id=d.id, period_key=period, completed=True, completed_at=datetime.now(timezone.utc)))
+                    else:
+                        ug.completed = True; ug.completed_at = datetime.now(timezone.utc)
+                    await award_xp(db, current_user, d.reward_xp, "goal_completion", f"{d.id}:{period}")
+            result.append({"id": d.id, "title": d.title, "icon": d.icon, "metric": d.metric, "target": d.target, "current": current, "progress": min(100, int(current / max(1, d.target) * 100)), "reward_xp": d.reward_xp})
+        return result
+
+    yearly = await build_goals(yearly_defs, str(year))
+    monthly = await build_goals(monthly_defs, f"{year}-{month:02d}")
+    # Only three active goals are exposed. Completed goals naturally drop out and the next catalog entries replace them.
+    yearly = sorted(yearly, key=lambda x: (x["current"] >= x["target"], x["id"]))[:3]
+    monthly = sorted(monthly, key=lambda x: (x["current"] >= x["target"], x["id"]))[:4]
+
+    months = []
+    for m in range(1, 13):
+        start = datetime(year, m, 1, tzinfo=timezone.utc)
+        end = datetime(year + 1, 1, 1, tzinfo=timezone.utc) if m == 12 else datetime(year, m + 1, 1, tzinfo=timezone.utc)
+        xp = await db.scalar(select(func.coalesce(func.sum(XPEvent.xp), 0)).where(XPEvent.user_id == current_user.id, XPEvent.created_at >= start, XPEvent.created_at < end)) or 0
+        done = await db.scalar(select(func.count(UserAnimeList.id)).where(UserAnimeList.user_id == current_user.id, UserAnimeList.status.ilike("completed"), UserAnimeList.completed_at >= start, UserAnimeList.completed_at < end)) or 0
+        months.append({"month": m, "xp": int(xp), "completed": int(done)})
+
+    notes = (await db.execute(select(GoalNote).where(GoalNote.user_id == current_user.id).order_by(GoalNote.created_at.desc()).limit(20))).scalars().all()
+    rewards = [
+        {"title": "Anime Starter", "requirement": "Complete 5 anime", "required": 5, "current": metrics["completed_year"], "xp": 75},
+        {"title": "The Veteran", "requirement": "Complete 50 anime", "required": 50, "current": metrics["completed_year"], "xp": 500},
+        {"title": "Episode Hunter", "requirement": "Watch 1000 episodes", "required": 1000, "current": metrics["episodes"], "xp": 750},
+        {"title": "XP Ascension", "requirement": "Earn 5000 XP", "required": 5000, "current": int(current_user.xp_points or 0), "xp": 500},
+    ]
+    await db.commit()
+    level = level_for_xp(current_user.xp_points)
+    return {"year": year, "month": month, "user": {"id": current_user.id, "username": current_user.username, "avatar": current_user.avatar_seed, "xp": int(current_user.xp_points or 0), "level": level}, "yearly_goals": yearly, "monthly_challenges": monthly, "rewards": rewards, "notes": [{"id": str(n.id), "note": n.note, "created_at": n.created_at.isoformat()} for n in notes], "months": months, "store": {"xp": int(current_user.xp_points or 0), "level": level["level"]}, "metrics": metrics}
+
+
+@app.post("/api/goals/notes")
+async def create_goal_note(payload: GoalNoteRequest, current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    note = payload.note.strip()
+    if not note: raise HTTPException(status_code=400, detail="Note cannot be empty")
+    item = GoalNote(user_id=current_user.id, note=note)
+    db.add(item); await db.commit(); await db.refresh(item)
+    return {"id": str(item.id), "note": item.note, "created_at": item.created_at.isoformat()}
+
+
+@app.delete("/api/goals/notes/{note_id}")
+async def delete_goal_note(note_id: str, current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    await db.execute(sql_delete(GoalNote).where(GoalNote.id == uuid.UUID(note_id), GoalNote.user_id == current_user.id))
+    await db.commit()
+    return {"message": "Note deleted"}
+
+
+@app.post("/api/goals/complete")
+async def complete_goal(payload: GoalActionRequest, current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    goal = await db.scalar(select(GoalDefinition).where(GoalDefinition.id == payload.goal_id))
+    if not goal: raise HTTPException(status_code=404, detail="Goal not found")
+    now = datetime.now(timezone.utc)
+    metrics = await goal_metrics(db, current_user.id, now.year, now.month)
+    if goal.metric == "completed_anime": current = metrics["completed_year"]
+    elif goal.metric == "episodes": current = metrics["episodes"]
+    elif goal.metric == "xp": current = int(current_user.xp_points or 0)
+    elif goal.metric == "monthly_completed": current = metrics["completed_month"]
+    elif goal.metric == "monthly_xp": current = metrics["month_xp"]
+    elif goal.metric == "monthly_episodes": current = await db.scalar(select(func.coalesce(func.sum(WatchHistory.episodes_count), 0)).where(WatchHistory.user_id == current_user.id, WatchHistory.activity_date >= date(now.year, now.month, 1))) or 0
+    else: current = 0
+    if int(current) < int(goal.target):
+        raise HTTPException(status_code=409, detail=f"Goal is not complete yet: {current}/{goal.target}")
+    period = str(now.year) if goal.kind == "yearly" else f"{now.year}-{now.month:02d}"
+    existing = await db.scalar(select(UserGoal).where(UserGoal.user_id == current_user.id, UserGoal.goal_id == goal.id, UserGoal.period_key == period))
+    if not existing:
+        existing = UserGoal(user_id=current_user.id, goal_id=goal.id, period_key=period, completed=True, completed_at=now); db.add(existing)
+    else:
+        existing.completed = True; existing.completed_at = now
+    gained = await award_xp(db, current_user, goal.reward_xp, "goal_completion", f"{goal.id}:{period}")
+    await db.commit()
+    return {"message": "Goal completed", "xp_earned": gained, "xp": current_user.xp_points, "level": level_for_xp(current_user.xp_points)}
+
+
 @app.get("/api/anime/source-url")
 async def get_anime_source_url(
     current_user: User = Depends(get_current_user),
@@ -966,14 +1355,9 @@ async def submit_watch_activity(
 
     user_uuid = uuid.uuid5(uuid.NAMESPACE_DNS, str(current_user.id))
 
-    await db.execute(
-        sql_delete(DailyWatchActivity).where(
-            DailyWatchActivity.user_id == user_uuid
-        )
-    )
-
     primary_anime_id = fetched_anime_list[0].get("id") if fetched_anime_list else "unknown"
 
+    # Keep a real history row for analytics; DailyWatchActivity remains a lightweight preference record.
     activity = DailyWatchActivity(
         user_id=user_uuid,
         anime_id=str(primary_anime_id),
@@ -984,11 +1368,23 @@ async def submit_watch_activity(
     )
 
     db.add(activity)
+    history = WatchHistory(
+        user_id=current_user.id,
+        anime_id=str(primary_anime_id),
+        episodes_count=max(1, int(payload.episodes_count or 1)),
+        xp_earned=0,
+        activity_date=parsed_date,
+    )
+    db.add(history)
+    await db.flush()
+    gained = await award_xp(db, current_user, max(1, int(payload.episodes_count or 1)) * 10, "episode_watch", str(history.id))
+    history.xp_earned = gained
     await db.commit()
 
     return {
         "message": "Watch activity stored successfully",
         "activity_id": str(activity.id),
+        "xp_earned": gained,
         "data": fetched_anime_list,
         "included": included_list,
     }
@@ -1303,9 +1699,45 @@ async def add_to_watchlist(
         current_user.updated_at = now
 
     db.add(new_watchlist_item)
+    await db.flush()
+    initial_eps = max(0, int(payload.episodes_watched or 0))
+    gained = 0
+    if initial_eps:
+        gained += await award_xp(db, current_user, initial_eps * 10, "watchlist_initial_episodes", watchlist_id)
+    if str(payload.status).lower() == "completed":
+        gained += await award_xp(db, current_user, 50, "anime_completion", watchlist_id)
     await db.commit()
 
-    return {"message": "Anime added to watchlist successfully", "id": watchlist_id}
+    return {"message": "Anime added to watchlist successfully", "id": watchlist_id, "xp_earned": gained, "xp": current_user.xp_points, "level": level_for_xp(current_user.xp_points)}
+
+
+@app.put("/api/user/watchlist/{watchlist_id}")
+async def update_watchlist_item(watchlist_id: str, payload: WatchlistAddRequest, current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    item = await db.scalar(select(UserAnimeList).where(UserAnimeList.id == watchlist_id, UserAnimeList.user_id == current_user.id))
+    if not item: raise HTTPException(status_code=404, detail="Watchlist item not found")
+    now = datetime.now(timezone.utc)
+    old_eps = int(item.episodes_watched or 0)
+    new_eps = max(0, int(payload.episodes_watched or 0))
+    gained = 0
+    if new_eps > old_eps:
+        delta = new_eps - old_eps
+        gained += await award_xp(db, current_user, delta * 10, "episode_progress", f"{watchlist_id}:{new_eps}")
+        db.add(WatchHistory(user_id=current_user.id, anime_id=item.anime_id, episodes_count=delta, xp_earned=delta * 10, activity_date=now.date()))
+    old_status = str(item.status).lower()
+    new_status = str(payload.status)
+    item.status = new_status
+    item.episodes_watched = new_eps
+    item.score = payload.score
+    item.priority = payload.priority
+    item.notes = payload.notes
+    item.is_favorite = payload.is_favorite
+    item.started_at = payload.started_at or item.started_at
+    item.completed_at = payload.completed_at or (now if new_status.lower() == "completed" and old_status != "completed" else item.completed_at)
+    item.updated_at = now
+    if new_status.lower() == "completed" and old_status != "completed":
+        gained += await award_xp(db, current_user, 50, "anime_completion", watchlist_id)
+    await db.commit(); await db.refresh(current_user)
+    return {"message": "Watchlist updated", "xp_earned": gained, "xp": current_user.xp_points, "level": level_for_xp(current_user.xp_points)}
 
 
 @app.get("/api/anime/new-releases")
@@ -1503,7 +1935,7 @@ async def get_anime_full_details(anime_id: str):
 @app.get("/api/anime/{anime_id}/episodes")
 async def get_anime_episodes(
     anime_id: str,
-    limit: int = Query(50, ge=1, le=100),
+    limit: int = Query(20, ge=1, le=20),
     offset: int = Query(0, ge=0),
 ):
     headers = {

@@ -64,6 +64,164 @@
       object-fit: cover;
     }
 
+    /* ---------------- GLOBAL SKELETON LOADING ---------------- */
+    .skeleton {
+      position: relative;
+      overflow: hidden;
+      color: transparent !important;
+      background: linear-gradient(90deg, rgba(31, 33, 47, .75) 25%, rgba(55, 48, 70, .95) 50%, rgba(31, 33, 47, .75) 75%) !important;
+      background-size: 220% 100% !important;
+      animation: anilogSkeleton 1.35s ease-in-out infinite;
+      border-color: rgba(157, 44, 255, .18) !important;
+    }
+
+    .skeleton * {
+      visibility: hidden;
+    }
+
+    .anilog-data-skeleton {
+      min-width: 100%;
+      pointer-events: none;
+    }
+
+    .anilog-section-error {
+      padding: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+    }
+
+    @keyframes anilogSkeleton {
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -20% 0;
+      }
+    }
+
+    /* ---------------- GLOBAL NOTIFICATION TOAST ---------------- */
+    #anilog-toast-container {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(430px, calc(100vw - 28px));
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 100000;
+      pointer-events: none;
+    }
+
+    .anilog-toast {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 50px;
+      padding: 12px 13px;
+      border: 1px solid rgba(157, 44, 255, .7);
+      border-radius: 9px;
+      background: rgba(10, 11, 20, .97);
+      box-shadow: 0 14px 35px rgba(0, 0, 0, .5), 0 0 22px rgba(157, 44, 255, .13);
+      color: var(--text);
+      font-size: 12px;
+      animation: toastIn .24s ease forwards;
+      pointer-events: auto;
+      backdrop-filter: blur(12px);
+    }
+
+    .anilog-toast.success {
+      border-color: rgba(76, 220, 139, .65);
+    }
+
+    .anilog-toast.error {
+      border-color: rgba(255, 45, 99, .72);
+    }
+
+    .anilog-toast.warning {
+      border-color: rgba(255, 184, 77, .72);
+    }
+
+    .anilog-toast.info {
+      border-color: rgba(195, 76, 255, .65);
+    }
+
+    .anilog-toast>.material-symbols-outlined {
+      color: var(--purple2);
+      font-size: 21px;
+      flex: 0 0 auto;
+    }
+
+    .anilog-toast.success>.material-symbols-outlined {
+      color: #4cdc8b;
+    }
+
+    .anilog-toast.error>.material-symbols-outlined {
+      color: var(--danger);
+    }
+
+    .anilog-toast.warning>.material-symbols-outlined {
+      color: #ffb84d;
+    }
+
+    .anilog-toast-message {
+      flex: 1;
+      line-height: 1.4;
+    }
+
+    .anilog-toast-close {
+      width: 25px;
+      height: 25px;
+      border-radius: 5px;
+      color: #aaa5b3;
+      font-size: 20px;
+      line-height: 1;
+      flex: 0 0 auto;
+    }
+
+    .anilog-toast-close:hover {
+      background: rgba(255, 255, 255, .08);
+      color: #fff;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(-12px) scale(.98);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes toastOut {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      to {
+        opacity: 0;
+        transform: translateY(-8px) scale(.98);
+      }
+    }
+
+    .dropdown-panel .dropdown-item[data-action] {
+      position: relative;
+    }
+
+    .dropdown-item .toggle-state {
+      margin-left: auto;
+      font-size: 9px;
+      color: var(--muted);
+    }
+
     /* ---------------- PRELOADER OVERLAY ---------------- */
     #preloader {
       position: fixed;
@@ -182,6 +340,7 @@
         transform: translateX(-100%);
         opacity: 0;
       }
+
       to {
         transform: translateX(0);
         opacity: 1;
@@ -197,20 +356,61 @@
       animation: navItemSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    body.loaded .side-link:nth-child(1) { animation-delay: 0.15s; }
-    body.loaded .side-link:nth-child(2) { animation-delay: 0.20s; }
-    body.loaded .side-link:nth-child(3) { animation-delay: 0.25s; }
-    body.loaded .side-link:nth-child(4) { animation-delay: 0.30s; }
-    body.loaded .side-link:nth-child(5) { animation-delay: 0.35s; }
-    body.loaded .side-link:nth-child(6) { animation-delay: 0.40s; }
-    body.loaded .side-link:nth-child(7) { animation-delay: 0.45s; }
-    body.loaded .side-link:nth-child(8) { animation-delay: 0.50s; }
-    body.loaded .side-link:nth-child(9) { animation-delay: 0.55s; }
-    body.loaded .side-link:nth-child(10) { animation-delay: 0.60s; }
-    body.loaded .side-link:nth-child(11) { animation-delay: 0.65s; }
-    body.loaded .side-link:nth-child(12) { animation-delay: 0.70s; }
-    body.loaded .side-link:nth-child(13) { animation-delay: 0.75s; }
-    body.loaded .side-link:nth-child(14) { animation-delay: 0.80s; }
+    body.loaded .side-link:nth-child(1) {
+      animation-delay: 0.15s;
+    }
+
+    body.loaded .side-link:nth-child(2) {
+      animation-delay: 0.20s;
+    }
+
+    body.loaded .side-link:nth-child(3) {
+      animation-delay: 0.25s;
+    }
+
+    body.loaded .side-link:nth-child(4) {
+      animation-delay: 0.30s;
+    }
+
+    body.loaded .side-link:nth-child(5) {
+      animation-delay: 0.35s;
+    }
+
+    body.loaded .side-link:nth-child(6) {
+      animation-delay: 0.40s;
+    }
+
+    body.loaded .side-link:nth-child(7) {
+      animation-delay: 0.45s;
+    }
+
+    body.loaded .side-link:nth-child(8) {
+      animation-delay: 0.50s;
+    }
+
+    body.loaded .side-link:nth-child(9) {
+      animation-delay: 0.55s;
+    }
+
+    body.loaded .side-link:nth-child(10) {
+      animation-delay: 0.60s;
+    }
+
+    body.loaded .side-link:nth-child(11) {
+      animation-delay: 0.65s;
+    }
+
+    body.loaded .side-link:nth-child(12) {
+      animation-delay: 0.70s;
+    }
+
+    body.loaded .side-link:nth-child(13) {
+      animation-delay: 0.75s;
+    }
+
+    body.loaded .side-link:nth-child(14) {
+      animation-delay: 0.80s;
+    }
 
     @keyframes navItemSlideIn {
       to {
@@ -247,13 +447,28 @@
     }
 
     @keyframes typingLoop {
-      0%, 100% { width: 0; }
-      30%, 70% { width: 6.2ch; }
+
+      0%,
+      100% {
+        width: 0;
+      }
+
+      30%,
+      70% {
+        width: 6.2ch;
+      }
     }
 
     @keyframes blinkCursor {
-      from, to { border-color: transparent; }
-      50% { border-color: #c65cff; }
+
+      from,
+      to {
+        border-color: transparent;
+      }
+
+      50% {
+        border-color: #c65cff;
+      }
     }
 
     .brand-sub {
@@ -324,6 +539,7 @@
         opacity: 0;
         transform: rotateY(-180deg);
       }
+
       to {
         opacity: 1;
         transform: rotateY(0deg);
@@ -420,10 +636,12 @@
         opacity: 0;
         clip-path: circle(0px at 50% 50%);
       }
+
       10% {
         opacity: 1;
         clip-path: circle(12px at 50% 50%);
       }
+
       100% {
         opacity: 1;
         clip-path: none;
@@ -522,8 +740,13 @@
     }
 
     @keyframes topActionsFadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
 
     .top-action-wrap {
@@ -646,9 +869,25 @@
       align-items: center;
       margin-top: 10px;
     }
-    .titlebar h1 { margin: 0; font-size: 28px; line-height: 1; font-weight: 700; letter-spacing: -.7px; }
-    .title-icons { display: flex; gap: 14px; margin-left: 12px; }
-    .title-icons .material-symbols-outlined { font-size: 24px; color: var(--purple2); }
+
+    .titlebar h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: -.7px;
+    }
+
+    .title-icons {
+      display: flex;
+      gap: 14px;
+      margin-left: 12px;
+    }
+
+    .title-icons .material-symbols-outlined {
+      font-size: 24px;
+      color: var(--purple2);
+    }
 
     .dashboard {
       display: grid;
@@ -656,7 +895,14 @@
       gap: 10px;
       margin-top: 10px;
     }
-    .col { display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+
+    .col {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      min-width: 0;
+    }
+
     .panel {
       border: 1px solid rgba(114, 54, 164, .68);
       border-radius: 10px;
@@ -664,124 +910,537 @@
       box-shadow: 0 0 18px rgba(87, 29, 139, .08), inset 0 0 20px rgba(105, 35, 160, .045);
       overflow: hidden;
     }
-    .panel-title {
-      height: 40px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between;
-      font-size: 15px; font-weight: 600; border-bottom: 1px solid rgba(116, 67, 158, .18);
-    }
-    .panel-title .right { font-size: 12px; color: #a770ce; font-weight: 400; }
-    .panel-title .icon { width: 17px; height: 17px; margin-right: 7px; display: inline-block; vertical-align: middle; }
-    .panel-title-left { display: flex; align-items: center; }
 
-    .yearly { height: 236px; }
-    .goal-list { padding: 8px; }
+    .panel-title {
+      height: 40px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 15px;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(116, 67, 158, .18);
+    }
+
+    .panel-title .right {
+      font-size: 12px;
+      color: #a770ce;
+      font-weight: 400;
+    }
+
+    .panel-title .icon {
+      width: 17px;
+      height: 17px;
+      margin-right: 7px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .panel-title-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .yearly {
+      height: 236px;
+    }
+
+    .goal-list {
+      padding: 8px;
+    }
+
     .goal {
-      min-height: 48px; margin-bottom: 7px; border: 1px solid rgba(120, 57, 169, .55); border-radius: 8px;
+      min-height: 48px;
+      margin-bottom: 7px;
+      border: 1px solid rgba(120, 57, 169, .55);
+      border-radius: 8px;
       background: linear-gradient(120deg, rgba(45, 23, 62, .72), rgba(17, 17, 28, .84));
       padding: 9px 10px 7px;
     }
-    .goal:last-child { margin-bottom: 0; }
-    .goal-line { display: flex; align-items: center; gap: 9px; font-size: 13px; }
-    .goal-line .material-symbols-outlined { font-size: 18px; color: var(--purple2); }
-    .progress-bar-custom { height: 6px; border-radius: 8px; background: #2a2b35; margin: 6px 0 0 33px; overflow: hidden; }
-    .progress-bar-custom span { height: 100%; display: block; background: linear-gradient(90deg,#9c35f5,#7d27ce); border-radius: 8px; }
-    .checks { font-size: 11px; color: #bdb7c5; margin: 5px 0 0 33px; line-height: 16px; }
-    .checks b { color: #b63ff4; font-size: 15px; margin-right: 5px; }
 
-    .rewards { height: 226px; }
-    .reward-body { padding: 8px; }
+    .goal:last-child {
+      margin-bottom: 0;
+    }
+
+    .goal-line {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 13px;
+    }
+
+    .goal-line .material-symbols-outlined {
+      font-size: 18px;
+      color: var(--purple2);
+    }
+
+    .progress-bar-custom {
+      height: 6px;
+      border-radius: 8px;
+      background: #2a2b35;
+      margin: 6px 0 0 33px;
+      overflow: hidden;
+    }
+
+    .progress-bar-custom span {
+      height: 100%;
+      display: block;
+      background: linear-gradient(90deg, #9c35f5, #7d27ce);
+      border-radius: 8px;
+    }
+
+    .checks {
+      font-size: 11px;
+      color: #bdb7c5;
+      margin: 5px 0 0 33px;
+      line-height: 16px;
+    }
+
+    .checks b {
+      color: #b63ff4;
+      font-size: 15px;
+      margin-right: 5px;
+    }
+
+    .rewards {
+      height: 226px;
+    }
+
+    .reward-body {
+      padding: 8px;
+    }
+
     .reward {
-      height: 57px; border: 1px solid rgba(120, 57, 169, .5); border-radius: 8px; margin-bottom: 7px;
-      background: rgba(33, 23, 47, .7); display: flex; align-items: center; padding: 7px 9px; gap: 10px;
+      height: 57px;
+      border: 1px solid rgba(120, 57, 169, .5);
+      border-radius: 8px;
+      margin-bottom: 7px;
+      background: rgba(33, 23, 47, .7);
+      display: flex;
+      align-items: center;
+      padding: 7px 9px;
+      gap: 10px;
     }
-    .reward img { width: 48px; height: 43px; border-radius: 6px; border: 1px solid #6e3c8c; object-fit: cover; }
-    .reward strong { font-size: 13px; font-weight: 400; display: block; }
-    .reward span { font-size: 10px; color: #b4adbb; display: block; margin-top: 3px; }
-    .reward:last-child { margin-bottom: 0; }
-    .reward.simple { display: block; padding: 8px 10px; height: auto; }
-    .reward.simple strong { font-size: 13px; }
-    .reward.simple .progress-bar-custom { margin-left: 0; margin-top: 7px; }
 
-    .monthly-top { height: 146px; }
-    .challenge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px; }
+    .reward img {
+      width: 48px;
+      height: 43px;
+      border-radius: 6px;
+      border: 1px solid #6e3c8c;
+      object-fit: cover;
+    }
+
+    .reward strong {
+      font-size: 13px;
+      font-weight: 400;
+      display: block;
+    }
+
+    .reward span {
+      font-size: 10px;
+      color: #b4adbb;
+      display: block;
+      margin-top: 3px;
+    }
+
+    .reward:last-child {
+      margin-bottom: 0;
+    }
+
+    .reward.simple {
+      display: block;
+      padding: 8px 10px;
+      height: auto;
+    }
+
+    .reward.simple strong {
+      font-size: 13px;
+    }
+
+    .reward.simple .progress-bar-custom {
+      margin-left: 0;
+      margin-top: 7px;
+    }
+
+    .monthly-top {
+      height: 146px;
+    }
+
+    .challenge-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 8px;
+    }
+
     .challenge {
-      height: 100px; border: 1px solid rgba(117, 56, 165, .56); border-radius: 9px;
+      height: 100px;
+      border: 1px solid rgba(117, 56, 165, .56);
+      border-radius: 9px;
       background: linear-gradient(120deg, rgba(43, 22, 62, .76), rgba(15, 16, 28, .88));
-      padding: 10px; position: relative; overflow: hidden;
+      padding: 10px;
+      position: relative;
+      overflow: hidden;
     }
-    .challenge .material-symbols-outlined { font-size: 24px; float: left; margin-right: 8px; color: var(--purple2); }
-    .challenge strong { font-size: 13px; font-weight: 400; display: block; line-height: 16px; }
-    .challenge .done { font-size: 11px; color: #9c47d7; margin-top: 2px; }
-    .challenge small { display: block; font-size: 9px; color: #aaa; margin-top: 4px; line-height: 13px; }
 
-    .tracker { height: 190px; }
-    .tracker-body { padding: 8px 10px; position: relative; height: 149px; }
-    .chart-title { font-size: 13px; margin-bottom: 5px; color: #d5cfe0; }
+    .challenge .material-symbols-outlined {
+      font-size: 24px;
+      float: left;
+      margin-right: 8px;
+      color: var(--purple2);
+    }
+
+    .challenge strong {
+      font-size: 13px;
+      font-weight: 400;
+      display: block;
+      line-height: 16px;
+    }
+
+    .challenge .done {
+      font-size: 11px;
+      color: #9c47d7;
+      margin-top: 2px;
+    }
+
+    .challenge small {
+      display: block;
+      font-size: 9px;
+      color: #aaa;
+      margin-top: 4px;
+      line-height: 13px;
+    }
+
+    .tracker {
+      height: 190px;
+    }
+
+    .tracker-body {
+      padding: 8px 10px;
+      position: relative;
+      height: 149px;
+    }
+
+    .chart-title {
+      font-size: 13px;
+      margin-bottom: 5px;
+      color: #d5cfe0;
+    }
+
     .chart {
-      position: absolute; left: 10px; right: 92px; top: 37px; bottom: 12px;
-      border-left: 1px solid #45414e; border-bottom: 1px solid #45414e;
+      position: absolute;
+      left: 10px;
+      right: 92px;
+      top: 37px;
+      bottom: 12px;
+      border-left: 1px solid #45414e;
+      border-bottom: 1px solid #45414e;
       background:
-        repeating-linear-gradient(to top,transparent 0 27px,rgba(160,153,173,.12) 28px),
-        linear-gradient(180deg,rgba(146,45,220,.28),rgba(75,24,111,.08));
-      clip-path: polygon(0 100%,0 72%,10% 62%,18% 68%,27% 45%,39% 35%,50% 31%,60% 21%,70% 14%,80% 4%,90% 0,100% 0,100% 100%);
+        repeating-linear-gradient(to top, transparent 0 27px, rgba(160, 153, 173, .12) 28px),
+        linear-gradient(180deg, rgba(146, 45, 220, .28), rgba(75, 24, 111, .08));
+      clip-path: polygon(0 100%, 0 72%, 10% 62%, 18% 68%, 27% 45%, 39% 35%, 50% 31%, 60% 21%, 70% 14%, 80% 4%, 90% 0, 100% 0, 100% 100%);
     }
-    .chart-labels { position: absolute; left: 36px; right: 100px; bottom: 1px; display: flex; justify-content: space-between; font-size: 7px; color: #aaa; }
-    .chart-y { position: absolute; left: 0; top: 37px; bottom: 12px; display: flex; flex-direction: column; justify-content: space-between; font-size: 7px; color: #aaa; }
-    .tracker-art { position: absolute; right: 8px; top: 28px; width: 83px; height: 120px; background: url("./pc-bg.png") center/contain no-repeat; opacity: .6; }
 
-    .small-charts { height: 128px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 9px; background: transparent; border: 0; box-shadow: none; overflow: visible; }
-    .mini { height: 128px; }
-    .bar-chart { height: 84px; padding: 4px 8px 7px; display: flex; align-items: flex-end; gap: 8px; border-bottom: 1px solid #413d49; margin: 0 8px; }
-    .bar { width: 14px; background: #9140d1; min-height: 5px; border-radius: 2px 2px 0 0; }
-    .bar-labels { display: flex; justify-content: space-around; font-size: 7px; color: #aaa; margin: 3px 10px; }
-    .h-bars { padding: 5px 9px; font-size: 9px; color: #bbb; }
-    .hrow { display: flex; align-items: center; margin: 5px 0; gap: 5px; }
-    .hrow span:first-child { width: 90px; font-size: 9px; }
-    .hrow i { display: block; height: 7px; background: #9140d1; border-radius: 2px; }
+    .chart-labels {
+      position: absolute;
+      left: 36px;
+      right: 100px;
+      bottom: 1px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 7px;
+      color: #aaa;
+    }
 
-    .store { height: 121px; }
-    .store-body { height: 80px; display: flex; align-items: center; padding: 8px 8px; gap: 8px; }
-    .earned { width: 115px; }
-    .earned .label { font-size: 12px; color: #b4adbb; }
-    .earned .amount { font-size: 18px; color: #a53ff0; margin-top: 2px; font-weight: 700; }
-    .earned .points { font-size: 11px; color: #bdb6c5; margin-top: 6px; }
-    .store-item { width: 78px; text-align: center; }
-    .store-item img { width: 42px; height: 42px; border: 1px solid #69358c; border-radius: 6px; margin: 0 auto 5px; object-fit: cover; }
-    .store-item span { display: block; font-size: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .store-item small { font-size: 10px; color: #a03de7; }
+    .chart-y {
+      position: absolute;
+      left: 0;
+      top: 37px;
+      bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-size: 7px;
+      color: #aaa;
+    }
 
-    .rightcol .profile-top { height: 98px; }
-    .profile-top-body { display: flex; align-items: center; padding: 10px 16px; gap: 12px; }
-    .profile-top .avatar { width: 47px; height: 47px; }
-    .profile-top .profile-name { font-size: 14px; font-weight: 700; }
-    .profile-top .profile-level { font-size: 11px; color: #aaa; margin-top: 2px; }
-    .month-challenges { height: 337px; }
-    .challenge-stack { padding: 8px; }
+    .tracker-art {
+      position: absolute;
+      right: 8px;
+      top: 28px;
+      width: 83px;
+      height: 120px;
+      background: url("./pc-bg.png") center/contain no-repeat;
+      opacity: .6;
+    }
+
+    .small-charts {
+      height: 128px;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 9px;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      overflow: visible;
+    }
+
+    .mini {
+      height: 128px;
+    }
+
+    .bar-chart {
+      height: 84px;
+      padding: 4px 8px 7px;
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      border-bottom: 1px solid #413d49;
+      margin: 0 8px;
+    }
+
+    .bar {
+      width: 14px;
+      background: #9140d1;
+      min-height: 5px;
+      border-radius: 2px 2px 0 0;
+    }
+
+    .bar-labels {
+      display: flex;
+      justify-content: space-around;
+      font-size: 7px;
+      color: #aaa;
+      margin: 3px 10px;
+    }
+
+    .h-bars {
+      padding: 5px 9px;
+      font-size: 9px;
+      color: #bbb;
+    }
+
+    .hrow {
+      display: flex;
+      align-items: center;
+      margin: 5px 0;
+      gap: 5px;
+    }
+
+    .hrow span:first-child {
+      width: 90px;
+      font-size: 9px;
+    }
+
+    .hrow i {
+      display: block;
+      height: 7px;
+      background: #9140d1;
+      border-radius: 2px;
+    }
+
+    .store {
+      height: 121px;
+    }
+
+    .store-body {
+      height: 80px;
+      display: flex;
+      align-items: center;
+      padding: 8px 8px;
+      gap: 8px;
+    }
+
+    .earned {
+      width: 115px;
+    }
+
+    .earned .label {
+      font-size: 12px;
+      color: #b4adbb;
+    }
+
+    .earned .amount {
+      font-size: 18px;
+      color: #a53ff0;
+      margin-top: 2px;
+      font-weight: 700;
+    }
+
+    .earned .points {
+      font-size: 11px;
+      color: #bdb6c5;
+      margin-top: 6px;
+    }
+
+    .store-item {
+      width: 78px;
+      text-align: center;
+    }
+
+    .store-item img {
+      width: 42px;
+      height: 42px;
+      border: 1px solid #69358c;
+      border-radius: 6px;
+      margin: 0 auto 5px;
+      object-fit: cover;
+    }
+
+    .store-item span {
+      display: block;
+      font-size: 9px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .store-item small {
+      font-size: 10px;
+      color: #a03de7;
+    }
+
+    .rightcol .profile-top {
+      height: 98px;
+    }
+
+    .profile-top-body {
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      gap: 12px;
+    }
+
+    .profile-top .avatar {
+      width: 47px;
+      height: 47px;
+    }
+
+    .profile-top .profile-name {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .profile-top .profile-level {
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 2px;
+    }
+
+    .month-challenges {
+      height: 337px;
+    }
+
+    .challenge-stack {
+      padding: 8px;
+    }
+
     .side-challenge {
-      border: 1px solid rgba(118, 58, 166, .6); border-radius: 8px; background: rgba(36, 24, 47, .72);
-      padding: 10px 10px; margin-bottom: 8px; min-height: 57px; position: relative;
+      border: 1px solid rgba(118, 58, 166, .6);
+      border-radius: 8px;
+      background: rgba(36, 24, 47, .72);
+      padding: 10px 10px;
+      margin-bottom: 8px;
+      min-height: 57px;
+      position: relative;
     }
-    .side-challenge strong { font-size: 13px; font-weight: 400; display: block; line-height: 17px; }
-    .side-challenge .bar { height: 6px; width: 100%; margin-top: 7px; background: #292b35; border-radius: 5px; }
-    .side-challenge .bar i { display: block; height: 100%; width: 77%; background: #9a37e7; border-radius: 5px; }
-    .side-challenge ul { margin: 5px 0 0; padding-left: 15px; color: #bdb6c4; font-size: 11px; line-height: 17px; }
-    .side-challenge li::marker { color: #a33bea; }
-    .side-challenge .chevron { position: absolute; right: 9px; top: 8px; color: #bbb; }
 
-    .notes { height: 282px; }
-    .notes-body { padding: 8px 12px; }
-    .notebook {
-      height: 233px; border: 1px solid rgba(106, 74, 125, .8); border-radius: 8px;
-      background: linear-gradient(180deg, rgba(47, 38, 57, .8), rgba(31, 27, 41, .88));
-      position: relative; padding: 30px 15px 10px; overflow: hidden;
+    .side-challenge strong {
+      font-size: 13px;
+      font-weight: 400;
+      display: block;
+      line-height: 17px;
     }
+
+    .side-challenge .bar {
+      height: 6px;
+      width: 100%;
+      margin-top: 7px;
+      background: #292b35;
+      border-radius: 5px;
+    }
+
+    .side-challenge .bar i {
+      display: block;
+      height: 100%;
+      width: 77%;
+      background: #9a37e7;
+      border-radius: 5px;
+    }
+
+    .side-challenge ul {
+      margin: 5px 0 0;
+      padding-left: 15px;
+      color: #bdb6c4;
+      font-size: 11px;
+      line-height: 17px;
+    }
+
+    .side-challenge li::marker {
+      color: #a33bea;
+    }
+
+    .side-challenge .chevron {
+      position: absolute;
+      right: 9px;
+      top: 8px;
+      color: #bbb;
+    }
+
+    .notes {
+      height: 282px;
+    }
+
+    .notes-body {
+      padding: 8px 12px;
+    }
+
+    .notebook {
+      height: 233px;
+      border: 1px solid rgba(106, 74, 125, .8);
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(47, 38, 57, .8), rgba(31, 27, 41, .88));
+      position: relative;
+      padding: 30px 15px 10px;
+      overflow: hidden;
+    }
+
     .notebook:before {
-      content: ""; position: absolute; left: 0; right: 0; top: 0; height: 27px;
-      background: repeating-linear-gradient(90deg,transparent 0 18px,#6d5c78 19px 22px,transparent 23px 36px);
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 27px;
+      background: repeating-linear-gradient(90deg, transparent 0 18px, #6d5c78 19px 22px, transparent 23px 36px);
       opacity: .8;
     }
-    .note { font-size: 12px; font-style: italic; color: #eee; line-height: 17px; border-bottom: 1px solid rgba(185, 169, 196, .25); padding: 6px 0; }
-    .note:before { content: "•"; color: #a03ce8; font-size: 20px; margin-right: 8px; }
-    .pen { position: absolute; right: 10px; bottom: 8px; width: 48px; height: 48px; background: url("./pc-bg.png") center/contain no-repeat; opacity: .5; }
+
+    .note {
+      font-size: 12px;
+      font-style: italic;
+      color: #eee;
+      line-height: 17px;
+      border-bottom: 1px solid rgba(185, 169, 196, .25);
+      padding: 6px 0;
+    }
+
+    .note:before {
+      content: "•";
+      color: #a03ce8;
+      font-size: 20px;
+      margin-right: 8px;
+    }
+
+    .pen {
+      position: absolute;
+      right: 10px;
+      bottom: 8px;
+      width: 48px;
+      height: 48px;
+      background: url("./pc-bg.png") center/contain no-repeat;
+      opacity: .5;
+    }
 
     /* ---------------- MOBILE LAYOUT ---------------- */
 
@@ -793,11 +1452,13 @@
       .desktop-page {
         display: none;
       }
+
       .mobile-page {
         display: block;
         min-height: 100vh;
         background: #05060c;
       }
+
       .mobile-shell {
         position: relative;
         min-height: 100vh;
@@ -805,6 +1466,7 @@
         overflow: hidden;
         background: radial-gradient(circle at 65% 13%, rgba(96, 24, 154, .16), transparent 28%), #05060c;
       }
+
       .mobile-topbar {
         height: 69px;
         padding: 17px 16px 7px;
@@ -815,22 +1477,27 @@
         position: relative;
         z-index: 100;
       }
+
       .mobile-brand {
         margin: auto;
         display: flex;
         align-items: center;
         gap: 6px;
       }
+
       .mobile-brand img {
         width: 31px;
         height: 31px;
       }
+
       .mobile-brand .brand-name {
         font-size: 17px;
       }
+
       .mobile-brand .brand-sub {
         font-size: 6px;
       }
+
       .mobile-search-bar {
         display: none;
         padding: 10px 16px;
@@ -838,9 +1505,11 @@
         border-bottom: 1px solid var(--border);
         position: relative;
       }
+
       .mobile-search-bar.active {
         display: block;
       }
+
       .mobile-search-input-wrap {
         display: flex;
         align-items: center;
@@ -849,6 +1518,7 @@
         border-radius: 20px;
         padding: 6px 12px;
       }
+
       .mobile-search-input-wrap input {
         width: 100%;
         background: transparent;
@@ -857,20 +1527,24 @@
         color: var(--text);
         font-size: 13px;
       }
+
       .mobile-content {
         padding: 14px 13px 0;
       }
+
       .mobile-title {
         font-size: 22px;
         font-weight: 700;
         margin-bottom: 12px;
       }
+
       .mobile-title .material-symbols-outlined {
         font-size: 24px;
         color: var(--purple2);
         vertical-align: middle;
         margin-left: 8px;
       }
+
       .m-panel {
         border: 1px solid rgba(114, 54, 164, .68);
         border-radius: 10px;
@@ -878,33 +1552,112 @@
         overflow: hidden;
         margin-bottom: 10px;
       }
+
       .m-panel-title {
-        height: 38px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between;
-        font-size: 14px; font-weight: 600; border-bottom: 1px solid rgba(116, 67, 158, .18);
+        height: 38px;
+        padding: 0 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 14px;
+        font-weight: 600;
+        border-bottom: 1px solid rgba(116, 67, 158, .18);
       }
-      .m-panel-title .right { font-size: 11px; color: #a770ce; font-weight: 400; }
-      .m-goal-list { padding: 8px; }
+
+      .m-panel-title .right {
+        font-size: 11px;
+        color: #a770ce;
+        font-weight: 400;
+      }
+
+      .m-goal-list {
+        padding: 8px;
+      }
+
       .m-goal {
-        min-height: 40px; margin-bottom: 6px; border: 1px solid rgba(120, 57, 169, .55); border-radius: 8px;
+        min-height: 40px;
+        margin-bottom: 6px;
+        border: 1px solid rgba(120, 57, 169, .55);
+        border-radius: 8px;
         background: linear-gradient(120deg, rgba(45, 23, 62, .72), rgba(17, 17, 28, .84));
         padding: 8px 10px 6px;
       }
-      .m-goal:last-child { margin-bottom: 0; }
-      .m-goal-line { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-      .m-goal-line .material-symbols-outlined { font-size: 16px; color: var(--purple2); }
-      .m-progress { height: 5px; border-radius: 8px; background: #2a2b35; margin: 5px 0 0 30px; overflow: hidden; }
-      .m-progress span { height: 100%; display: block; background: linear-gradient(90deg,#9c35f5,#7d27ce); border-radius: 8px; }
 
-      .m-challenge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 8px; }
-      .m-challenge {
-        height: 85px; border: 1px solid rgba(117, 56, 165, .56); border-radius: 9px;
-        background: linear-gradient(120deg, rgba(43, 22, 62, .76), rgba(15, 16, 28, .88));
-        padding: 8px; position: relative; overflow: hidden;
+      .m-goal:last-child {
+        margin-bottom: 0;
       }
-      .m-challenge .material-symbols-outlined { font-size: 20px; float: left; margin-right: 6px; color: var(--purple2); }
-      .m-challenge strong { font-size: 11px; font-weight: 400; display: block; line-height: 14px; }
-      .m-challenge .done { font-size: 10px; color: #9c47d7; margin-top: 2px; }
-      .m-challenge small { display: block; font-size: 8px; color: #aaa; margin-top: 3px; line-height: 11px; }
+
+      .m-goal-line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+      }
+
+      .m-goal-line .material-symbols-outlined {
+        font-size: 16px;
+        color: var(--purple2);
+      }
+
+      .m-progress {
+        height: 5px;
+        border-radius: 8px;
+        background: #2a2b35;
+        margin: 5px 0 0 30px;
+        overflow: hidden;
+      }
+
+      .m-progress span {
+        height: 100%;
+        display: block;
+        background: linear-gradient(90deg, #9c35f5, #7d27ce);
+        border-radius: 8px;
+      }
+
+      .m-challenge-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        padding: 8px;
+      }
+
+      .m-challenge {
+        height: 85px;
+        border: 1px solid rgba(117, 56, 165, .56);
+        border-radius: 9px;
+        background: linear-gradient(120deg, rgba(43, 22, 62, .76), rgba(15, 16, 28, .88));
+        padding: 8px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .m-challenge .material-symbols-outlined {
+        font-size: 20px;
+        float: left;
+        margin-right: 6px;
+        color: var(--purple2);
+      }
+
+      .m-challenge strong {
+        font-size: 11px;
+        font-weight: 400;
+        display: block;
+        line-height: 14px;
+      }
+
+      .m-challenge .done {
+        font-size: 10px;
+        color: #9c47d7;
+        margin-top: 2px;
+      }
+
+      .m-challenge small {
+        display: block;
+        font-size: 8px;
+        color: #aaa;
+        margin-top: 3px;
+        line-height: 11px;
+      }
 
       .mobile-bottom-nav {
         position: fixed;
@@ -919,6 +1672,7 @@
         background: rgba(7, 8, 14, .98);
         backdrop-filter: blur(14px);
       }
+
       .mobile-nav-item {
         display: flex;
         flex-direction: column;
@@ -931,12 +1685,15 @@
         transition: color 0.2s ease;
         padding: 4px 0;
       }
+
       .mobile-nav-item.active {
         color: #bd43ff;
       }
+
       .mobile-nav-item:hover {
         color: #bd43ff;
       }
+
       .mobile-nav-item .material-symbols-outlined {
         font-size: 22px;
       }
@@ -946,51 +1703,195 @@
       .desktop-shell {
         grid-template-columns: 165px minmax(0, 1fr);
       }
+
       .sidebar {
         padding-left: 8px;
         padding-right: 8px;
       }
+
       .side-link {
         font-size: 11px;
         padding-left: 8px;
       }
+
       .sidebar-brand {
         margin-left: 7px;
       }
+
       .main {
         padding: 22px 18px;
       }
+
       .search {
         width: 180px;
       }
+
       .dashboard {
         grid-template-columns: 180px minmax(0, 1fr) 210px;
         gap: 8px;
       }
+
       .earned .amount {
         font-size: 15px;
       }
+
       .store-item {
         width: 60px;
       }
+
       .store-item img {
         width: 34px;
         height: 34px;
       }
+
       .challenge {
         height: 85px;
       }
+
       .challenge strong {
         font-size: 11px;
       }
+
       .side-challenge strong {
         font-size: 11px;
       }
     }
   </style>
+
+  <style id="anilog-live-goals-style">
+    .anilog-pencil-btn {
+      width: 28px;
+      height: 28px;
+      border: 1px solid rgba(157, 44, 255, .55);
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--purple2);
+      background: rgba(157, 44, 255, .08)
+    }
+
+    .anilog-pencil-btn:hover {
+      background: rgba(157, 44, 255, .2)
+    }
+
+    .anilog-live-chart {
+      position: absolute;
+      inset: 0;
+      padding: 10px 8px 3px;
+      display: flex;
+      align-items: flex-end;
+      gap: 4px
+    }
+
+    .anilog-live-chart .live-col {
+      height: 100%;
+      flex: 1;
+      display: flex;
+      align-items: flex-end;
+      position: relative
+    }
+
+    .anilog-live-chart .live-bar {
+      width: 100%;
+      min-height: 2px;
+      background: linear-gradient(180deg, #c34cff, #7020a8);
+      border-radius: 3px 3px 0 0;
+      box-shadow: 0 0 8px rgba(157, 44, 255, .18)
+    }
+
+    .anilog-live-chart .live-value {
+      position: absolute;
+      bottom: calc(var(--h) + 3px);
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 6px;
+      color: #cfc6d8;
+      white-space: nowrap
+    }
+
+    .anilog-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .72);
+      backdrop-filter: blur(7px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100001;
+      padding: 18px
+    }
+
+    .anilog-modal-backdrop.open {
+      display: flex
+    }
+
+    .anilog-note-modal {
+      width: min(520px, 100%);
+      border: 1px solid rgba(157, 44, 255, .7);
+      border-radius: 12px;
+      background: #0b0d16;
+      box-shadow: 0 20px 70px rgba(0, 0, 0, .7);
+      padding: 16px
+    }
+
+    .anilog-note-modal h3 {
+      font-size: 16px;
+      margin-bottom: 12px
+    }
+
+    .anilog-note-modal textarea {
+      width: 100%;
+      min-height: 150px;
+      resize: vertical;
+      background: #111421;
+      color: #eee;
+      border: 1px solid #34364a;
+      border-radius: 8px;
+      padding: 11px;
+      outline: none
+    }
+
+    .anilog-note-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 10px
+    }
+
+    .anilog-note-actions button {
+      padding: 8px 13px;
+      border: 1px solid #3b3d52;
+      border-radius: 7px;
+      background: #151827
+    }
+
+    .anilog-note-actions .save {
+      border-color: #9d2cff;
+      background: #7f20bd
+    }
+
+    .anilog-live-note {
+      display: flex;
+      align-items: center;
+      gap: 7px
+    }
+
+    .anilog-live-note .delete-note {
+      opacity: .55;
+      font-size: 14px
+    }
+
+    .anilog-live-empty {
+      font-size: 11px;
+      color: var(--muted);
+      padding: 8px 0
+    }
+  </style>
 </head>
 
 <body>
+  <div id="anilog-toast-container" aria-live="polite" aria-atomic="true"></div>
 
   <!-- PRELOADER OVERLAY -->
   <div id="preloader">
@@ -1013,31 +1914,47 @@
         </div>
 
         <nav class="sidebar-nav">
-          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span class="material-symbols-outlined">home</span>Home</button>
-          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';"><span class="material-symbols-outlined">list_alt</span>Watchlist</button>
-          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span class="material-symbols-outlined">play_circle</span>Currently Watching</button>
-          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span class="material-symbols-outlined">check_circle</span>Completed</button>
-          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span class="material-symbols-outlined">calendar_month</span>Seasonal</button>
-          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span class="material-symbols-outlined">rate_review</span>Reviews</button>
-          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span>Profile</button>
-          <button class="side-link" onclick="window.location.href='./anilog-favorites.html';"><span class="material-symbols-outlined">bookmark</span>Favorites</button>
-          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span class="material-symbols-outlined">leaderboard</span>Top Lists</button>
-          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span class="material-symbols-outlined">shopping_bag</span>Merch</button>
-          <button class="side-link" onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span class="material-symbols-outlined">history</span>Logs</button>
-          <button class="side-link active" onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span class="material-symbols-outlined">target</span>Goals</button>
-          <button class="side-link" onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span class="material-symbols-outlined">history</span>Year view</button>
+          <button class="side-link" onclick="window.location.href='./anilog-home.html';"><span
+              class="material-symbols-outlined">home</span>Home</button>
+          <button class="side-link" onclick="window.location.href='./anilog-watchlist.html';"><span
+              class="material-symbols-outlined">list_alt</span>Watchlist</button>
+          <button class="side-link" onclick="window.location.href='./anilog-currentlywatching.html';"><span
+              class="material-symbols-outlined">play_circle</span>Currently Watching</button>
+          <button class="side-link" onclick="window.location.href='./anilog-completed.html';"><span
+              class="material-symbols-outlined">check_circle</span>Completed</button>
+          <button class="side-link" onclick="window.location.href='./anilog-seasonal-all.html';"><span
+              class="material-symbols-outlined">calendar_month</span>Seasonal</button>
+          <button class="side-link" onclick="window.location.href='./anilog-anime-review-responsive.html';"><span
+              class="material-symbols-outlined">rate_review</span>Reviews</button>
+          <button class="side-link" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span
+              class="material-symbols-outlined">account_circle</span>Profile</button>
+          <button class="side-link" onclick="window.location.href='./anilog-favorites.html';"><span
+              class="material-symbols-outlined">bookmark</span>Favorites</button>
+          <button class="side-link" onclick="window.location.href='./anilog-top-lists-responsive.html';"><span
+              class="material-symbols-outlined">leaderboard</span>Top Lists</button>
+          <button class="side-link" onclick="window.location.href='./anilog-merch-collection-responsive.html';"><span
+              class="material-symbols-outlined">shopping_bag</span>Merch</button>
+          <button class="side-link"
+            onclick="window.location.href='./anilog-episode-reaction-log-responsive.html';"><span
+              class="material-symbols-outlined">history</span>Logs</button>
+          <button class="side-link active"
+            onclick="window.location.href='./anilog-goals-challenges-responsive.html';"><span
+              class="material-symbols-outlined">target</span>Goals</button>
+          <button class="side-link"
+            onclick="window.location.href='./anilog-yearly-monthly-watch-log-responsive.html';"><span
+              class="material-symbols-outlined">history</span>Year view</button>
         </nav>
 
 
         <div class="user-card">
-          <img class="user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="Avatar">
+          <img class="user-avatar skeleton" id="sidebar-user-avatar" src="" alt="Avatar">
           <div class="user-info">
-            <h3 class="user-name">ShadowX</h3>
-            <div class="user-level">Level 27</div>
-            <div class="xp-track">
-              <div class="xp-fill"></div>
+            <h3 class="user-name skeleton" id="sidebar-user-name">Loading...</h3>
+            <div class="user-level skeleton" id="sidebar-user-level">LVL 1 - Otaku Novice</div>
+            <div class="xp-track skeleton" id="sidebar-xp-track">
+              <div class="xp-fill" id="sidebar-xp-fill" style="width: 0%;"></div>
             </div>
-            <div class="xp-text">XP 4,250 / 8,600</div>
+            <div class="xp-text skeleton" id="sidebar-xp-text">0 / 500 XP</div>
           </div>
         </div>
       </aside>
@@ -1047,37 +1964,78 @@
         <header class="topbar">
           <div class="search">
             <input type="text" id="desktop-search-input" placeholder="Search anime...">
-            <span class="material-symbols-outlined" style="position: absolute; right: 12px; color: #777184; font-size: 16px;">search</span>
+            <span class="material-symbols-outlined"
+              style="position: absolute; right: 12px; color: #777184; font-size: 16px;">search</span>
             <div class="search-results-dropdown" id="desktop-search-results"></div>
           </div>
 
           <div class="top-actions">
             <div class="top-action-wrap">
-              <div class="top-action"><span class="material-symbols-outlined">notifications</span></div>
-            </div>
-
-            <div class="top-action-wrap">
-              <div class="top-action streak">
-                <span class="material-symbols-outlined" style="color: #ca5aff;">local_fire_department</span>
-                <span>12</span>
+              <div class="top-action" role="button" tabindex="0">
+                <span class="material-symbols-outlined">notifications</span>
+              </div>
+              <div class="dropdown-panel">
+                <div class="dropdown-panel-header">Notifications</div>
+                <button class="dropdown-item" type="button" onclick="navigateTo('./anilog-notifications.html')">
+                  <span class="material-symbols-outlined">notifications</span> Notifications
+                </button>
               </div>
             </div>
 
             <div class="top-action-wrap">
-              <div class="top-action"><span class="material-symbols-outlined">workspace_premium</span></div>
+              <div class="top-action streak" role="button" tabindex="0">
+                <span class="material-symbols-outlined" style="color: #ca5aff;">local_fire_department</span>
+                <span id="user-streak-val" class="skeleton" style="min-width:18px;">—</span>
+              </div>
+              <div class="dropdown-panel">
+                <div class="dropdown-panel-header">Streak</div>
+                <button class="dropdown-item" type="button" onclick="navigateTo('./anilog-notifications.html')">
+                  <span class="material-symbols-outlined">local_fire_department</span> View streak activity
+                </button>
+              </div>
+            </div>
+
+            <div class="top-action-wrap">
+              <div class="top-action" role="button" tabindex="0">
+                <span class="material-symbols-outlined">settings</span>
+              </div>
+              <div class="dropdown-panel">
+                <div class="dropdown-panel-header">Settings</div>
+                <button class="dropdown-item" type="button" onclick="navigateTo('./anilog-notifications.html')">
+                  <span class="material-symbols-outlined">notifications</span> Notifications
+                </button>
+                <button class="dropdown-item" type="button" onclick="navigateTo('./anilog-sub-dub-settings.html')">
+                  <span class="material-symbols-outlined">translate</span> Dub / Sub
+                </button>
+                <button class="dropdown-item" type="button" onclick="navigateTo('./anilog-content-filter.html')">
+                  <span class="material-symbols-outlined">filter_alt</span> Content Filter
+                </button>
+                <button class="dropdown-item" type="button" data-action="theme" onclick="toggleTheme()">
+                  <span class="material-symbols-outlined">dark_mode</span> Theme
+                  <span class="toggle-state" id="theme-toggle-state">Dark</span>
+                </button>
+              </div>
             </div>
 
             <div class="profile-wrap">
               <div class="profile">
-                <img class="avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="User">
+                <img class="avatar skeleton" id="top-user-avatar" src="" alt="User">
                 <span class="material-symbols-outlined">expand_more</span>
               </div>
               <div class="dropdown-panel">
                 <div class="dropdown-panel-header">User Profile</div>
-                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span> View Profile</button>
-                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">edit</span> Edit Profile</button>
+                <button class="dropdown-item" type="button"
+                  onclick="navigateTo('./anilog-user-profile-responsive.html')">
+                  <span class="material-symbols-outlined">account_circle</span> View Profile
+                </button>
+                <button class="dropdown-item" type="button"
+                  onclick="navigateTo('./anilog-user-profile-responsive.html')">
+                  <span class="material-symbols-outlined">edit</span> Edit Profile
+                </button>
                 <div class="dropdown-divider"></div>
-                <button class="dropdown-item" style="color: var(--danger);"><span class="material-symbols-outlined" style="color: var(--danger);">logout</span> Log Out</button>
+                <button class="dropdown-item" type="button" style="color: var(--danger);" onclick="logoutUser()">
+                  <span class="material-symbols-outlined" style="color: var(--danger);">logout</span> Log Out
+                </button>
               </div>
             </div>
           </div>
@@ -1098,23 +2056,27 @@
               <div class="panel-title"><span>Yearly Goals</span><span class="right">2024 ⌄</span></div>
               <div class="goal-list">
                 <div class="goal">
-                  <div class="goal-line"><span class="material-symbols-outlined">play_circle</span><span>Watch 100 new series</span></div>
+                  <div class="goal-line"><span class="material-symbols-outlined">play_circle</span><span>Watch 100 new
+                      series</span></div>
                   <div class="progress-bar-custom"><span style="width:82%"></span></div>
                 </div>
                 <div class="goal">
-                  <div class="goal-line"><span class="material-symbols-outlined">star</span><span>Complete 10 highly-rated classics</span></div>
+                  <div class="goal-line"><span class="material-symbols-outlined">star</span><span>Complete 10
+                      highly-rated classics</span></div>
                   <div class="progress-bar-custom"><span style="width:76%"></span></div>
                   <div class="checks"><b>✓</b>Completed new series<br><b>✓</b>Completed 10+ eps</div>
                 </div>
                 <div class="goal">
-                  <div class="goal-line"><span class="material-symbols-outlined">event</span><span>Attend an Anime Convention</span></div>
+                  <div class="goal-line"><span class="material-symbols-outlined">event</span><span>Attend an Anime
+                      Convention</span></div>
                   <div class="progress-bar-custom"><span style="width:64%"></span></div>
                 </div>
               </div>
             </section>
 
             <section class="panel rewards">
-              <div class="panel-title"><span class="panel-title-left"><span class="material-symbols-outlined icon" style="font-size:18px;">trophy</span>Rewards/Milestones</span></div>
+              <div class="panel-title"><span class="panel-title-left"><span class="material-symbols-outlined icon"
+                    style="font-size:18px;">trophy</span>Rewards/Milestones</span></div>
               <div class="reward-body">
                 <div class="reward">
                   <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Veteran" alt="">
@@ -1128,9 +2090,11 @@
                 <div class="reward simple">
                   <strong>Unlock New Profile Avatar:</strong>
                   <div style="display:flex;align-items:center;gap:9px;margin-top:4px">
-                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Avatar1" alt="" style="width:28px;height:28px;border-radius:4px;">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Avatar1" alt=""
+                      style="width:28px;height:28px;border-radius:4px;">
                     <span style="font-size:10px;color:var(--muted);">10</span>
-                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Avatar2" alt="" style="width:28px;height:28px;border-radius:4px;">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Avatar2" alt=""
+                      style="width:28px;height:28px;border-radius:4px;">
                   </div>
                 </div>
               </div>
@@ -1167,12 +2131,17 @@
             </section>
 
             <section class="panel tracker">
-              <div class="panel-title"><span class="panel-title-left"><span class="material-symbols-outlined icon" style="font-size:18px;">show_chart</span>Progress Tracker</span></div>
+              <div class="panel-title"><span class="panel-title-left"><span class="material-symbols-outlined icon"
+                    style="font-size:18px;">show_chart</span>Progress Tracker</span></div>
               <div class="tracker-body">
                 <div class="chart-title">Total Anime Completed vs Goal</div>
-                <div class="chart-y"><span>300</span><span>250</span><span>200</span><span>150</span><span>100</span><span>50</span><span>0</span></div>
+                <div class="chart-y">
+                  <span>300</span><span>250</span><span>200</span><span>150</span><span>100</span><span>50</span><span>0</span>
+                </div>
                 <div class="chart"></div>
-                <div class="chart-labels"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span></div>
+                <div class="chart-labels">
+                  <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+                </div>
                 <div class="tracker-art"></div>
               </div>
             </section>
@@ -1181,30 +2150,32 @@
               <section class="panel mini">
                 <div class="panel-title"><span>Monthly Goal Progress</span></div>
                 <div class="bar-chart">
-                  <i class="bar" style="height:8%"></i><i class="bar" style="height:20%"></i><i class="bar" style="height:38%"></i><i class="bar" style="height:52%"></i><i class="bar" style="height:72%"></i><i class="bar" style="height:88%"></i><i class="bar" style="height:83%"></i><i class="bar" style="height:94%"></i>
+                  <i class="bar" style="height:8%"></i><i class="bar" style="height:20%"></i><i class="bar"
+                    style="height:38%"></i><i class="bar" style="height:52%"></i><i class="bar"
+                    style="height:72%"></i><i class="bar" style="height:88%"></i><i class="bar"
+                    style="height:83%"></i><i class="bar" style="height:94%"></i>
                 </div>
-                <div class="bar-labels"><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span></div>
-              </section>
-              <section class="panel mini">
-                <div class="panel-title"><span>Genre Goal Achievement</span></div>
-                <div class="h-bars">
-                  <div style="margin-bottom:4px;font-size:9px;color:var(--muted);">watch 10 action anime</div>
-                  <div class="hrow"><span>Action</span><i style="width:110px"></i></div>
-                  <div class="hrow"><span>Drama</span><i style="width:82px"></i></div>
-                  <div class="hrow"><span>Fantasy</span><i style="width:48px"></i></div>
-                  <div class="hrow"><span>Romance</span><i style="width:30px"></i></div>
-                  <div style="text-align:center;font-size:8px;color:#888;margin-top:2px;">0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10</div>
+                <div class="bar-labels">
+                  <span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span>
                 </div>
               </section>
             </div>
 
             <section class="panel store">
-              <div class="panel-title"><span class="panel-title-left"><span class="material-symbols-outlined icon" style="font-size:18px;">storefront</span>Goal Point Store</span></div>
+              <div class="panel-title"><span class="panel-title-left"><span class="material-symbols-outlined icon"
+                    style="font-size:18px;">storefront</span>Goal Point Store</span></div>
               <div class="store-body">
-                <div class="earned"><div class="label">Points Earned</div><div class="amount">$ 1,375,000</div><div class="points">Goal Points<br><b style="color:var(--purple2);">1000</b></div></div>
-                <div class="store-item"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Store1" alt=""><span>Digital Item</span><small>$ 300</small></div>
-                <div class="store-item"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Store2" alt=""><span>Digital Points</span><small>$ 100</small></div>
-                <div class="store-item"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Store3" alt=""><span>Digital Items</span><small>$1000</small></div>
+                <div class="earned">
+                  <div class="label">Points Earned</div>
+                  <div class="amount">$ 1,375,000</div>
+                  <div class="points">Goal Points<br><b style="color:var(--purple2);">1000</b></div>
+                </div>
+                <div class="store-item"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Store1"
+                    alt=""><span>Digital Item</span><small>$ 300</small></div>
+                <div class="store-item"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Store2"
+                    alt=""><span>Digital Points</span><small>$ 100</small></div>
+                <div class="store-item"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Store3"
+                    alt=""><span>Digital Items</span><small>$1000</small></div>
               </div>
             </section>
           </div>
@@ -1214,7 +2185,11 @@
             <section class="panel profile-top">
               <div class="profile-top-body">
                 <img class="avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="">
-                <div><div class="profile-name">ShadowX</div><div class="profile-level">Level 37</div><div class="profile-level">XP 4,250 / 8,600</div></div>
+                <div>
+                  <div class="profile-name">ShadowX</div>
+                  <div class="profile-level">Level 37</div>
+                  <div class="profile-level">XP 4,250 / 8,600</div>
+                </div>
               </div>
             </section>
 
@@ -1229,7 +2204,11 @@
                 </div>
                 <div class="side-challenge" style="min-height:94px">
                   <strong>Write a detailed review for 3 anime</strong><span class="chevron">⌃</span>
-                  <ul><li>Write a detailed review for 3 anime</li><li>Write a detailed review 1 anime</li><li style="list-style-type:square;color:#aaa">Rewatch a show from a different decade</li></ul>
+                  <ul>
+                    <li>Write a detailed review for 3 anime</li>
+                    <li>Write a detailed review 1 anime</li>
+                    <li style="list-style-type:square;color:#aaa">Rewatch a show from a different decade</li>
+                  </ul>
                 </div>
                 <div class="side-challenge">
                   <strong>Rewatch a show from a different decade</strong>
@@ -1242,7 +2221,8 @@
             </section>
 
             <section class="panel notes">
-              <div class="panel-title"><span class="panel-title-left"><span class="material-symbols-outlined icon" style="font-size:18px;">edit_note</span>Goal Notes &amp; Musings</span></div>
+              <div class="panel-title"><span class="panel-title-left"><span class="material-symbols-outlined icon"
+                    style="font-size:18px;">edit_note</span>Goal Notes &amp; Musings</span></div>
               <div class="notes-body">
                 <div class="notebook">
                   <div class="note">Must pick a favorite classic for November</div>
@@ -1280,7 +2260,7 @@
 
       <div class="mobile-search-bar" id="mobile-search-bar">
         <div class="mobile-search-input-wrap">
-          <input type="text" id="mobile-search-input" placeholder="Search anime...">
+          <input type="text" id="mobile-search-input" placeholder="Search anime dynamic...">
         </div>
         <div class="search-results-dropdown" id="mobile-search-results"></div>
       </div>
@@ -1296,16 +2276,20 @@
           <div class="m-panel-title"><span>Yearly Goals</span><span class="right">2024 ⌄</span></div>
           <div class="m-goal-list">
             <div class="m-goal">
-              <div class="m-goal-line"><span class="material-symbols-outlined">play_circle</span><span>Watch 100 new series</span></div>
+              <div class="m-goal-line"><span class="material-symbols-outlined">play_circle</span><span>Watch 100 new
+                  series</span></div>
               <div class="m-progress"><span style="width:82%"></span></div>
             </div>
             <div class="m-goal">
-              <div class="m-goal-line"><span class="material-symbols-outlined">star</span><span>Complete 10 highly-rated classics</span></div>
+              <div class="m-goal-line"><span class="material-symbols-outlined">star</span><span>Complete 10 highly-rated
+                  classics</span></div>
               <div class="m-progress"><span style="width:76%"></span></div>
-              <div class="checks" style="margin-left:28px;font-size:10px;"><b>✓</b>Completed new series<br><b>✓</b>Completed 10+ eps</div>
+              <div class="checks" style="margin-left:28px;font-size:10px;"><b>✓</b>Completed new
+                series<br><b>✓</b>Completed 10+ eps</div>
             </div>
             <div class="m-goal">
-              <div class="m-goal-line"><span class="material-symbols-outlined">event</span><span>Attend an Anime Convention</span></div>
+              <div class="m-goal-line"><span class="material-symbols-outlined">event</span><span>Attend an Anime
+                  Convention</span></div>
               <div class="m-progress"><span style="width:64%"></span></div>
             </div>
           </div>
@@ -1344,8 +2328,10 @@
           <div class="m-panel-title"><span>Rewards/Milestones</span></div>
           <div class="m-goal-list">
             <div class="m-goal" style="display:flex;align-items:center;gap:10px;min-height:44px;">
-              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Veteran" alt="" style="width:36px;height:36px;border-radius:6px;border:1px solid #6e3c8c;">
-              <div><strong style="font-size:12px;">The Veteran</strong><br><span style="font-size:10px;color:var(--muted);">50 anime completed</span></div>
+              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Veteran" alt=""
+                style="width:36px;height:36px;border-radius:6px;border:1px solid #6e3c8c;">
+              <div><strong style="font-size:12px;">The Veteran</strong><br><span
+                  style="font-size:10px;color:var(--muted);">50 anime completed</span></div>
             </div>
             <div class="m-goal" style="min-height:40px;">
               <div style="font-size:12px;font-weight:600;">1000 Episodes Watched</div>
@@ -1394,138 +2380,995 @@
   </div>
 
   <script>
-    window.addEventListener('load', async () => {
-      if (document.fonts) {
-        await document.fonts.ready;
-      }
-      const preloader = document.getElementById('preloader');
-      preloader.style.opacity = '0';
-      preloader.style.visibility = 'hidden';
-      document.body.classList.add('loaded');
-    });
+    /* =========================================================
+       ANILOG FRONTEND / BACKEND INTEGRATION
+       The browser talks only to the AniLog backend.
+       ========================================================= */
+    const API_BASE_URL = window.API_BASE_URL || 'http://127.0.0.1:8000';
 
+    const ANILOG_API = {
+      me: '/api/auth/me',
+      search: '/api/anime/kitsu-search',
+      logout: '/api/auth/logout'
+    };
+
+    function getStoredToken() {
+      const keys = ['access_token', 'accessToken', 'token', 'auth_token', 'jwt'];
+
+      for (const key of keys) {
+        const value =
+          localStorage.getItem(key) ||
+          sessionStorage.getItem(key);
+
+        if (value) {
+          return value.replace(/^Bearer\s+/i, '').trim();
+        }
+      }
+
+      return null;
+    }
+
+    function clearStoredAuth() {
+      [
+        'access_token',
+        'accessToken',
+        'token',
+        'auth_token',
+        'jwt',
+        'refresh_token',
+        'refreshToken'
+      ].forEach(key => {
+        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
+      });
+    }
+
+    function authHeaders(extra = {}) {
+      const headers = {
+        'Accept': 'application/json',
+        ...extra
+      };
+
+      const token = getStoredToken();
+
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
+      return headers;
+    }
+
+    function navigateTo(path) {
+      window.location.href = path;
+    }
+
+    function getErrorMessage(error, fallback = 'Something went wrong. Please try again.') {
+      if (!error) return fallback;
+
+      if (error.name === 'TypeError') {
+        return 'Unable to connect to the AniLog server. Make sure the backend is running.';
+      }
+
+      return error.message || fallback;
+    }
+
+    function showToast(message, type = 'info', duration = 4200) {
+      const container = document.getElementById('anilog-toast-container');
+
+      if (!container) {
+        console.warn('[AniLog Toast]', message);
+        return;
+      }
+
+      const icons = {
+        success: 'check_circle',
+        error: 'error',
+        warning: 'warning',
+        info: 'info'
+      };
+
+      const toast = document.createElement('div');
+      toast.className = `anilog-toast ${type}`;
+
+      const icon = document.createElement('span');
+      icon.className = 'material-symbols-outlined';
+      icon.textContent = icons[type] || icons.info;
+
+      const text = document.createElement('div');
+      text.className = 'anilog-toast-message';
+      text.textContent = message;
+
+      const close = document.createElement('button');
+      close.className = 'anilog-toast-close';
+      close.type = 'button';
+      close.setAttribute('aria-label', 'Close notification');
+      close.textContent = '×';
+      close.addEventListener('click', () => toast.remove());
+
+      toast.append(icon, text, close);
+      container.appendChild(toast);
+
+      if (duration > 0) {
+        window.setTimeout(() => {
+          if (!toast.isConnected) return;
+          toast.style.animation = 'toastOut .2s ease forwards';
+          window.setTimeout(() => toast.remove(), 200);
+        }, duration);
+      }
+    }
+
+    function setSkeletonState(isLoading) {
+      document.querySelectorAll(
+        '#sidebar-user-avatar, #sidebar-user-name, #sidebar-user-level, #sidebar-xp-track, #sidebar-xp-text, #top-user-avatar, #user-streak-val'
+      ).forEach(el => {
+        el.classList.toggle('skeleton', isLoading);
+      });
+    }
+
+    function calculateUserLevel(xp) {
+      const levels = [
+        { level: 1, title: 'Otaku Novice', minXP: 0, nextLevelXP: 500 },
+        { level: 2, title: 'Casual Watcher', minXP: 500, nextLevelXP: 2000 },
+        { level: 3, title: 'Anime Enthusiast', minXP: 1200, nextLevelXP: 3000 },
+        { level: 4, title: 'Seasoned Binger', minXP: 2500, nextLevelXP: 5000 },
+        { level: 5, title: 'Master Otaku', minXP: 5000, nextLevelXP: 10000 },
+        { level: 6, title: 'Anime Scholar', minXP: 10000, nextLevelXP: 20000 },
+        { level: 7, title: 'Supreme Weeb', minXP: 20000, nextLevelXP: 50000 }
+      ];
+
+      xp = Number.isFinite(Number(xp)) ? Math.max(0, Number(xp)) : 0;
+
+      for (let i = levels.length - 1; i >= 0; i--) {
+        if (xp >= levels[i].minXP) {
+          const lvl = levels[i];
+          const range = lvl.nextLevelXP - lvl.minXP;
+          const progress = xp - lvl.minXP;
+          const percent = Math.min(
+            100,
+            Math.max(0, Math.floor((progress / range) * 100))
+          );
+
+          return {
+            level: lvl.level,
+            title: lvl.title,
+            currentXP: xp,
+            nextLevelXP: lvl.nextLevelXP,
+            percent
+          };
+        }
+      }
+
+      return {
+        level: 1,
+        title: 'Otaku Novice',
+        currentXP: xp,
+        nextLevelXP: 500,
+        percent: 0
+      };
+    }
+
+    function renderUserCard(user) {
+      const avatarUrl =
+        user.avatar_seed ||
+        'https://api.dicebear.com/7.x/bottts/svg?seed=Shadow';
+
+      const avatar = document.getElementById('sidebar-user-avatar');
+      const name = document.getElementById('sidebar-user-name');
+      const level = document.getElementById('sidebar-user-level');
+      const xpTrack = document.getElementById('sidebar-xp-track');
+      const xpFill = document.getElementById('sidebar-xp-fill');
+      const xpText = document.getElementById('sidebar-xp-text');
+      const topAvatar = document.getElementById('top-user-avatar');
+      const streak = document.getElementById('user-streak-val');
+
+      if (avatar) {
+        avatar.src = avatarUrl;
+        avatar.classList.remove('skeleton');
+      }
+
+      if (topAvatar) {
+        topAvatar.src = avatarUrl;
+        topAvatar.classList.remove('skeleton');
+      }
+
+      if (name) {
+        name.textContent = user.username || 'AniLog User';
+        name.classList.remove('skeleton');
+      }
+
+      const currentXP = Number(user.xp_points || 0);
+      const levelObj = calculateUserLevel(currentXP);
+
+      if (level) {
+        level.textContent = `LVL ${levelObj.level} - ${levelObj.title}`;
+        level.classList.remove('skeleton');
+      }
+
+      if (xpTrack) xpTrack.classList.remove('skeleton');
+
+      if (xpFill) {
+        xpFill.style.width = `${levelObj.percent}%`;
+        xpFill.classList.remove('skeleton');
+      }
+
+      if (xpText) {
+        xpText.textContent =
+          `${currentXP.toLocaleString()} / ${levelObj.nextLevelXP.toLocaleString()} XP`;
+        xpText.classList.remove('skeleton');
+      }
+
+      if (streak) {
+        streak.textContent = String(user.streak_count || 0);
+        streak.classList.remove('skeleton');
+      }
+
+      updateThemeToggleState(user.user_settings);
+    }
+
+    async function loadLiveData() {
+      const storedToken = getStoredToken();
+
+      try {
+        const response = await fetch(`${API_BASE_URL}${ANILOG_API.me}`, {
+          method: 'GET',
+          headers: authHeaders(),
+          credentials: 'include',
+          cache: 'no-store'
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          clearStoredAuth();
+          showToast('Your session is expired. Redirecting to login...', 'warning', 1800);
+
+          window.setTimeout(() => {
+            navigateTo('./anilog-login-register.html');
+          }, 900);
+
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(`Server returned HTTP ${response.status}`);
+        }
+
+        const user = await response.json();
+        renderUserCard(user);
+
+        if (!storedToken) {
+          showToast('Session restored successfully.', 'success', 2200);
+        }
+      } catch (error) {
+        console.error('[AniLog auth]', error);
+
+        if (!storedToken) {
+          clearStoredAuth();
+          showToast(
+            'Unable to verify your session. Please log in again.',
+            'error',
+            2200
+          );
+
+          window.setTimeout(() => {
+            navigateTo('./anilog-login-register.html');
+          }, 1200);
+
+          return;
+        }
+
+        showToast(
+          getErrorMessage(
+            error,
+            'The server could not load your account information.'
+          ),
+          'error'
+        );
+      }
+    }
+
+    function updateThemeToggleState(settings) {
+      const state = document.getElementById('theme-toggle-state');
+      if (!state) return;
+
+      const theme = settings && settings.app_theme
+        ? settings.app_theme
+        : localStorage.getItem('anilog_theme') || 'dark';
+
+      state.textContent = theme === 'light' ? 'Light' : 'Dark';
+    }
+
+    function toggleTheme() {
+      const current =
+        document.documentElement.dataset.theme ||
+        localStorage.getItem('anilog_theme') ||
+        'dark';
+
+      const next = current === 'dark' ? 'light' : 'dark';
+
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem('anilog_theme', next);
+
+      updateThemeToggleState({ app_theme: next });
+      showToast(`${next === 'light' ? 'Light' : 'Dark'} mode selected.`, 'success', 2200);
+
+      /*
+       * This page keeps the existing visual design by default.
+       * If the wider AniLog app already has a theme implementation,
+       * its own stylesheet can consume [data-theme="light"].
+       */
+    }
+
+    async function logoutUser() {
+      try {
+        const response = await fetch(`${API_BASE_URL}${ANILOG_API.logout}`, {
+          method: 'POST',
+          headers: authHeaders(),
+          credentials: 'include'
+        });
+
+        if (!response.ok && response.status !== 404) {
+          throw new Error(`Logout failed (HTTP ${response.status})`);
+        }
+      } catch (error) {
+        console.warn('[AniLog logout]', error);
+      } finally {
+        clearStoredAuth();
+        showToast('You have been logged out.', 'success', 1000);
+
+        window.setTimeout(() => {
+          navigateTo('./anilog-login-register.html');
+        }, 650);
+      }
+    }
+
+    /* ---------------- SEARCH ENGINE CONTROLLER ---------------- */
     let searchTimeout = null;
     let currentAbortController = null;
 
     function openAnimeReviewFromSearch(anime) {
-      const attr = anime.attributes || {};
       const reviewData = {
         id: anime.id,
-        title: attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled',
-        image: attr.posterImage?.large || attr.posterImage?.medium || attr.posterImage?.original || '',
-        episodes: attr.episodeCount || '',
-        status: attr.status || '',
-        type: attr.showType || '',
-        rating: attr.averageRating || '',
-        synopsis: attr.synopsis || '',
-        startDate: attr.startDate || ''
+        title: anime.title || 'Untitled',
+        image: anime.image || '',
+        episodes: anime.episodes || '',
+        status: anime.status || '',
+        type: anime.type || '',
+        rating: anime.score ?? '',
+        synopsis: anime.synopsis || '',
+        startDate: anime.start_date || anime.startDate || ''
       };
-      window.location.href = `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(JSON.stringify(reviewData))}`;
+
+      window.location.href =
+        `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(
+          JSON.stringify(reviewData)
+        )}`;
     }
 
-    function handleSearch(query, resultsContainer) {
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    async function handleSearch(query, resultsContainer) {
       const cleanQuery = query.trim();
 
-      if (cleanQuery.length < 3) {
+      if (cleanQuery.length < 2) {
         resultsContainer.classList.remove('active');
         resultsContainer.innerHTML = '';
-        if (currentAbortController) currentAbortController.abort();
+
+        if (currentAbortController) {
+          currentAbortController.abort();
+        }
+
         return;
       }
 
       clearTimeout(searchTimeout);
 
-      searchTimeout = setTimeout(async () => {
+      searchTimeout = window.setTimeout(async () => {
         if (currentAbortController) {
           currentAbortController.abort();
         }
+
         currentAbortController = new AbortController();
 
-        resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">Searching...</div>`;
+        resultsContainer.innerHTML = `
+          <div class="search-result-item skeleton" style="min-height:62px;">
+            <div style="width:32px;height:45px;border-radius:4px;"></div>
+            <div class="search-result-info">
+              <div class="search-result-title">Searching...</div>
+              <div class="search-result-meta">Loading anime data</div>
+            </div>
+          </div>
+        `;
         resultsContainer.classList.add('active');
 
         try {
-          const targetUrl = `https://kitsu.io/api/edge/anime?filter[text]=${encodeURIComponent(cleanQuery)}&page[limit]=6`;
-          const response = await fetch(targetUrl, {
-            signal: currentAbortController.signal,
-            headers: {
-              'Accept': 'application/vnd.api+json',
-              'Content-Type': 'application/vnd.api+json'
+          const response = await fetch(
+            `${API_BASE_URL}${ANILOG_API.search}?q=${encodeURIComponent(cleanQuery)}`,
+            {
+              method: 'GET',
+              signal: currentAbortController.signal,
+              headers: authHeaders(),
+              credentials: 'include',
+              cache: 'no-store'
             }
-          });
+          );
 
-          if (!response.ok) throw new Error(`HTTP_${response.status}`);
+          if (response.status === 401 || response.status === 403) {
+            clearStoredAuth();
+            showToast('Your session has expired. Please log in again.', 'warning');
+
+            window.setTimeout(() => {
+              navigateTo('./anilog-login-register.html');
+            }, 900);
+
+            return;
+          }
+
+          if (!response.ok) {
+            throw new Error(`Search server returned HTTP ${response.status}`);
+          }
+
           const data = await response.json();
-          const results = data.data || [];
-          resultsContainer._animeResults = results;
+          const results = Array.isArray(data.results) ? data.results : [];
 
+          resultsContainer._animeResults = results;
           resultsContainer.innerHTML = '';
 
           if (results.length === 0) {
-            resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">No anime found</div>`;
-          } else {
-            results.forEach(anime => {
-              const attr = anime.attributes || {};
-              const title = attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled';
-              const img = attr.posterImage?.tiny || attr.posterImage?.small || '';
-              const rating = attr.averageRating ? `★ ${(parseFloat(attr.averageRating) / 10).toFixed(1)}` : 'N/A';
-              const type = attr.showType ? attr.showType.toUpperCase() : 'ANIME';
-
-              const itemHTML = `
-              <div class="search-result-item" data-result-index="${results.indexOf(anime)}" role="button" tabindex="0">
-                <img src="${img}" alt="${title}">
-                <div class="search-result-info">
-                  <div class="search-result-title">${title}</div>
-                  <div class="search-result-meta">${type} • ${rating}</div>
-                </div>
+            resultsContainer.innerHTML = `
+              <div style="padding:12px;font-size:12px;color:var(--muted);text-align:center;">
+                No anime found
               </div>
             `;
-              resultsContainer.insertAdjacentHTML('beforeend', itemHTML);
-            });
+            return;
           }
-        } catch (err) {
-          if (err.name === 'AbortError') return;
-          console.error('Search fetch error:', err);
-          resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--danger); text-align: center;">Search failed. Try typing again.</div>`;
+
+          results.forEach((anime, index) => {
+            const title = escapeHtml(anime.title || 'Untitled');
+            const image = escapeHtml(anime.image || '');
+            const rating = anime.score != null
+              ? `★ ${Number(anime.score).toFixed(1)}`
+              : 'N/A';
+            const type = escapeHtml(
+              (anime.type || anime.subtype || 'ANIME').toString().toUpperCase()
+            );
+
+            const item = document.createElement('div');
+            item.className = 'search-result-item';
+            item.dataset.resultIndex = String(index);
+            item.setAttribute('role', 'button');
+            item.setAttribute('tabindex', '0');
+
+            item.innerHTML = `
+              <img src="${image}" alt="${title}" loading="lazy"
+                   onerror="this.style.visibility='hidden'">
+              <div class="search-result-info">
+                <div class="search-result-title">${title}</div>
+                <div class="search-result-meta">${type} • ${rating}</div>
+              </div>
+            `;
+
+            resultsContainer.appendChild(item);
+          });
+        } catch (error) {
+          if (error.name === 'AbortError') return;
+
+          console.error('[AniLog search]', error);
+
+          resultsContainer.innerHTML = `
+            <div style="padding:12px;font-size:12px;color:var(--danger);text-align:center;">
+              Unable to search right now. Please try again.
+            </div>
+          `;
+
+          showToast(
+            getErrorMessage(error, 'Anime search failed.'),
+            'error'
+          );
         }
       }, 400);
     }
 
-    const desktopInput = document.getElementById('desktop-search-input');
-    const desktopResults = document.getElementById('desktop-search-results');
-    if (desktopInput) {
-      desktopInput.addEventListener('input', (e) => handleSearch(e.target.value, desktopResults));
-    }
+    function attachSearchController(inputId, resultsId) {
+      const input = document.getElementById(inputId);
+      const results = document.getElementById(resultsId);
 
-    const mobileInput = document.getElementById('mobile-search-input');
-    const mobileResults = document.getElementById('mobile-search-results');
-    if (mobileInput) {
-      mobileInput.addEventListener('input', (e) => handleSearch(e.target.value, mobileResults));
-    }
+      if (!input || !results) return;
 
-    const mobileSearchToggle = document.getElementById('mobile-search-toggle');
-    const mobileSearchBar = document.getElementById('mobile-search-bar');
-    if (mobileSearchToggle && mobileSearchBar) {
-      mobileSearchToggle.addEventListener('click', () => {
-        mobileSearchBar.classList.toggle('active');
+      input.addEventListener('input', event => {
+        handleSearch(event.target.value, results);
+      });
+
+      input.addEventListener('keydown', event => {
+        if (event.key === 'Escape') {
+          results.classList.remove('active');
+          results.innerHTML = '';
+          input.blur();
+        }
+
+        if (event.key === 'Enter') {
+          const first = results.querySelector('.search-result-item[data-result-index]');
+          if (first) first.click();
+        }
       });
     }
 
-    document.addEventListener('click', (event) => {
+    /* ---------------- GENERIC ANIME CARD ROUTING ---------------- */
+    function getAnimePayloadFromElement(element) {
+      if (!element) return null;
+
+      const raw =
+        element.dataset.anime ||
+        element.dataset.animeData ||
+        element.dataset.animeJson;
+
+      if (raw) {
+        try {
+          return JSON.parse(raw);
+        } catch {
+          /* Continue to data attributes below. */
+        }
+      }
+
+      const id =
+        element.dataset.animeId ||
+        element.getAttribute('data-id');
+
+      if (!id) return null;
+
+      return {
+        id,
+        title: element.dataset.title || element.getAttribute('data-title') || 'Untitled',
+        image: element.dataset.image || element.getAttribute('data-image') || '',
+        episodes: element.dataset.episodes || '',
+        rating: element.dataset.rating || ''
+      };
+    }
+
+    document.addEventListener('click', event => {
       const resultItem = event.target.closest('.search-result-item');
-      if (!resultItem) return;
-      const anime = resultItem.parentElement._animeResults?.[Number(resultItem.dataset.resultIndex)];
-      if (anime) openAnimeReviewFromSearch(anime);
+
+      if (resultItem) {
+        const container = resultItem.closest('.search-results-dropdown');
+        const anime =
+          container?._animeResults?.[Number(resultItem.dataset.resultIndex)];
+
+        if (anime) {
+          openAnimeReviewFromSearch(anime);
+          return;
+        }
+      }
+
+      const animeCard = event.target.closest(
+        '[data-anime-id], [data-anime-json], [data-anime-data], .anime-card, .anime-item, .anime-result-card'
+      );
+
+      if (
+        animeCard &&
+        !event.target.closest('button, a, input, select, textarea')
+      ) {
+        const anime = getAnimePayloadFromElement(animeCard);
+
+        if (anime && anime.id) {
+          openAnimeReviewFromSearch(anime);
+        }
+      }
     });
 
-    document.addEventListener('click', (e) => {
-      if (desktopResults && !e.target.closest('.search')) {
+    document.addEventListener('click', event => {
+      const desktopResults = document.getElementById('desktop-search-results');
+      const mobileResults = document.getElementById('mobile-search-results');
+
+      if (
+        desktopResults &&
+        !event.target.closest('.search')
+      ) {
         desktopResults.classList.remove('active');
       }
-      if (mobileResults && !e.target.closest('#mobile-search-bar') && !e.target.closest('#mobile-search-toggle')) {
+
+      if (
+        mobileResults &&
+        !event.target.closest('#mobile-search-bar') &&
+        !event.target.closest('#mobile-search-toggle')
+      ) {
         mobileResults.classList.remove('active');
       }
     });
+
+    /* ---------------- MOBILE SEARCH ---------------- */
+    const mobileSearchToggle =
+      document.getElementById('mobile-search-toggle');
+
+    const mobileSearchBar =
+      document.getElementById('mobile-search-bar');
+
+    if (mobileSearchToggle && mobileSearchBar) {
+      mobileSearchToggle.addEventListener('click', () => {
+        mobileSearchBar.classList.toggle('active');
+
+        if (mobileSearchBar.classList.contains('active')) {
+          document.getElementById('mobile-search-input')?.focus();
+        }
+      });
+    }
+
+    /* ---------------- STARTUP ---------------- */
+    window.addEventListener('load', async () => {
+      try {
+        if (document.fonts) {
+          await document.fonts.ready;
+        }
+      } catch (error) {
+        console.warn('[AniLog fonts]', error);
+      }
+
+      const preloader = document.getElementById('preloader');
+
+      if (preloader) {
+        preloader.style.opacity = '0';
+        preloader.style.visibility = 'hidden';
+      }
+
+      document.body.classList.add('loaded');
+
+      attachSearchController(
+        'desktop-search-input',
+        'desktop-search-results'
+      );
+
+      attachSearchController(
+        'mobile-search-input',
+        'mobile-search-results'
+      );
+
+      updateThemeToggleState({
+        app_theme: localStorage.getItem('anilog_theme') || 'dark'
+      });
+
+      await loadLiveData();
+    });
+  </script>
+
+  <script id="anilog-live-goals-controller">
+    (function () {
+      const API = window.API_BASE_URL || 'http://127.0.0.1:8000';
+      const endpoint = '/api/goals/dashboard';
+      const token = () => (
+        localStorage.getItem('access_token') ||
+        localStorage.getItem('accessToken') ||
+        localStorage.getItem('token') ||
+        localStorage.getItem('auth_token') ||
+        localStorage.getItem('jwt') || ''
+      ).replace(/^Bearer\s+/i, '');
+      const headers = () => ({
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        ...(token() ? { Authorization: `Bearer ${token()}` } : {})
+      });
+      const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+      }[c]));
+      const pct = (v, t) => Math.min(100, Math.max(0, Math.round((Number(v) || 0) / Math.max(1, Number(t) || 1) * 100)));
+
+      function panelByTitle(title) {
+        return [...document.querySelectorAll('.m-panel')]
+          .find(p => p.querySelector('.m-panel-title')?.textContent.includes(title));
+      }
+      function desktopPanel(cls) { return document.querySelector(`.${cls}`); }
+
+      function skeletonRows(count = 3, height = 42) {
+        return Array.from({ length: count }, () =>
+          `<div class="skeleton anilog-data-skeleton" style="height:${height}px;border-radius:8px;margin-bottom:10px;"></div>`
+        ).join('');
+      }
+
+      function setSectionSkeletons() {
+        const yearly = desktopPanel('yearly');
+        if (yearly) yearly.querySelector('.goal-list').innerHTML = skeletonRows(3, 66);
+        const my = panelByTitle('Yearly Goals');
+        if (my) my.querySelector('.m-goal-list').innerHTML = skeletonRows(3, 62);
+
+        const monthly = desktopPanel('monthly-top');
+        if (monthly) monthly.querySelector('.challenge-grid').innerHTML = skeletonRows(4, 92);
+        const mm = panelByTitle('Monthly Challenges');
+        if (mm) mm.querySelector('.m-challenge-grid').innerHTML = skeletonRows(4, 76);
+
+        const rewards = desktopPanel('rewards');
+        if (rewards) rewards.querySelector('.reward-body').innerHTML = skeletonRows(3, 62);
+
+        const notes = desktopPanel('notes');
+        if (notes) notes.querySelector('.notebook').innerHTML = skeletonRows(4, 38);
+        const mn = panelByTitle('Goal Notes');
+        if (mn) {
+          const body = mn.querySelector('[style*="padding:10px"]');
+          if (body) body.innerHTML = skeletonRows(4, 28);
+        }
+
+        const tracker = desktopPanel('tracker');
+        if (tracker) {
+          const chart = tracker.querySelector('.chart');
+          if (chart) chart.innerHTML = '<div class="skeleton" style="height:100%;width:100%;border-radius:8px;"></div>';
+          tracker.querySelector('.chart-title').textContent = 'Loading progress...';
+        }
+
+        const minis = [...document.querySelectorAll('.panel.mini')];
+        const monthlyProgress = minis.find(x => x.querySelector('.panel-title')?.textContent.includes('Monthly Goal Progress'));
+        if (monthlyProgress) {
+          monthlyProgress.querySelector('.bar-chart').innerHTML = skeletonRows(1, 118);
+        }
+
+        const store = desktopPanel('store');
+        if (store) {
+          store.querySelector('.amount').textContent = 'Loading XP';
+          store.querySelector('.points').innerHTML = '<span class="skeleton" style="display:inline-block;width:130px;height:28px;border-radius:6px;">Loading</span>';
+        }
+
+        const profile = desktopPanel('profile-top');
+        if (profile) {
+          profile.querySelectorAll('.profile-name,.profile-level').forEach(el => {
+            el.classList.add('skeleton');
+          });
+          profile.querySelectorAll('.avatar').forEach(el => el.classList.add('skeleton'));
+        }
+
+      }
+
+      function clearSkeleton(el) { el?.classList.remove('skeleton'); }
+
+      function renderYearly(goals, year) {
+        const d = desktopPanel('yearly');
+        if (d) {
+          d.querySelector('.panel-title .right').textContent = year;
+          d.querySelector('.goal-list').innerHTML = goals.map(g => `
+            <div class="goal" data-goal-id="${g.id}">
+              <div class="goal-line"><span class="material-symbols-outlined">${esc(g.icon)}</span><span>${esc(g.title)}</span></div>
+              <div class="progress-bar-custom"><span style="width:${g.progress}%"></span></div>
+              <div class="checks"><b>${g.current >= g.target ? '✓' : '•'}</b>${g.current.toLocaleString()} / ${g.target.toLocaleString()} · +${g.reward_xp} XP</div>
+            </div>`).join('');
+        }
+        const m = panelByTitle('Yearly Goals');
+        if (m) {
+          m.querySelector('.m-panel-title .right').textContent = year;
+          m.querySelector('.m-goal-list').innerHTML = goals.map(g => `
+            <div class="m-goal">
+              <div class="m-goal-line"><span class="material-symbols-outlined">${esc(g.icon)}</span><span>${esc(g.title)}</span></div>
+              <div class="m-progress"><span style="width:${g.progress}%"></span></div>
+              <small>${g.current.toLocaleString()} / ${g.target.toLocaleString()} · +${g.reward_xp} XP</small>
+            </div>`).join('');
+        }
+      }
+
+      function renderMonthly(challenges, month) {
+        const name = new Date(2020, month - 1, 1).toLocaleString(undefined, { month: 'long' });
+        const d = desktopPanel('monthly-top');
+        if (d) {
+          d.querySelector('.panel-title .right').textContent = name;
+          d.querySelector('.challenge-grid').innerHTML = challenges.map(g => `
+            <div class="challenge">
+              <span class="material-symbols-outlined">${esc(g.icon)}</span>
+              <strong>${esc(g.title)}</strong>
+              <div class="done">${g.current >= g.target ? 'Completed' : g.progress + '%'}</div>
+              <small>${g.current.toLocaleString()} / ${g.target.toLocaleString()} · +${g.reward_xp} XP</small>
+            </div>`).join('');
+        }
+        const m = panelByTitle('Monthly Challenges');
+        if (m) {
+          m.querySelector('.m-panel-title .right').textContent = name;
+          m.querySelector('.m-challenge-grid').innerHTML = challenges.map(g => `
+            <div class="m-challenge">
+              <span class="material-symbols-outlined">${esc(g.icon)}</span>
+              <strong>${esc(g.title)}</strong>
+              <div class="done">${g.current >= g.target ? 'Completed' : g.progress + '%'}</div>
+              <small>${g.current.toLocaleString()} / ${g.target.toLocaleString()}</small>
+            </div>`).join('');
+        }
+      }
+
+      function renderRewards(rewards) {
+        const d = desktopPanel('rewards');
+        if (d) d.querySelector('.reward-body').innerHTML = rewards.map(r => `
+          <div class="reward simple">
+            <strong>${esc(r.title)}<br><span style="font-weight:400;color:var(--muted)">${esc(r.requirement)}</span></strong>
+            <div class="progress-bar-custom"><span style="width:${pct(r.current, r.required)}%"></span></div>
+            <span>${Math.min(r.current, r.required).toLocaleString()} / ${r.required.toLocaleString()} · +${r.xp} XP</span>
+          </div>`).join('');
+      }
+
+      function renderNotes(notes) {
+        const d = desktopPanel('notes');
+        if (d) {
+          d.querySelector('.notebook').innerHTML = (notes.length
+            ? notes.map(n => `<div class="note anilog-live-note"><span style="flex:1">${esc(n.note)}</span><button class="delete-note" data-note-id="${n.id}" title="Delete">×</button></div>`).join('')
+            : '<div class="anilog-live-empty">No notes yet. Use the pencil to add one.</div>') + '<div class="pen"></div>';
+          addPencil(d);
+        }
+        const m = panelByTitle('Goal Notes');
+        if (m) {
+          const body = m.querySelector('[style*="padding:10px"]');
+          if (body) body.innerHTML = notes.length
+            ? notes.map(n => `<div class="anilog-live-note"><span style="flex:1">• ${esc(n.note)}</span><button class="delete-note" data-note-id="${n.id}">×</button></div>`).join('')
+            : '<div class="anilog-live-empty">No notes yet.</div>';
+        }
+      }
+
+      function addPencil(panel) {
+        if (!panel) return;
+        const title = panel.querySelector('.panel-title');
+        if (title && !title.querySelector('.anilog-pencil-btn')) {
+          const b = document.createElement('button');
+          b.className = 'anilog-pencil-btn';
+          b.innerHTML = '<span class="material-symbols-outlined">edit</span>';
+          b.onclick = openNoteModal;
+          title.appendChild(b);
+        }
+      }
+
+      function renderTracker(months) {
+        const t = desktopPanel('tracker');
+        if (!t) return;
+        const chart = t.querySelector('.chart');
+        const max = Math.max(1, ...months.map(m => m.xp));
+        chart.style.clipPath = 'none';
+        chart.style.background = 'repeating-linear-gradient(to top,transparent 0 27px,rgba(160,153,173,.12) 28px),linear-gradient(180deg,rgba(146,45,220,.18),rgba(75,24,111,.05))';
+        chart.innerHTML = '<div class="anilog-live-chart">' + months.map(m => {
+          const h = Math.max(2, m.xp / max * 88);
+          return `<div class="live-col" title="${m.xp} XP"><span class="live-value">${m.xp}</span><i class="live-bar" style="height:${h}%"></i></div>`;
+        }).join('') + '</div>';
+        t.querySelector('.chart-y').innerHTML = `<span>${max.toLocaleString()}</span><span>${Math.round(max * .75).toLocaleString()}</span><span>${Math.round(max * .5).toLocaleString()}</span><span>${Math.round(max * .25).toLocaleString()}</span><span>0</span>`;
+        t.querySelector('.chart-title').textContent = 'XP Earned vs Time';
+      }
+
+      function renderMonthlyProgress(months) {
+        const panels = [...document.querySelectorAll('.panel.mini')];
+        const target = panels.find(x => x.querySelector('.panel-title')?.textContent.includes('Monthly Goal Progress'));
+        if (!target) return;
+        const vals = months.map(m => m.completed);
+        const max = Math.max(1, ...vals);
+        target.querySelector('.bar-chart').innerHTML = months.map(m => `<i class="bar" title="${m.completed} completed" style="height:${Math.max(5, m.completed / max * 94)}%"></i>`).join('');
+        target.querySelector('.bar-labels').innerHTML = months.map(m => `<span>${new Date(2020, m.month - 1, 1).toLocaleString(undefined, { month: 'short' })}</span>`).join('');
+      }
+
+      function renderStore(store) {
+        const d = desktopPanel('store');
+        if (!d) return;
+        d.querySelector('.amount').textContent = `${store.xp.toLocaleString()} XP`;
+        d.querySelector('.points').innerHTML = `XP earned through anime<br><b style="color:var(--purple2)">${store.xp.toLocaleString()}</b>`;
+        d.querySelectorAll('.store-item small').forEach((x, i) => x.textContent = [`${store.xp} XP`, `LVL ${store.level}`, `${Math.floor(store.xp / 100)} XP`][i] || '');
+      }
+
+      function renderProfile(user) {
+        const avatar = user.avatar || 'https://api.dicebear.com/7.x/bottts/svg?seed=Shadow';
+        document.querySelectorAll('.profile-top .avatar').forEach(x => { x.src = avatar; clearSkeleton(x); });
+        document.querySelectorAll('.profile-top .profile-name').forEach(x => { x.textContent = user.username || 'User'; clearSkeleton(x); });
+        document.querySelectorAll('.profile-top .profile-level').forEach((x, i) => {
+          x.textContent = i % 2 === 0
+            ? `Level ${user.level.level} · ${user.level.title}`
+            : `XP ${user.xp.toLocaleString()} / ${user.level.next_xp.toLocaleString()}`;
+          clearSkeleton(x);
+        });
+      }
+
+      function sectionError(section, message) {
+        const map = {
+          yearly: '.yearly .goal-list', monthly: '.monthly-top .challenge-grid',
+          rewards: '.rewards .reward-body', notes: '.notes .notebook',
+          progress: '.tracker .chart', store: '.store .points', profile: '.profile-top .profile-name'
+        };
+        const el = document.querySelector(map[section]);
+        if (el) el.innerHTML = `<div class="anilog-section-error">${esc(message)}</div>`;
+        if (section === 'monthly') {
+          const m = panelByTitle('Monthly Challenges');
+          if (m) m.querySelector('.m-challenge-grid').innerHTML = '<div class="anilog-section-error">Unable to load monthly challenges.</div>';
+        }
+        if (section === 'yearly') {
+          const m = panelByTitle('Yearly Goals');
+          if (m) m.querySelector('.m-goal-list').innerHTML = '<div class="anilog-section-error">Unable to load yearly goals.</div>';
+        }
+      }
+
+      function ensureModal() {
+        if (document.getElementById('anilog-note-modal')) return;
+        document.body.insertAdjacentHTML('beforeend', `
+          <div class="anilog-modal-backdrop" id="anilog-note-modal">
+            <div class="anilog-note-modal">
+              <h3>Add Anime Note</h3>
+              <textarea id="anilog-note-input" maxlength="2000" placeholder="Write your anime goal note..."></textarea>
+              <div class="anilog-note-actions">
+                <button type="button" onclick="closeNoteModal()">Cancel</button>
+                <button type="button" class="save" onclick="saveNote()">Save Note</button>
+              </div>
+            </div>
+          </div>`);
+      }
+      window.openNoteModal = function () {
+        ensureModal();
+        document.getElementById('anilog-note-modal').classList.add('open');
+        document.getElementById('anilog-note-input').focus();
+      };
+      window.closeNoteModal = function () { document.getElementById('anilog-note-modal')?.classList.remove('open'); };
+
+      async function loadSection(section, render) {
+        try {
+          const r = await fetch(`${API}${endpoint}?section=${encodeURIComponent(section)}`, {
+            headers: headers(), credentials: 'include', cache: 'no-store'
+          });
+          if (r.status === 401 || r.status === 403) {
+            clearStoredAuth();
+            showToast('Your session has expired. Please log in again.', 'warning');
+            setTimeout(() => navigateTo('./anilog-login-register.html'), 700);
+            return;
+          }
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          const data = await r.json();
+          render(data);
+          return data;
+        } catch (e) {
+          console.error(`[AniLog ${section}]`, e);
+          sectionError(section, 'Unable to load this section.');
+        }
+      }
+
+      async function loadGoals() {
+        // Every request starts together. The first completed backend calculation
+        // is painted immediately; the page never waits for the slowest section.
+        const jobs = [
+          ['yearly', d => renderYearly(d.yearly_goals || [], d.year)],
+          ['monthly', d => renderMonthly(d.monthly_challenges || [], d.month)],
+          ['rewards', d => renderRewards(d.rewards || [])],
+          ['notes', d => renderNotes(d.notes || [])],
+          ['progress', d => { renderTracker(d.months || []); renderMonthlyProgress(d.months || []); }],
+          ['store', d => renderStore(d.store || { xp: 0, level: 1 })],
+          ['profile', d => renderProfile(d.user || {})]
+        ];
+        jobs.forEach(([section, render]) => loadSection(section, render));
+      }
+
+      window.saveNote = async function () {
+        const input = document.getElementById('anilog-note-input');
+        const note = input.value.trim();
+        if (!note) return showToast('Write a note first.', 'warning');
+        try {
+          const r = await fetch(API + '/api/goals/notes', {
+            method: 'POST', headers: headers(), body: JSON.stringify({ note })
+          });
+          if (!r.ok) throw new Error('Unable to save note');
+          input.value = '';
+          closeNoteModal();
+          showToast('Anime note saved.', 'success');
+          loadSection('notes', d => renderNotes(d.notes || []));
+        } catch (e) { showToast(e.message, 'error'); }
+      };
+
+      document.addEventListener('click', async e => {
+        const del = e.target.closest('.delete-note');
+        if (!del) return;
+        try {
+          const r = await fetch(API + '/api/goals/notes/' + encodeURIComponent(del.dataset.noteId), {
+            method: 'DELETE', headers: headers()
+          });
+          if (!r.ok) throw new Error('Delete failed');
+          loadSection('notes', d => renderNotes(d.notes || []));
+          showToast('Note deleted.', 'success');
+        } catch (x) { showToast(x.message, 'error'); }
+      });
+
+      // Goals are automatically completed by the backend when their metric reaches
+      // the target. Clicking a goal no longer creates a fake/manual completion.
+      document.addEventListener('DOMContentLoaded', () => {
+        setSectionSkeletons();
+        document.querySelectorAll('.notes').forEach(addPencil);
+        const mobileNotes = panelByTitle('Goal Notes');
+        if (mobileNotes) addPencil(mobileNotes);
+        loadGoals();
+      });
+
+      window.AniLogGoals = { load: loadGoals };
+    })();
   </script>
 </body>
 

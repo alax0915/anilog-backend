@@ -107,6 +107,54 @@
       visibility: visible;
     }
 
+    /* ---------------- TOAST NOTIFICATIONS & SKELETON ---------------- */
+    #toast-container {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      padding: 12px 20px;
+      background: #11131d;
+      border: 1px solid #9d2cff;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 13px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      opacity: 0;
+      transform: translateX(100%);
+      animation: toastSlideIn 0.3s forwards;
+    }
+
+    .toast.error { border-color: #ff2d63; }
+    .toast.success { border-color: #68ed72; }
+
+    @keyframes toastSlideIn { to { opacity: 1; transform: translateX(0); } }
+    @keyframes toastFadeOut { to { opacity: 0; transform: translateX(100%); } }
+
+    .skeleton {
+      background: linear-gradient(90deg, #161824 25%, #242738 50%, #161824 75%);
+      background-size: 200% 100%;
+      animation: skeletonLoading 1.5s infinite;
+      border-radius: 4px;
+      color: transparent !important;
+      pointer-events: none;
+    }
+
+    .skeleton * {
+      visibility: hidden;
+    }
+
+    @keyframes skeletonLoading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
     /* ---------------- MATERIAL ICONS ---------------- */
     .material-symbols-outlined {
       font-family: 'Material Symbols Outlined';
@@ -297,6 +345,7 @@
       box-shadow: inset 0 0 20px rgba(155, 34, 246, .09);
     }
 
+    /* ---------------- UPDATED USER CARD CSS ---------------- */
     .user-card {
       position: absolute;
       left: 14px;
@@ -310,7 +359,8 @@
       border: 1px solid #9b31e7;
       border-radius: 7px;
       background: linear-gradient(145deg, rgba(14, 16, 27, .98), rgba(7, 8, 15, .98));
-      clip-path: polygon(4% 0, 96% 0, 100% 7%, 100% 93%, 96% 100%, 4% 100%, 0 93%, 0 7%);
+      
+      /* Preserved animation logic to maintain UX intent */
       backface-visibility: hidden;
       transform-style: preserve-3d;
       opacity: 0;
@@ -349,6 +399,7 @@
       margin: 0 0 4px;
       font-size: 14px;
       font-weight: 700;
+      word-break: break-word;
     }
 
     .user-level {
@@ -369,6 +420,7 @@
       width: 63%;
       height: 100%;
       background: #9c2cff;
+      transition: width 0.8s ease;
     }
 
     .xp-text {
@@ -769,6 +821,13 @@
       background: linear-gradient(180deg, rgba(19, 16, 29, .94), rgba(10, 10, 18, .96));
       padding: 14px;
       box-shadow: inset 0 0 0 1px rgba(156, 50, 255, .03);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .episode-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(145, 42, 222, .15);
     }
 
     .episode-card:first-child {
@@ -994,6 +1053,12 @@
         border-radius: 8px;
         padding: 12px;
         background: rgba(14, 12, 24, .9);
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+      }
+
+      .m-card:hover {
+        border-color: #a42df2;
       }
 
       .m-meta {
@@ -1108,14 +1173,416 @@
         color: #bd43ff;
       }
     }
+
+    /* ---------------- EPISODE PICKER MODAL ---------------- */
+    #episode-picker-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 20000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, .78);
+      backdrop-filter: blur(10px);
+    }
+
+    #episode-picker-modal.active {
+      display: flex;
+      animation: episodePickerFadeIn .22s ease forwards;
+    }
+
+    @keyframes episodePickerFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .episode-picker-card {
+      width: min(560px, 100%);
+      max-height: min(720px, 92vh);
+      overflow: visible;
+      position: relative;
+      padding: 24px;
+      border: 1px solid #a43cff;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(157,44,255,.18), transparent 42%),
+        linear-gradient(145deg, #0e101b, #070810);
+      box-shadow: 0 25px 80px rgba(0,0,0,.8), 0 0 45px rgba(157,44,255,.16);
+    }
+
+    .episode-picker-kicker {
+      color: var(--purple2);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+    }
+
+    .episode-picker-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 7px;
+    }
+
+    .episode-picker-subtitle {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .episode-picker-field {
+      position: relative;
+      margin-top: 13px;
+    }
+
+    .episode-picker-field label {
+      display: block;
+      color: #b44eff;
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 7px;
+      text-transform: uppercase;
+      letter-spacing: .45px;
+    }
+
+    .episode-picker-input {
+      width: 100%;
+      height: 46px;
+      padding: 0 14px;
+      border: 1px solid #302b42;
+      border-radius: 8px;
+      outline: none;
+      background: #0b0d16;
+      color: #fff;
+      font-size: 13px;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .episode-picker-input:focus {
+      border-color: var(--purple2);
+      box-shadow: 0 0 0 3px rgba(157,44,255,.12);
+    }
+
+    .episode-picker-input:disabled {
+      opacity: .48;
+      cursor: not-allowed;
+    }
+
+    #episode-picker-search-results {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 73px;
+      max-height: 280px;
+      overflow-y: auto;
+      display: none;
+      z-index: 5;
+      border: 1px solid var(--purple);
+      border-radius: 8px;
+      background: #090b14;
+      box-shadow: 0 16px 35px rgba(0,0,0,.85);
+    }
+
+    #episode-picker-search-results.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .episode-picker-result {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      width: 100%;
+      padding: 9px 11px;
+      border-bottom: 1px solid #1a1c29;
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .episode-picker-result:last-child { border-bottom: 0; }
+
+    .episode-picker-result:hover {
+      background: rgba(157,44,255,.15);
+    }
+
+    .episode-picker-result img {
+      width: 36px;
+      height: 50px;
+      flex: 0 0 36px;
+      border-radius: 4px;
+      background: #161322;
+    }
+
+    .episode-picker-result-info {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .episode-picker-result-title {
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .episode-picker-result-meta {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .episode-picker-selected {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 42px;
+      margin-top: 8px;
+      padding: 8px 10px;
+      border: 1px solid #292239;
+      border-radius: 8px;
+      background: #0b0d16;
+    }
+
+    .episode-picker-selected img {
+      width: 28px;
+      height: 38px;
+      border-radius: 4px;
+    }
+
+    .episode-picker-selected-text {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .episode-picker-selected-name {
+      font-size: 12px;
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .episode-picker-selected-meta {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .episode-picker-hint {
+      margin-top: 8px;
+      color: #777384;
+      font-size: 10px;
+      line-height: 1.4;
+    }
+
+    .episode-picker-status {
+      min-height: 16px;
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .episode-picker-status.error { color: var(--danger); }
+    .episode-picker-status.success { color: var(--green); }
+
+    .episode-picker-loading {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      background: rgba(5,6,12,.72);
+      backdrop-filter: blur(3px);
+    }
+
+    .episode-picker-loading.active { display: flex; }
+
+    .episode-picker-loading-inner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border: 1px solid #482567;
+      border-radius: 8px;
+      background: #0b0d16;
+      font-size: 11px;
+    }
+
+    .episode-picker-loading .spinner {
+      width: 22px;
+      height: 22px;
+      border-width: 2px;
+    }
+
+    .episode-picker-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 12px 0 16px;
+    }
+
+    .episode-stepper {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px;
+      border: 1px solid #3b2354;
+      border-radius: 9px;
+      background: #0b0d16;
+    }
+
+    .episode-step-btn {
+      width: 32px;
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #342743;
+      border-radius: 6px;
+      color: #fff;
+      background: #11121d;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      transition: background .2s ease, border-color .2s ease, opacity .2s ease;
+    }
+
+    .episode-step-btn:hover:not(:disabled) {
+      background: rgba(157,44,255,.22);
+      border-color: var(--purple2);
+    }
+
+    .episode-step-btn:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+    }
+
+    #desktop-current-episode-label,
+    #mobile-current-episode-label {
+      min-width: 90px;
+      text-align: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .episode-current-anime {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 10px;
+      text-align: center;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .episode-dynamic-loading {
+      opacity: .55;
+      pointer-events: none;
+      transition: opacity .2s ease;
+    }
+
+    @media(max-width: 900px) {
+      #episode-picker-modal {
+        padding: 12px;
+      }
+
+      .episode-picker-card {
+        padding: 19px;
+        border-radius: 12px;
+      }
+
+      .episode-picker-title {
+        font-size: 20px;
+      }
+
+      .episode-picker-controls {
+        margin: 10px 0 13px;
+      }
+
+      .episode-picker-stepper {
+        gap: 6px;
+      }
+    }
+
   </style>
 </head>
 
 <body>
 
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container"></div>
+
   <!-- PRELOADER OVERLAY -->
   <div id="preloader">
     <div class="spinner"></div>
+  </div>
+
+
+  <!-- EPISODE SELECTION MODAL: SHOWN AFTER SUCCESSFUL AUTHENTICATION -->
+  <div id="episode-picker-modal" aria-hidden="true">
+    <div class="episode-picker-card" role="dialog" aria-modal="true" aria-labelledby="episode-picker-title">
+      <div class="episode-picker-loading" id="episode-picker-loading">
+        <div class="episode-picker-loading-inner">
+          <div class="spinner"></div>
+          <span>Loading anime episode data...</span>
+        </div>
+      </div>
+
+      <div class="episode-picker-kicker">ANILOG • EPISODE LOG</div>
+      <div class="episode-picker-title" id="episode-picker-title">Choose what you watched</div>
+      <div class="episode-picker-subtitle">
+        Search and select an anime first. Then enter the episode number. A valid episode number automatically closes this window and loads the anime data into the log.
+      </div>
+
+      <div class="episode-picker-field">
+        <label for="episode-picker-anime-search">1. Search anime</label>
+        <input
+          class="episode-picker-input"
+          id="episode-picker-anime-search"
+          type="text"
+          autocomplete="off"
+          placeholder="Search anime..."
+        >
+        <div id="episode-picker-search-results"></div>
+      </div>
+
+      <div class="episode-picker-selected" id="episode-picker-selected" hidden>
+        <img id="episode-picker-selected-image" src="" alt="">
+        <div class="episode-picker-selected-text">
+          <div class="episode-picker-selected-name" id="episode-picker-selected-name">No anime selected</div>
+          <div class="episode-picker-selected-meta" id="episode-picker-selected-meta"></div>
+        </div>
+      </div>
+
+      <div class="episode-picker-field">
+        <label for="episode-picker-number">2. Episode number</label>
+        <input
+          class="episode-picker-input"
+          id="episode-picker-number"
+          type="number"
+          min="1"
+          step="1"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="Select an anime first"
+          disabled
+        >
+        <div class="episode-picker-hint">The page loads as soon as you enter a valid episode number.</div>
+      </div>
+
+      <div class="episode-picker-status" id="episode-picker-status"></div>
+    </div>
   </div>
 
   <!-- =========================================================
@@ -1150,14 +1617,14 @@
         </nav>
 
         <div class="user-card">
-          <img class="user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="Avatar">
+          <img class="user-avatar skeleton" id="sidebar-user-avatar" src="" alt="Avatar">
           <div class="user-info">
-            <h3 class="user-name">ShadowX</h3>
-            <div class="user-level">Level 27</div>
-            <div class="xp-track">
-              <div class="xp-fill"></div>
+            <h3 class="user-name skeleton" id="sidebar-user-name">Loading...</h3>
+            <div class="user-level skeleton" id="sidebar-user-level">LVL 1 - Otaku Novice</div>
+            <div class="xp-track skeleton">
+              <div class="xp-fill" id="sidebar-xp-fill" style="width: 0%;"></div>
             </div>
-            <div class="xp-text">XP 4,250 / 6,800</div>
+            <div class="xp-text skeleton" id="sidebar-xp-text">0 / 500 XP</div>
           </div>
         </div>
       </aside>
@@ -1173,13 +1640,13 @@
 
           <div class="top-actions">
             <div class="top-action-wrap">
-              <div class="top-action"><span class="material-symbols-outlined">notifications</span></div>
+              <div class="top-action" onclick="showToast('No new notifications', 'success')"><span class="material-symbols-outlined">notifications</span></div>
             </div>
 
             <div class="top-action-wrap">
               <div class="top-action streak">
                 <span class="material-symbols-outlined" style="color: #ff2d63;">local_fire_department</span>
-                <span>12</span>
+                <span id="streak-counter" class="skeleton">12</span>
               </div>
             </div>
 
@@ -1189,27 +1656,27 @@
               </div>
               <div class="dropdown-panel">
                 <div class="dropdown-panel-header">System Settings</div>
-                <button class="dropdown-item"><span class="material-symbols-outlined">dark_mode</span> App Theme</button>
-                <button class="dropdown-item"><span class="material-symbols-outlined">notifications_active</span> Notifications</button>
-                <button class="dropdown-item"><span class="material-symbols-outlined">subtitles</span> Default Sub/Dub</button>
-                <button class="dropdown-item"><span class="material-symbols-outlined">explicit</span> Content Filter</button>
+                <button class="dropdown-item" onclick="toggleSetting('App Theme')"><span class="material-symbols-outlined">dark_mode</span> App Theme</button>
+                <button class="dropdown-item" onclick="toggleSetting('Notifications')"><span class="material-symbols-outlined">notifications_active</span> Notifications</button>
+                <button class="dropdown-item" onclick="toggleSetting('Default Sub/Dub')"><span class="material-symbols-outlined">subtitles</span> Default Sub/Dub</button>
+                <button class="dropdown-item" onclick="toggleSetting('Content Filter')"><span class="material-symbols-outlined">explicit</span> Content Filter</button>
                 <div class="dropdown-divider"></div>
-                <button class="dropdown-item"><span class="material-symbols-outlined">tune</span> Preferences</button>
+                <button class="dropdown-item" onclick="showToast('Preferences opened', 'success')"><span class="material-symbols-outlined">tune</span> Preferences</button>
               </div>
             </div>
 
             <div class="profile-wrap">
               <div class="profile">
-                <img class="avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX" alt="User">
+                <img class="avatar skeleton" id="top-user-avatar" src="" alt="User">
                 <span class="material-symbols-outlined">expand_more</span>
               </div>
               <div class="dropdown-panel">
                 <div class="dropdown-panel-header">User Profile</div>
                 <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span> View Profile</button>
                 <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">edit</span> Edit Profile</button>
-                <button class="dropdown-item"><span class="material-symbols-outlined">workspace_premium</span> VIP Membership</button>
+                <button class="dropdown-item" onclick="showToast('VIP Details Loading...', 'success')"><span class="material-symbols-outlined">workspace_premium</span> VIP Membership</button>
                 <div class="dropdown-divider"></div>
-                <button class="dropdown-item" style="color: var(--danger);"><span class="material-symbols-outlined" style="color: var(--danger);">logout</span> Log Out</button>
+                <button class="dropdown-item" style="color: var(--danger);" onclick="logout()"><span class="material-symbols-outlined" style="color: var(--danger);">logout</span> Log Out</button>
               </div>
             </div>
 
@@ -1237,98 +1704,111 @@
         </div>
 
         <section class="log">
+          <div class="episode-picker-controls" aria-label="Episode navigation">
+            <div>
+              <div class="episode-stepper">
+                <button class="episode-step-btn" id="desktop-previous-episode" type="button" title="Previous episode" aria-label="Previous episode">−</button>
+                <div>
+                  <div id="desktop-current-episode-label">Episode —</div>
+                  <div class="episode-current-anime" id="desktop-current-anime-label">Select an anime</div>
+                </div>
+                <button class="episode-step-btn" id="desktop-next-episode" type="button" title="Next episode" aria-label="Next episode">+</button>
+              </div>
+            </div>
+          </div>
           <div class="log-row">
-            <span>Ep 82</span>
-            <span>Oct 15, 2024</span>
-            <span class="rating-top">9.8 <span class="stars">★★★★★</span></span>
+            <span id="desktop-log-episode">Ep —</span>
+            <span id="desktop-log-date">—</span>
+            <span class="rating-top" id="desktop-log-rating">— <span class="stars">★★★★★</span></span>
           </div>
-          <div class="cards">
-
-            <article class="episode-card">
+          <div class="cards episode-dynamic-loading" id="desktop-episode-cards">
+            <article class="episode-card" data-episode-slot="current">
               <div class="meta">
-                <div><label>Episode Number</label><span>Ep 82</span></div>
-                <div><label>Date Watched</label><span>Oct 15, 2024</span></div>
+                <div><label>Episode Number</label><span data-field="number">Ep —</span></div>
+                <div><label>Date Watched</label><span data-field="date">—</span></div>
               </div>
               <div class="title-label">Episode Title</div>
-              <div class="ep-title">"From You, 2,000 Years Ago"</div>
-              <div class="thumb-row"><img class="thumb" src="https://placehold.co/120x60/161322/9635d9?text=Ep+82" alt="Thumb"><img class="thumb" src="https://placehold.co/120x60/161322/9635d9?text=Scene" alt="Thumb"></div>
+              <div class="ep-title" data-field="title">Choose an anime and episode</div>
+              <div class="thumb-row">
+                <img class="thumb" data-field="thumb" src="https://placehold.co/120x60/161322/9635d9?text=Episode" alt="Episode thumbnail">
+                <img class="thumb" data-field="anime-thumb" src="https://placehold.co/120x60/161322/9635d9?text=Anime" alt="Anime thumbnail">
+              </div>
               <div class="field"><label>Immediate Reactions</label>
-                <div class="box reaction">
-                  <div>"From You, 2,000 Years Ago"</div>
-                  <div>"Masterful execution"</div>
+                <div class="box reaction" data-field="reaction">
+                  <div>Select an episode to load its anime data.</div>
                 </div>
               </div>
               <div class="field"><label>Favorite Moments</label>
-                <div class="box blank"></div>
+                <div class="box blank" data-field="favorite">—</div>
               </div>
               <div class="field"><label>Predictions</label>
-                <div class="box prediction">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec consectetur feugiat libero, vel tristique ipsum. Integer consectetur posuere mauris, nec consequat lectus.</div>
+                <div class="box prediction" data-field="synopsis">Episode synopsis will appear here.</div>
               </div>
               <div class="card-rating">
                 <div><label>Rating for Episode</label>
-                  <div class="card-stars">★★★★½</div>
+                  <div class="card-stars" data-field="stars">★★★★★</div>
                 </div>
-                <div class="score">9.8</div>
+                <div class="score" data-field="score">—</div>
               </div>
             </article>
 
-            <article class="episode-card">
+            <article class="episode-card" data-episode-slot="next">
               <div class="meta">
-                <div><label>Episode Number</label><span>Ep 83</span></div>
-                <div><label>Date Watched</label><span>Oct 15, 2024</span></div>
+                <div><label>Episode Number</label><span data-field="number">Ep —</span></div>
+                <div><label>Date Watched</label><span data-field="date">—</span></div>
               </div>
               <div class="title-label">Episode Title</div>
-              <div class="ep-title">"So thaing Akumeeling"</div>
-              <div class="thumb-row"><img class="thumb" src="https://placehold.co/120x60/161322/9635d9?text=Ep+83" alt="Thumb"><img class="thumb" src="https://placehold.co/120x60/161322/9635d9?text=Scene" alt="Thumb"></div>
+              <div class="ep-title" data-field="title">Next episode</div>
+              <div class="thumb-row">
+                <img class="thumb" data-field="thumb" src="https://placehold.co/120x60/161322/9635d9?text=Next" alt="Next episode thumbnail">
+                <img class="thumb" data-field="anime-thumb" src="https://placehold.co/120x60/161322/9635d9?text=Anime" alt="Anime thumbnail">
+              </div>
               <div class="field"><label>Immediate Reactions</label>
-                <div class="box reaction">
-                  <div>...</div>
-                  <div>...</div>
-                </div>
+                <div class="box reaction" data-field="reaction"><div>Next episode data.</div></div>
               </div>
               <div class="field"><label>Favorite Moments</label>
-                <div class="box blank"></div>
+                <div class="box blank" data-field="favorite">—</div>
               </div>
               <div class="field"><label>Predictions</label>
-                <div class="box prediction">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec consectetur feugiat libero, vel tristique ipsum. Integer consectetur posuere mauris, nec consequat lectus.</div>
+                <div class="box prediction" data-field="synopsis">—</div>
               </div>
               <div class="card-rating">
                 <div><label>Rating for Episode</label>
-                  <div class="card-stars">★★★★½</div>
+                  <div class="card-stars" data-field="stars">★★★★★</div>
                 </div>
-                <div class="score">9.8</div>
+                <div class="score" data-field="score">—</div>
               </div>
             </article>
 
-            <article class="episode-card">
+            <article class="episode-card" data-episode-slot="previous">
               <div class="meta">
-                <div><label>Episode Number</label><span>Ep 80</span></div>
-                <div><label>Date Watched</label><span>Oct 15, 2024</span></div>
+                <div><label>Episode Number</label><span data-field="number">Ep —</span></div>
+                <div><label>Date Watched</label><span data-field="date">—</span></div>
               </div>
               <div class="title-label">Episode Title</div>
-              <div class="ep-title">Frieren: Beyond Journey's End</div>
-              <div class="thumb-row"><img class="thumb" src="https://placehold.co/120x60/161322/9635d9?text=Ep+80" alt="Thumb"><img class="thumb" src="https://placehold.co/120x60/161322/9635d9?text=Scene" alt="Thumb"></div>
+              <div class="ep-title" data-field="title">Previous episode</div>
+              <div class="thumb-row">
+                <img class="thumb" data-field="thumb" src="https://placehold.co/120x60/161322/9635d9?text=Previous" alt="Previous episode thumbnail">
+                <img class="thumb" data-field="anime-thumb" src="https://placehold.co/120x60/161322/9635d9?text=Anime" alt="Anime thumbnail">
+              </div>
               <div class="field"><label>Immediate Reactions</label>
-                <div class="box reaction">
-                  <div>...</div>
-                  <div>...</div>
-                </div>
+                <div class="box reaction" data-field="reaction"><div>Previous episode data.</div></div>
               </div>
               <div class="field"><label>Favorite Moments</label>
-                <div class="box blank"></div>
+                <div class="box blank" data-field="favorite">—</div>
               </div>
               <div class="field"><label>Predictions</label>
-                <div class="box prediction">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec consectetur feugiat libero, vel tristique ipsum. Integer consectetur posuere mauris, nec consequat lectus.</div>
+                <div class="box prediction" data-field="synopsis">—</div>
               </div>
               <div class="card-rating">
                 <div><label>Rating for Episode</label>
-                  <div class="card-stars">★★★★½</div>
+                  <div class="card-stars" data-field="stars">★★★★★</div>
                 </div>
-                <div class="score">9.6</div>
+                <div class="score" data-field="score">—</div>
               </div>
             </article>
-
           </div>
+
         </section>
 
       </section>
@@ -1363,32 +1843,71 @@
       <div class="mobile-content">
         <div class="m-title">Episode Reaction<br>Log</div>
 
-        <section class="m-log">
-          <article class="m-card">
+        <div class="episode-picker-controls" aria-label="Episode navigation">
+          <div class="episode-stepper">
+            <button class="episode-step-btn" id="mobile-previous-episode" type="button" title="Previous episode" aria-label="Previous episode">−</button>
+            <div>
+              <div id="mobile-current-episode-label">Episode —</div>
+              <div class="episode-current-anime" id="mobile-current-anime-label">Select an anime</div>
+            </div>
+            <button class="episode-step-btn" id="mobile-next-episode" type="button" title="Next episode" aria-label="Next episode">+</button>
+          </div>
+        </div>
+
+        <section class="m-log episode-dynamic-loading" id="mobile-episode-cards">
+          <article class="m-card" data-episode-slot="current">
             <div class="m-meta">
-              <div><label>Episode Number</label><span>Ep 82</span></div>
-              <div><label>Date Watched</label><span>Oct 15, 2024</span></div>
+              <div><label>Episode Number</label><span data-field="number">Ep —</span></div>
+              <div><label>Date Watched</label><span data-field="date">—</span></div>
             </div>
             <div class="m-label">Episode Title</div>
-            <div class="m-ep-title">"From You, 2,000 Years Ago"</div>
-            <div class="m-thumbs"><img src="https://placehold.co/120x63/161322/9635d9?text=Thumb1" alt="Thumb"><img src="https://placehold.co/120x63/161322/9635d9?text=Thumb2" alt="Thumb"></div>
+            <div class="m-ep-title" data-field="title">Choose an anime and episode</div>
+            <div class="m-thumbs">
+              <img data-field="thumb" src="https://placehold.co/120x63/161322/9635d9?text=Episode" alt="Episode thumbnail">
+              <img data-field="anime-thumb" src="https://placehold.co/120x63/161322/9635d9?text=Anime" alt="Anime thumbnail">
+            </div>
             <div class="m-label">Immediate Reactions</div>
-            <div class="m-box"></div>
+            <div class="m-box" data-field="reaction">Select an episode to load its anime data.</div>
             <div class="m-label">Favorite Moments</div>
-            <div class="m-box" style="height:39px"></div>
+            <div class="m-box" data-field="favorite">—</div>
             <div class="m-label">Predictions</div>
-            <div class="m-box m-pred">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec consectetur feugiat libero, vel tristique ipsum. Integer consectetur posuere mauris, nec consequat lectus.</div>
+            <div class="m-box m-pred" data-field="synopsis">Episode synopsis will appear here.</div>
             <div class="m-label">Rating for Episode</div>
-            <div class="m-rating"><span class="m-stars">★★★★½</span><span class="m-score">9.8</span></div>
+            <div class="m-rating"><span class="m-stars" data-field="stars">★★★★★</span><span class="m-score" data-field="score">—</span></div>
           </article>
 
-          <article class="m-card m-second">
+          <article class="m-card m-second" data-episode-slot="next">
             <div class="m-meta">
-              <div><label>Episode Number</label><span>Ep 82</span></div>
-              <div><label>Date Watched</label><span>Oct 15, 2024</span></div>
+              <div><label>Episode Number</label><span data-field="number">Ep —</span></div>
+              <div><label>Date Watched</label><span data-field="date">—</span></div>
             </div>
             <div class="m-label">Episode Title</div>
-            <div class="m-ep-title">"From You, 2,000 Years Ago"</div>
+            <div class="m-ep-title" data-field="title">Next episode</div>
+            <div class="m-thumbs">
+              <img data-field="thumb" src="https://placehold.co/120x63/161322/9635d9?text=Next" alt="Next episode thumbnail">
+              <img data-field="anime-thumb" src="https://placehold.co/120x63/161322/9635d9?text=Anime" alt="Anime thumbnail">
+            </div>
+            <div class="m-label">Episode Synopsis</div>
+            <div class="m-box m-pred" data-field="synopsis">—</div>
+            <div class="m-label">Rating</div>
+            <div class="m-rating"><span class="m-stars" data-field="stars">★★★★★</span><span class="m-score" data-field="score">—</span></div>
+          </article>
+
+          <article class="m-card m-second" data-episode-slot="previous">
+            <div class="m-meta">
+              <div><label>Episode Number</label><span data-field="number">Ep —</span></div>
+              <div><label>Date Watched</label><span data-field="date">—</span></div>
+            </div>
+            <div class="m-label">Episode Title</div>
+            <div class="m-ep-title" data-field="title">Previous episode</div>
+            <div class="m-thumbs">
+              <img data-field="thumb" src="https://placehold.co/120x63/161322/9635d9?text=Previous" alt="Previous episode thumbnail">
+              <img data-field="anime-thumb" src="https://placehold.co/120x63/161322/9635d9?text=Anime" alt="Anime thumbnail">
+            </div>
+            <div class="m-label">Episode Synopsis</div>
+            <div class="m-box m-pred" data-field="synopsis">—</div>
+            <div class="m-label">Rating</div>
+            <div class="m-rating"><span class="m-stars" data-field="stars">★★★★★</span><span class="m-score" data-field="score">—</span></div>
           </article>
         </section>
 
@@ -1421,36 +1940,152 @@
   </div>
 
   <script>
-    window.addEventListener('load', async () => {
-      if (document.fonts) {
-        await document.fonts.ready;
-      }
-      const preloader = document.getElementById('preloader');
-      preloader.style.opacity = '0';
-      preloader.style.visibility = 'hidden';
-      document.body.classList.add('loaded');
-    });
+    // ---------------- NOTIFICATION SYSTEM ----------------
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      if(!container) return;
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerText = message;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.animation = 'toastFadeOut 0.3s forwards';
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
 
+    function toggleSetting(settingName) {
+      showToast(`${settingName} setting toggled successfully!`, 'success');
+    }
+
+    function logout() {
+      localStorage.removeItem('access_token');
+      sessionStorage.removeItem('access_token');
+      document.cookie = 'access_token=; Max-Age=0; path=/;';
+      showToast("Logging out...", "success");
+      setTimeout(() => { window.location.href = './anilog-login-register.html'; }, 1000);
+    }
+
+    // ---------------- AUTHENTICATION & DATA FETCH ----------------
+    const API_BASE_URL = 'http://127.0.0.1:8000';
+    
+    function getToken() {
+      const storageToken = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+      if (storageToken) return storageToken;
+      const match = document.cookie.match(new RegExp('(^| )access_token=([^;]+)'));
+      if (match) return decodeURIComponent(match[2]);
+      return null;
+    }
+
+    const currentToken = getToken();
+
+    // Helper function to calculate user level and progress percentage
+    function calculateUserLevel(xp) {
+      const levels = [
+        { level: 1, title: 'Otaku Novice', minXP: 0, nextLevelXP: 500 },
+        { level: 2, title: 'Casual Watcher', minXP: 500, nextLevelXP: 2000 },
+        { level: 3, title: 'Anime Enthusiast', minXP: 1200, nextLevelXP: 3000 },
+        { level: 4, title: 'Seasoned Binger', minXP: 2500, nextLevelXP: 5000 },
+        { level: 5, title: 'Master Otaku', minXP: 5000, nextLevelXP: 10000 },
+        { level: 6, title: 'Anime Scholar', minXP: 10000, nextLevelXP: 20000 },
+        { level: 7, title: 'Supreme Weeb', minXP: 20000, nextLevelXP: 50000 }
+      ];
+
+      for (let i = levels.length - 1; i >= 0; i--) {
+        if (xp >= levels[i].minXP) {
+          const lvl = levels[i];
+          const range = lvl.nextLevelXP - lvl.minXP;
+          const progress = xp - lvl.minXP;
+          const percent = Math.min(100, Math.max(0, Math.floor((progress / range) * 100)));
+          return {
+            level: lvl.level,
+            title: lvl.title,
+            currentXP: xp,
+            nextLevelXP: lvl.nextLevelXP,
+            percent: percent
+          };
+        }
+      }
+      return { level: 1, title: 'Otaku Novice', currentXP: xp, nextLevelXP: 500, percent: 0 };
+    }
+
+    // Logic to populate and render data into the user-card component
+    function renderUserCard(user) {
+      const avatarUrl = user.avatar_seed || 'https://api.dicebear.com/7.x/bottts/svg?seed=Shadow';
+      document.getElementById('sidebar-user-avatar').src = avatarUrl;
+      document.getElementById('sidebar-user-name').innerText = user.username;
+
+      const topAvatar = document.getElementById('top-user-avatar');
+      if (topAvatar) topAvatar.src = avatarUrl;
+
+      const streakCounter = document.getElementById('streak-counter');
+      if(streakCounter) streakCounter.innerText = user.streak_count || 0;
+
+      const currentXP = user.xp_points || 0;
+      const levelObj = calculateUserLevel(currentXP);
+
+      const sidebarLevel = document.getElementById('sidebar-user-level');
+      if (sidebarLevel) sidebarLevel.innerText = `LVL ${levelObj.level} - ${levelObj.title}`;
+
+      const sidebarXpFill = document.getElementById('sidebar-xp-fill');
+      if (sidebarXpFill) sidebarXpFill.style.width = `${levelObj.percent}%`;
+
+      const sidebarXpText = document.getElementById('sidebar-xp-text');
+      if (sidebarXpText) sidebarXpText.innerText = `${currentXP.toLocaleString()} / ${levelObj.nextLevelXP.toLocaleString()} XP`;
+
+      // Remove skeleton classes to reveal live data
+      document.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
+    }
+
+    async function loadLiveData() {
+      if (!currentToken) {
+        window.location.href = './anilog-login-register.html';
+        return;
+      }
+      
+      const authHeader = currentToken.startsWith('Bearer') ? currentToken : `Bearer ${currentToken}`;
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+          headers: { 'Authorization': authHeader }
+        });
+
+        if (!response.ok) {
+           if(response.status === 401 || response.status === 403) {
+             window.location.href = './anilog-login-register.html';
+           }
+           throw new Error("Failed to load user info");
+        }
+        
+        const userData = await response.json();
+        renderUserCard(userData);
+        window.__anilogUser = userData;
+        if (typeof showEpisodePicker === 'function') {
+          showEpisodePicker();
+        }
+      } catch(err) {
+        showToast("Error establishing connection with server", "error");
+        console.error(err);
+      }
+    }
+
+    // ---------------- SEARCH ENGINE CONTROLLER ----------------
     let searchTimeout = null;
     let currentAbortController = null;
 
     function openAnimeReviewFromSearch(anime) {
-      const attr = anime.attributes || {};
+      // Adjusted mappings from the backend API response format
       const reviewData = {
         id: anime.id,
-        title: attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled',
-        image: attr.posterImage?.large || attr.posterImage?.medium || attr.posterImage?.original || '',
-        episodes: attr.episodeCount || '',
-        status: attr.status || '',
-        type: attr.showType || '',
-        rating: attr.averageRating || '',
-        synopsis: attr.synopsis || '',
-        startDate: attr.startDate || ''
+        title: anime.title || 'Untitled',
+        image: anime.image || '',
+        episodes: anime.episodes || '',
+        rating: anime.score || ''
       };
       window.location.href = `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(JSON.stringify(reviewData))}`;
     }
 
-    function handleSearch(query, resultsContainer) {
+    async function handleSearch(query, resultsContainer) {
       const cleanQuery = query.trim();
 
       if (cleanQuery.length < 3) {
@@ -1463,27 +2098,27 @@
       clearTimeout(searchTimeout);
 
       searchTimeout = setTimeout(async () => {
-        if (currentAbortController) {
-          currentAbortController.abort();
-        }
+        if (currentAbortController) currentAbortController.abort();
         currentAbortController = new AbortController();
 
         resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">Searching...</div>`;
         resultsContainer.classList.add('active');
 
         try {
-          const targetUrl = `https://kitsu.io/api/edge/anime?filter[text]=${encodeURIComponent(cleanQuery)}&page[limit]=6`;
+          const targetUrl = `${API_BASE_URL}/api/anime/search?q=${encodeURIComponent(cleanQuery)}`;
+          const authHeader = currentToken ? (currentToken.startsWith('Bearer') ? currentToken : `Bearer ${currentToken}`) : '';
+
           const response = await fetch(targetUrl, {
             signal: currentAbortController.signal,
             headers: {
-              'Accept': 'application/vnd.api+json',
-              'Content-Type': 'application/vnd.api+json'
+              'Accept': 'application/json',
+              'Authorization': authHeader
             }
           });
 
           if (!response.ok) throw new Error(`HTTP_${response.status}`);
           const data = await response.json();
-          const results = data.data || [];
+          const results = data.results || [];
           resultsContainer._animeResults = results;
 
           resultsContainer.innerHTML = '';
@@ -1492,11 +2127,10 @@
             resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--muted); text-align: center;">No anime found</div>`;
           } else {
             results.forEach(anime => {
-              const attr = anime.attributes || {};
-              const title = attr.canonicalTitle || attr.titles?.en || attr.titles?.en_jp || 'Untitled';
-              const img = attr.posterImage?.tiny || attr.posterImage?.small || '';
-              const rating = attr.averageRating ? `★ ${(parseFloat(attr.averageRating) / 10).toFixed(1)}` : 'N/A';
-              const type = attr.showType ? attr.showType.toUpperCase() : 'ANIME';
+              const title = anime.title || 'Untitled';
+              const img = anime.image || '';
+              const rating = anime.score ? `★ ${Number(anime.score).toFixed(1)}` : 'N/A';
+              const type = 'ANIME';
 
               const itemHTML = `
               <div class="search-result-item" data-result-index="${results.indexOf(anime)}" role="button" tabindex="0">
@@ -1512,12 +2146,26 @@
           }
         } catch (err) {
           if (err.name === 'AbortError') return;
-
           console.error('Search fetch error:', err);
-          resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--danger); text-align: center;">Search failed. Try typing again.</div>`;
+          resultsContainer.innerHTML = `<div style="padding: 12px; font-size: 12px; color: var(--danger); text-align: center;">Search failed. Please try again.</div>`;
+          showToast('Search engine experienced an error', 'error');
         }
-      }, 400);
+      }, 400); // 400ms Debounce
     }
+
+    // ---------------- EVENT LISTENERS ----------------
+    window.addEventListener('load', async () => {
+      if (document.fonts) {
+        await document.fonts.ready;
+      }
+      const preloader = document.getElementById('preloader');
+      preloader.style.opacity = '0';
+      preloader.style.visibility = 'hidden';
+      document.body.classList.add('loaded');
+      
+      // Load and inject Live User Data
+      loadLiveData();
+    });
 
     const desktopInput = document.getElementById('desktop-search-input');
     const desktopResults = document.getElementById('desktop-search-results');
@@ -1549,6 +2197,522 @@
       }
     });
   </script>
+
+  <script>
+    // =========================================================
+    // EPISODE REACTION LOG - AUTHENTICATED ANIME/EPISODE PICKER
+    // Uses existing backend routes:
+    //   GET /api/anime/search
+    //   GET /api/anime/{anime_id}/full-details
+    //   GET /api/anime/{anime_id}/episodes
+    // =========================================================
+    (() => {
+      const pickerModal = document.getElementById('episode-picker-modal');
+      const pickerSearch = document.getElementById('episode-picker-anime-search');
+      const pickerResults = document.getElementById('episode-picker-search-results');
+      const pickerEpisode = document.getElementById('episode-picker-number');
+      const pickerSelected = document.getElementById('episode-picker-selected');
+      const pickerSelectedImage = document.getElementById('episode-picker-selected-image');
+      const pickerSelectedName = document.getElementById('episode-picker-selected-name');
+      const pickerSelectedMeta = document.getElementById('episode-picker-selected-meta');
+      const pickerStatus = document.getElementById('episode-picker-status');
+      const pickerLoading = document.getElementById('episode-picker-loading');
+
+      let pickerSearchTimer = null;
+      let pickerAbort = null;
+      let selectedAnime = null;
+      let selectedAnimeDetails = null;
+      let selectedEpisodeNumber = null;
+      let selectedEpisode = null;
+      let episodeCache = new Map();
+      let totalEpisodes = null;
+      let animeEpisodes = [];
+
+      function authHeaders() {
+        const token = getToken();
+        return token ? {
+          'Accept': 'application/json',
+          'Authorization': token.startsWith('Bearer') ? token : `Bearer ${token}`
+        } : { 'Accept': 'application/json' };
+      }
+
+      function setPickerStatus(message, type = '') {
+        pickerStatus.textContent = message || '';
+        pickerStatus.className = `episode-picker-status ${type}`.trim();
+      }
+
+      function setPickerLoading(active) {
+        pickerLoading.classList.toggle('active', active);
+      }
+
+      function showEpisodePicker() {
+        if (!currentToken || !pickerModal) return;
+        pickerModal.classList.add('active');
+        pickerModal.setAttribute('aria-hidden', 'false');
+        setPickerStatus('');
+        setTimeout(() => pickerSearch?.focus(), 60);
+      }
+
+      window.showEpisodePicker = showEpisodePicker;
+
+      function closeEpisodePicker() {
+        pickerModal.classList.remove('active');
+        pickerModal.setAttribute('aria-hidden', 'true');
+      }
+
+      function safeImage(url, fallbackText = 'Anime') {
+        return url || `https://placehold.co/120x63/161322/9635d9?text=${encodeURIComponent(fallbackText)}`;
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      async function searchPickerAnime(query) {
+        const clean = query.trim();
+        if (clean.length < 2) {
+          pickerResults.classList.remove('active');
+          pickerResults.innerHTML = '';
+          return;
+        }
+
+        if (pickerAbort) pickerAbort.abort();
+        pickerAbort = new AbortController();
+
+        pickerResults.classList.add('active');
+        pickerResults.innerHTML = `<div style="padding:14px;text-align:center;color:var(--muted);font-size:11px;">Searching...</div>`;
+
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/api/anime/search?q=${encodeURIComponent(clean)}`,
+            { signal: pickerAbort.signal, headers: authHeaders() }
+          );
+
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const data = await response.json();
+          const results = Array.isArray(data.results) ? data.results : [];
+
+          if (!results.length) {
+            pickerResults.innerHTML = `<div style="padding:14px;text-align:center;color:var(--muted);font-size:11px;">No anime found.</div>`;
+            return;
+          }
+
+          pickerResults.innerHTML = results.map((anime, index) => `
+            <button type="button" class="episode-picker-result" data-picker-result-index="${index}">
+              <img src="${safeImage(anime.image, 'Anime')}" alt="">
+              <span class="episode-picker-result-info">
+                <span class="episode-picker-result-title">${escapeHtml(anime.title || 'Untitled')}</span>
+                <span class="episode-picker-result-meta">
+                  ${escapeHtml(anime.episodes ? `${anime.episodes} episodes` : 'Episode count unavailable')}
+                  ${anime.score ? ` • ★ ${Number(anime.score).toFixed(1)}` : ''}
+                </span>
+              </span>
+            </button>
+          `).join('');
+
+          pickerResults._results = results;
+        } catch (error) {
+          if (error.name === 'AbortError') return;
+          console.error('Episode picker anime search failed:', error);
+          pickerResults.innerHTML = `<div style="padding:14px;text-align:center;color:var(--danger);font-size:11px;">Search failed. Try again.</div>`;
+        }
+      }
+
+      async function selectAnime(anime) {
+        selectedAnime = anime;
+        selectedAnimeDetails = null;
+        selectedEpisode = null;
+        selectedEpisodeNumber = null;
+        episodeCache = new Map();
+        animeEpisodes = [];
+        totalEpisodes = Number(anime.episodes) || null;
+
+        pickerSelected.hidden = false;
+        pickerSelectedImage.src = safeImage(anime.image, 'Anime');
+        pickerSelectedName.textContent = anime.title || 'Untitled';
+        pickerSelectedMeta.textContent = anime.episodes
+          ? `${anime.episodes} episodes${anime.score ? ` • Score ${Number(anime.score).toFixed(1)}` : ''}`
+          : 'Loading episode count...';
+
+        pickerResults.classList.remove('active');
+        pickerResults.innerHTML = '';
+        pickerSearch.value = anime.title || '';
+        pickerEpisode.disabled = false;
+        pickerEpisode.placeholder = 'Enter episode number...';
+        pickerEpisode.value = '';
+        setPickerStatus('Anime selected. Enter an episode number.');
+        pickerEpisode.focus();
+
+        // Load the full anime data in the background so the page can render all sections.
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/api/anime/${encodeURIComponent(anime.id)}/full-details`,
+            { headers: authHeaders() }
+          );
+          if (response.ok) {
+            selectedAnimeDetails = await response.json();
+            totalEpisodes = Number(selectedAnimeDetails.episodes) || totalEpisodes;
+            pickerSelectedMeta.textContent =
+              `${totalEpisodes || 'Episode count unavailable'} episodes` +
+              (selectedAnimeDetails.rating ? ` • Rating ${formatScore(selectedAnimeDetails.rating)}` : '');
+          }
+        } catch (error) {
+          console.warn('Full anime details could not be loaded yet:', error);
+        }
+      }
+
+      function formatScore(rawScore) {
+        const n = Number(rawScore);
+        if (!Number.isFinite(n)) return '—';
+        // Kitsu averageRating is normally 0-100; keep already-scaled values intact.
+        return (n > 10 ? n / 10 : n).toFixed(1);
+      }
+
+      function makeStars(score) {
+        const n = Number(score);
+        if (!Number.isFinite(n)) return '★★★★★';
+        const scaled = n > 10 ? n / 10 : n;
+        const filled = Math.max(0, Math.min(5, Math.round(scaled / 2)));
+        return '★'.repeat(filled) + '☆'.repeat(5 - filled);
+      }
+
+      function formatAirDate(value) {
+        if (!value || value === 'N/A') return 'N/A';
+        const d = new Date(value);
+        if (Number.isNaN(d.getTime())) return String(value);
+        return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+      }
+
+      async function fetchEpisodeBatch(episodeNumber) {
+        const number = Number(episodeNumber);
+        if (!selectedAnime || !Number.isInteger(number) || number < 1) return;
+
+        const cached = [...episodeCache.values()].find(ep => Number(ep.number) === number);
+        if (cached) return cached;
+
+        const offset = Math.floor((number - 1) / 20) * 20;
+        const response = await fetch(
+          `${API_BASE_URL}/api/anime/${encodeURIComponent(selectedAnime.id)}/episodes?limit=20&offset=${offset}`,
+          { headers: authHeaders() }
+        );
+
+        if (!response.ok) throw new Error(`Episode API returned HTTP ${response.status}`);
+
+        const data = await response.json();
+        animeEpisodes = Array.isArray(data.episodes) ? data.episodes : [];
+        totalEpisodes = Number(data.total) || totalEpisodes;
+
+        animeEpisodes.forEach(ep => {
+          const n = Number(ep.number);
+          if (Number.isInteger(n)) episodeCache.set(n, ep);
+        });
+
+        return episodeCache.get(number) || null;
+      }
+
+      function getReactionForEpisode(epNumber) {
+        const logs = window.__anilogUser?.reaction_logs;
+        if (!logs) return null;
+
+        // Supports several common JSON shapes without changing the backend schema.
+        if (Array.isArray(logs)) {
+          return logs.find(item => Number(item.episode_number ?? item.episode ?? item.number) === Number(epNumber)) || null;
+        }
+
+        if (typeof logs === 'object') {
+          return logs[String(epNumber)] || logs[epNumber] || null;
+        }
+
+        return null;
+      }
+
+      function renderDesktopSlot(slot, episode) {
+        const card = document.querySelector(`#desktop-episode-cards [data-episode-slot="${slot}"]`);
+        if (!card) return;
+
+        const fields = name => card.querySelector(`[data-field="${name}"]`);
+        const setField = (name, property, value) => {
+          const el = fields(name);
+          if (el) el[property] = value;
+        };
+        const animeImage = selectedAnime?.image || selectedAnimeDetails?.posterImage || '';
+
+        if (!episode) {
+          setField('number', 'textContent', '—');
+          setField('date', 'textContent', '—');
+          setField('title', 'textContent',
+            slot === 'next' ? 'No next episode available' :
+            slot === 'previous' ? 'No previous episode available' :
+            'Episode data unavailable'
+          );
+          setField('thumb', 'src', safeImage(animeImage, slot === 'current' ? 'Episode' : slot));
+          setField('anime-thumb', 'src', safeImage(animeImage, 'Anime'));
+          setField('reaction', 'innerHTML', '<div>Episode data is unavailable.</div>');
+          setField('favorite', 'textContent', '—');
+          setField('synopsis', 'textContent', '—');
+          setField('score', 'textContent', '—');
+          setField('stars', 'textContent', '★★★★★');
+          return;
+        }
+
+        const reaction = getReactionForEpisode(episode.number);
+        const animeTitle = selectedAnimeDetails?.title || selectedAnime?.title || 'Selected anime';
+        const score = selectedAnimeDetails?.rating || selectedAnime?.score;
+        const synopsis = episode.synopsis || 'No episode synopsis provided.';
+
+        setField('number', 'textContent', `Ep ${episode.number}`);
+        setField('date', 'textContent', formatAirDate(episode.airDate));
+        setField('title', 'textContent', episode.title || `Episode ${episode.number}`);
+        setField('thumb', 'src', safeImage(episode.thumbnail, `Ep+${episode.number}`));
+        setField('anime-thumb', 'src', safeImage(animeImage, 'Anime'));
+        setField('reaction', 'innerHTML', reaction
+          ? `<div>${escapeHtml(reaction.text || reaction.reaction || reaction.immediate_reaction || `Episode ${episode.number} reaction`)}</div>`
+          : `<div>${escapeHtml(animeTitle)}</div><div>${escapeHtml(`Episode ${episode.number}: ${episode.title || 'Untitled episode'}`)}</div>`);
+        setField('favorite', 'textContent', episode.airDate && episode.airDate !== 'N/A'
+          ? `Aired ${formatAirDate(episode.airDate)}`
+          : 'No favorite moment recorded.');
+        setField('synopsis', 'textContent', synopsis);
+        setField('score', 'textContent', formatScore(score));
+        setField('stars', 'textContent', makeStars(score));
+
+        card.onclick = () => {
+          const reviewData = {
+            id: selectedAnime.id,
+            title: animeTitle,
+            image: animeImage,
+            episodes: totalEpisodes || selectedAnime.episodes || '',
+            rating: score || '',
+            episode: episode.number,
+            episodeId: episode.id
+          };
+          window.location.href =
+            `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(JSON.stringify(reviewData))}`;
+        };
+      }
+
+      function renderMobileSlot(slot, episode) {
+        const card = document.querySelector(`#mobile-episode-cards [data-episode-slot="${slot}"]`);
+        if (!card) return;
+
+        const fields = name => card.querySelector(`[data-field="${name}"]`);
+        const setField = (name, property, value) => {
+          const el = fields(name);
+          if (el) el[property] = value;
+        };
+        const animeImage = selectedAnime?.image || '';
+        const score = selectedAnimeDetails?.rating || selectedAnime?.score;
+        const animeTitle = selectedAnimeDetails?.title || selectedAnime?.title || 'Selected anime';
+
+        if (!episode) {
+          setField('number', 'textContent', '—');
+          setField('date', 'textContent', '—');
+          setField('title', 'textContent',
+            slot === 'next' ? 'No next episode available' :
+            slot === 'previous' ? 'No previous episode available' :
+            'Episode data unavailable'
+          );
+          setField('thumb', 'src', safeImage(animeImage, slot));
+          setField('anime-thumb', 'src', safeImage(animeImage, 'Anime'));
+          setField('reaction', 'textContent', 'Episode data is unavailable.');
+          setField('favorite', 'textContent', '—');
+          setField('synopsis', 'textContent', '—');
+          setField('score', 'textContent', '—');
+          setField('stars', 'textContent', '★★★★★');
+          return;
+        }
+
+        const reaction = getReactionForEpisode(episode.number);
+
+        setField('number', 'textContent', `Ep ${episode.number}`);
+        setField('date', 'textContent', formatAirDate(episode.airDate));
+        setField('title', 'textContent', episode.title || `Episode ${episode.number}`);
+        setField('thumb', 'src', safeImage(episode.thumbnail, `Ep+${episode.number}`));
+        setField('anime-thumb', 'src', safeImage(animeImage, 'Anime'));
+        setField('reaction', 'textContent', reaction
+          ? (reaction.text || reaction.reaction || reaction.immediate_reaction || `Episode ${episode.number} reaction`)
+          : `${animeTitle} • Episode ${episode.number}`);
+        setField('favorite', 'textContent', episode.airDate && episode.airDate !== 'N/A'
+          ? `Aired ${formatAirDate(episode.airDate)}`
+          : 'No favorite moment recorded.');
+        setField('synopsis', 'textContent', episode.synopsis || 'No episode synopsis provided.');
+        setField('score', 'textContent', formatScore(score));
+        setField('stars', 'textContent', makeStars(score));
+
+        card.onclick = () => {
+          const reviewData = {
+            id: selectedAnime.id,
+            title: animeTitle,
+            image: animeImage,
+            episodes: totalEpisodes || selectedAnime.episodes || '',
+            rating: score || '',
+            episode: episode.number,
+            episodeId: episode.id
+          };
+          window.location.href =
+            `./anilog-anime-review-responsive.html?anime=${encodeURIComponent(JSON.stringify(reviewData))}`;
+        };
+      }
+
+      function renderEpisodePage() {
+        const previous = selectedEpisodeNumber > 1 ? episodeCache.get(selectedEpisodeNumber - 1) : null;
+        const next = totalEpisodes && selectedEpisodeNumber < totalEpisodes
+          ? episodeCache.get(selectedEpisodeNumber + 1)
+          : null;
+
+        renderDesktopSlot('previous', previous);
+        renderDesktopSlot('current', selectedEpisode);
+        renderDesktopSlot('next', next);
+
+        renderMobileSlot('previous', previous);
+        renderMobileSlot('current', selectedEpisode);
+        renderMobileSlot('next', next);
+
+        const title = selectedAnimeDetails?.title || selectedAnime?.title || 'Selected anime';
+        const episodeLabel = `Episode ${selectedEpisodeNumber}`;
+
+        const desktopEpisode = document.getElementById('desktop-current-episode-label');
+        const desktopAnime = document.getElementById('desktop-current-anime-label');
+        const mobileEpisode = document.getElementById('mobile-current-episode-label');
+        const mobileAnime = document.getElementById('mobile-current-anime-label');
+
+        if (desktopEpisode) desktopEpisode.textContent = episodeLabel;
+        if (desktopAnime) desktopAnime.textContent = title;
+        if (mobileEpisode) mobileEpisode.textContent = episodeLabel;
+        if (mobileAnime) mobileAnime.textContent = title;
+
+        const logEpisode = document.getElementById('desktop-log-episode');
+        const logDate = document.getElementById('desktop-log-date');
+        const logRating = document.getElementById('desktop-log-rating');
+
+        if (logEpisode) logEpisode.textContent = `Ep ${selectedEpisodeNumber}`;
+        if (logDate) logDate.textContent = formatAirDate(selectedEpisode?.airDate);
+        if (logRating) {
+          const score = selectedAnimeDetails?.rating || selectedAnime?.score;
+          logRating.innerHTML = `${formatScore(score)} <span class="stars">${makeStars(score)}</span>`;
+        }
+
+        const canPrev = selectedEpisodeNumber > 1;
+        const canNext = totalEpisodes ? selectedEpisodeNumber < totalEpisodes : true;
+        const desktopPrev = document.getElementById('desktop-previous-episode');
+        if (desktopPrev) desktopPrev.disabled = !canPrev;
+        const mobilePrev = document.getElementById('mobile-previous-episode');
+        if (mobilePrev) mobilePrev.disabled = !canPrev;
+        const desktopNext = document.getElementById('desktop-next-episode');
+        if (desktopNext) desktopNext.disabled = !canNext;
+        const mobileNext = document.getElementById('mobile-next-episode');
+        if (mobileNext) mobileNext.disabled = !canNext;
+
+        document.getElementById('desktop-episode-cards')?.classList.remove('episode-dynamic-loading');
+        document.getElementById('mobile-episode-cards')?.classList.remove('episode-dynamic-loading');
+      }
+
+      async function loadEpisodeNumber(number, closeModal = false) {
+        const n = Number(number);
+        if (!selectedAnime || !Number.isInteger(n) || n < 1) return;
+
+        if (totalEpisodes && n > totalEpisodes) {
+          setPickerStatus(`Episode ${n} does not exist. This anime has ${totalEpisodes} episode(s).`, 'error');
+          return;
+        }
+
+        setPickerLoading(true);
+        try {
+          const episode = await fetchEpisodeBatch(n);
+          if (!episode) {
+            setPickerStatus(`Episode ${n} was not found for this anime.`, 'error');
+            return;
+          }
+
+          // Make sure adjacent episodes are available for the + / − controls.
+          await Promise.allSettled([
+            n > 1 ? fetchEpisodeBatch(n - 1) : Promise.resolve(),
+            totalEpisodes && n < totalEpisodes ? fetchEpisodeBatch(n + 1) : Promise.resolve()
+          ]);
+
+          selectedEpisodeNumber = n;
+          selectedEpisode = episode;
+          renderEpisodePage();
+
+          if (closeModal) {
+            closeEpisodePicker();
+            showToast(`${selectedAnimeDetails?.title || selectedAnime.title} — Episode ${n} loaded`, 'success');
+          }
+        } catch (error) {
+          console.error('Episode load/render failed:', error);
+          setPickerStatus('The episode was received, but the page could not render it. Please try again.', 'error');
+          showToast('Episode data could not be loaded', 'error');
+        } finally {
+          setPickerLoading(false);
+        }
+      }
+
+      pickerSearch?.addEventListener('input', event => {
+        clearTimeout(pickerSearchTimer);
+        pickerSearchTimer = setTimeout(
+          () => searchPickerAnime(event.target.value),
+          300
+        );
+      });
+
+      pickerResults?.addEventListener('click', event => {
+        const result = event.target.closest('.episode-picker-result');
+        if (!result) return;
+        const anime = result.parentElement._results?.[Number(result.dataset.pickerResultIndex)];
+        if (anime) selectAnime(anime);
+      });
+
+      pickerEpisode?.addEventListener('input', event => {
+        const value = event.target.value.trim();
+        if (!value || !selectedAnime) return;
+
+        const n = Number(value);
+        if (!Number.isInteger(n) || n < 1) return;
+
+        clearTimeout(pickerEpisode._loadTimer);
+        pickerEpisode._loadTimer = setTimeout(() => loadEpisodeNumber(n, true), 250);
+      });
+
+      async function stepEpisode(direction) {
+        if (!selectedAnime || !selectedEpisodeNumber) {
+          showEpisodePicker();
+          return;
+        }
+
+        const target = selectedEpisodeNumber + direction;
+        if (target < 1 || (totalEpisodes && target > totalEpisodes)) return;
+
+        await loadEpisodeNumber(target, false);
+      }
+
+      document.getElementById('desktop-next-episode')?.addEventListener('click', () => stepEpisode(1));
+      document.getElementById('mobile-next-episode')?.addEventListener('click', () => stepEpisode(1));
+      document.getElementById('desktop-previous-episode')?.addEventListener('click', () => stepEpisode(-1));
+      document.getElementById('mobile-previous-episode')?.addEventListener('click', () => stepEpisode(-1));
+
+      // Keep the picker open when authentication succeeds on this page.
+      // Existing loadLiveData() calls showEpisodePicker() after /api/auth/me succeeds.
+      window.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && pickerModal.classList.contains('active')) {
+          // Do not allow Escape to bypass the required anime/episode selection.
+          event.preventDefault();
+        }
+      });
+
+      // Make the selected anime available to any future page logic.
+      window.__anilogEpisodeState = {
+        get anime() { return selectedAnime; },
+        get episode() { return selectedEpisode; },
+        get episodeNumber() { return selectedEpisodeNumber; },
+        get totalEpisodes() { return totalEpisodes; }
+      };
+    })();
+  </script>
+
 </body>
 
 </html>
