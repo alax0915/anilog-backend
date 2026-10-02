@@ -8,3 +8,7 @@ CREATE TABLE "reaction_logs" (
 	"created_at" timestamp with time zone DEFAULT now()
 );
 CREATE UNIQUE INDEX "reaction_logs_pkey" ON "reaction_logs" ("id");
+CREATE INDEX "ix_reaction_logs_user_anime_episode"
+	ON "reaction_logs" ("user_id", "anime_id", "episode_number");
+CREATE UNIQUE INDEX "uq_reaction_user_anime_episode"
+	ON "reaction_logs" ("user_id", "anime_id", "episode_number");

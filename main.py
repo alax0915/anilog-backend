@@ -1,5 +1,6 @@
 import os
 import asyncio
+import logging
 import random
 import uuid
 from datetime import datetime, date, timedelta, timezone
@@ -22,7 +23,9 @@ from sqlalchemy import (
     func,
     Boolean,
     Text,
+    text,
     ForeignKey,
+    Index,
     update as sql_update,
     delete as sql_delete,
     UniqueConstraint,
@@ -47,6 +50,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-key-change-this")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1440
 REFRESH_TOKEN_EXPIRE_DAYS = 7
+REFRESH_TOKEN_CLEANUP_INTERVAL_SECONDS = 600
 MAX_FAILED_ATTEMPTS = 5
 LOCKOUT_MINUTES = 15
 
@@ -66,13 +70,17 @@ ALLOWED_ORIGINS = [
 
 HTTP_TIMEOUT = httpx.Timeout(20.0, connect=10.0)
 GOAL_CATALOG_LOCK = asyncio.Lock()
+NOTIFICATION_SCAN_DELAY_SECONDS = 180
+NOTIFICATION_SCAN_TASKS: Dict[int, asyncio.Task] = {}
+logger = logging.getLogger(__name__)
+REFRESH_TOKEN_CLEANUP_TASK: Optional[asyncio.Task] = None
 
 # ==================================================
 # 2. SECURITY & AUTHENTICATION
 # ==================================================
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
 
 
 def hash_password(password: str) -> str:
@@ -332,6 +340,95 @@ class UserSettings(Base):
     )
 
 
+class Notification(Base):
+    __tablename__ = "notifications"
+    __table_args__ = (
+        Index(
+            "uq_unread_episode_notification_user_anime",
+            "user_id",
+            "anime_id",
+            unique=True,
+            postgresql_where=text(
+                "type = 'SCHEDULED_ANIME' AND is_read = false AND anime_id IS NOT NULL"
+            ),
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    message: Mapped[str] = mapped_column(Text, nullable=False)
+    type: Mapped[str] = mapped_column(
+        PGEnum(
+            "SCHEDULED_ANIME",
+            "STREAK_WARNING",
+            "SYSTEM",
+            name="notification_type",
+            create_type=False,
+        ),
+        nullable=False,
+    )
+    is_read: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    scheduled_for: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+    anime_id: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    episode_count: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+
+
+class RefreshTokenRecord(Base):
+    __tablename__ = "refresh_tokens"
+    __table_args__ = (
+        Index("ix_refresh_tokens_user_id", "user_id"),
+        Index("ix_refresh_tokens_expires_at", "expires_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    token: Mapped[str] = mapped_column(String(500), unique=True, nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+
+class ReactionLog(Base):
+    __tablename__ = "reaction_logs"
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id",
+            "anime_id",
+            "episode_number",
+            name="uq_reaction_user_anime_episode",
+        ),
+        Index(
+            "ix_reaction_logs_user_anime_episode",
+            "user_id",
+            "anime_id",
+            "episode_number",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
+    anime_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    episode_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    reaction_emoji: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    note: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=True
+    )
+
+
 def user_settings_key(user_id: int) -> uuid.UUID:
     return uuid.uuid5(uuid.NAMESPACE_DNS, str(user_id))
 
@@ -426,7 +523,7 @@ class UserResponse(BaseModel):
     updated_at: datetime
     daily_watch_activities: Optional[Dict[str, Any]] = None
     notifications: int
-    reaction_logs: Optional[Dict[str, Any]] = None
+    reaction_logs: Optional[Any] = None
     user_anime_lists: Optional[Dict[str, Any]] = None
     user_settings: Optional[Dict[str, Any]] = None
 
@@ -481,6 +578,13 @@ class ThemeUpdateRequest(BaseModel):
     theme: Literal["dark", "light"]
 
 
+class ReactionLogUpsertRequest(BaseModel):
+    anime_id: str
+    episode_number: int
+    reaction_emoji: Optional[str] = None
+    note: Optional[str] = None
+
+
 # ==================================================
 # 5. FASTAPI APP INITIALIZATION
 # ==================================================
@@ -489,7 +593,7 @@ app = FastAPI(title="AniLog API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -503,7 +607,8 @@ app.add_middleware(
 
 
 async def get_current_user(
-    token: str = Depends(oauth2_scheme),
+    request: Request,
+    token: Optional[str] = Depends(oauth2_scheme),
     db: AsyncSession = Depends(get_db),
 ) -> User:
     credentials_exception = HTTPException(
@@ -512,23 +617,57 @@ async def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
 
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: str = payload.get("sub")
-        token_type: str = payload.get("type")
-
-        if user_id is None or token_type != "access":
-            raise credentials_exception
-    except (JWTError, ValueError):
+    token = token or request.cookies.get("access_token")
+    if token:
+        token = token.removeprefix("Bearer ").strip()
+    if not token:
         raise credentials_exception
 
-    result = await db.execute(select(User).where(User.id == int(user_id)))
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = int(payload.get("sub"))
+        session_id = uuid.UUID(payload.get("sid", ""))
+        token_type: str = payload.get("type")
+
+        if token_type != "access":
+            raise credentials_exception
+    except (JWTError, TypeError, ValueError):
+        raise credentials_exception
+
+    result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalars().first()
 
     if user is None:
         raise credentials_exception
 
+    refresh_session = await db.scalar(
+        select(RefreshTokenRecord).where(
+            RefreshTokenRecord.id == session_id,
+            RefreshTokenRecord.user_id == user_settings_key(user.id),
+            RefreshTokenRecord.expires_at > datetime.now(timezone.utc),
+        )
+    )
+    if refresh_session is None:
+        raise credentials_exception
+
     return user
+
+
+async def refresh_token_cleanup_loop() -> None:
+    while True:
+        try:
+            async with AsyncSessionLocal() as db:
+                await db.execute(
+                    sql_delete(RefreshTokenRecord).where(
+                        RefreshTokenRecord.expires_at <= datetime.now(timezone.utc)
+                    )
+                )
+                await db.commit()
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            logger.exception("Expired refresh-token cleanup failed")
+        await asyncio.sleep(REFRESH_TOKEN_CLEANUP_INTERVAL_SECONDS)
 
 
 # ==================================================
@@ -538,8 +677,52 @@ async def get_current_user(
 
 @app.on_event("startup")
 async def startup():
+    global REFRESH_TOKEN_CLEANUP_TASK
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        await conn.execute(
+            text('ALTER TABLE "notifications" ADD COLUMN IF NOT EXISTS "anime_id" varchar(50)')
+        )
+        await conn.execute(
+            text('ALTER TABLE "notifications" ADD COLUMN IF NOT EXISTS "episode_count" integer')
+        )
+        await conn.execute(
+            text(
+                "CREATE UNIQUE INDEX IF NOT EXISTS "
+                "uq_unread_episode_notification_user_anime "
+                "ON notifications (user_id, anime_id) "
+                "WHERE type = 'SCHEDULED_ANIME' AND is_read = false AND anime_id IS NOT NULL"
+            )
+        )
+        await conn.execute(
+            text("CREATE INDEX IF NOT EXISTS ix_refresh_tokens_user_id ON refresh_tokens (user_id)")
+        )
+        await conn.execute(
+            text(
+                "CREATE INDEX IF NOT EXISTS ix_reaction_logs_user_anime_episode "
+                "ON reaction_logs (user_id, anime_id, episode_number)"
+            )
+        )
+        await conn.execute(
+            text("CREATE INDEX IF NOT EXISTS ix_refresh_tokens_expires_at ON refresh_tokens (expires_at)")
+        )
+        await conn.execute(
+            text(
+                "CREATE UNIQUE INDEX IF NOT EXISTS uq_reaction_user_anime_episode "
+                "ON reaction_logs (user_id, anime_id, episode_number)"
+            )
+        )
+    REFRESH_TOKEN_CLEANUP_TASK = asyncio.create_task(refresh_token_cleanup_loop())
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    if REFRESH_TOKEN_CLEANUP_TASK:
+        REFRESH_TOKEN_CLEANUP_TASK.cancel()
+        try:
+            await REFRESH_TOKEN_CLEANUP_TASK
+        except asyncio.CancelledError:
+            pass
 
 
 @app.get("/api/avatars")
@@ -623,6 +806,132 @@ async def register(
     return new_user
 
 
+def parse_episode_airdate(value: Optional[str]) -> Optional[datetime]:
+    if not value:
+        return None
+    try:
+        airdate = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        try:
+            airdate = datetime.strptime(value, "%Y-%m-%d")
+        except ValueError:
+            return None
+    if airdate.tzinfo is None:
+        airdate = airdate.replace(tzinfo=timezone.utc)
+    return airdate.astimezone(timezone.utc)
+
+
+async def latest_aired_episode(
+    client: httpx.AsyncClient, anime_id: str, episodes_watched: int
+) -> Optional[Dict[str, Any]]:
+    try:
+        response = await client.get(
+            f"{ANIME_SOURCE_URL}/anime/{anime_id}/episodes",
+            params={
+                "page[limit]": "20",
+                "page[offset]": str(max(0, episodes_watched)),
+                "sort": "number",
+            },
+            headers={"Accept": "application/vnd.api+json"},
+        )
+        response.raise_for_status()
+        episodes = response.json().get("data", [])
+    except (httpx.HTTPError, ValueError) as error:
+        logger.warning("Episode lookup failed for anime %s: %s", anime_id, error)
+        return None
+
+    now = datetime.now(timezone.utc)
+    available = []
+    for episode in episodes:
+        attributes = episode.get("attributes", {})
+        try:
+            number = int(attributes.get("number"))
+        except (TypeError, ValueError):
+            continue
+        airdate = parse_episode_airdate(attributes.get("airdate"))
+        if number > episodes_watched and airdate and airdate <= now:
+            available.append({"number": number, "airdate": airdate})
+    return max(available, key=lambda item: item["number"]) if available else None
+
+
+async def scan_completed_anime_notifications(user_id: int) -> None:
+    user_key = user_settings_key(user_id)
+    async with AsyncSessionLocal() as db, httpx.AsyncClient(timeout=HTTP_TIMEOUT) as client:
+        result = await db.execute(
+            select(UserAnimeList, Anime)
+            .join(Anime, Anime.id == UserAnimeList.anime_id)
+            .where(
+                UserAnimeList.user_id == user_id,
+                UserAnimeList.status.ilike("completed"),
+            )
+        )
+        completed_anime = result.all()
+
+        for watchlist_item, anime in completed_anime:
+            latest_episode = await latest_aired_episode(
+                client, anime.id, int(watchlist_item.episodes_watched or 0)
+            )
+            if not latest_episode:
+                continue
+
+            notification = await db.scalar(
+                select(Notification).where(
+                    Notification.user_id == user_key,
+                    Notification.type == "SCHEDULED_ANIME",
+                    Notification.anime_id == anime.id,
+                )
+            )
+            if notification and int(notification.episode_count or 0) >= latest_episode["number"]:
+                continue
+
+            title = "New Episode Released"
+            message = (
+                f"Episode {latest_episode['number']} of {anime.title} is now available."
+            )
+            if notification:
+                notification.title = title
+                notification.message = message
+                notification.episode_count = latest_episode["number"]
+                notification.scheduled_for = latest_episode["airdate"]
+                notification.is_read = False
+            else:
+                db.add(Notification(
+                    user_id=user_key,
+                    title=title,
+                    message=message,
+                    type="SCHEDULED_ANIME",
+                    is_read=False,
+                    scheduled_for=latest_episode["airdate"],
+                    anime_id=anime.id,
+                    episode_count=latest_episode["number"],
+                ))
+            await db.commit()
+            await asyncio.sleep(0.2)
+
+
+async def delayed_notification_scan(user_id: int) -> None:
+    try:
+        await asyncio.sleep(NOTIFICATION_SCAN_DELAY_SECONDS)
+        await scan_completed_anime_notifications(user_id)
+    except asyncio.CancelledError:
+        raise
+    except Exception:
+        logger.exception("Notification scan failed for user %s", user_id)
+    finally:
+        current_task = asyncio.current_task()
+        if NOTIFICATION_SCAN_TASKS.get(user_id) is current_task:
+            NOTIFICATION_SCAN_TASKS.pop(user_id, None)
+
+
+def schedule_notification_scan(user_id: int) -> None:
+    current_task = NOTIFICATION_SCAN_TASKS.get(user_id)
+    if current_task and not current_task.done():
+        return
+    NOTIFICATION_SCAN_TASKS[user_id] = asyncio.create_task(
+        delayed_notification_scan(user_id)
+    )
+
+
 @app.post(
     "/api/auth/login",
     response_model=Token,
@@ -688,10 +997,17 @@ async def login(
     logs.append(audit_entry)
     user.login_audit_logs = logs[-10:]
 
-    access_token = create_access_token(data={"sub": str(user.id)})
-    refresh_token = create_refresh_token(data={"sub": str(user.id)})
-
-    user.hashed_refresh_token = hash_password(refresh_token)
+    session_id = uuid.uuid4()
+    token_data = {"sub": str(user.id), "sid": str(session_id)}
+    access_token = create_access_token(data=token_data)
+    refresh_token = create_refresh_token(data=token_data)
+    db.add(RefreshTokenRecord(
+        id=session_id,
+        user_id=user_settings_key(user.id),
+        token=hash_password(refresh_token),
+        expires_at=now + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
+        created_at=now,
+    ))
 
     await db.commit()
     await db.refresh(user)
@@ -702,19 +1018,31 @@ async def login(
 
     response.set_cookie(
         key="access_token",
-        value=f"Bearer {access_token}",
+        value=access_token,
         httponly=True,
-        secure=True,
+        secure=request.url.scheme == "https",
         samesite="lax",
+        max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        path="/",
+    )
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=request.url.scheme == "https",
+        samesite="lax",
+        max_age=REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
+        path="/",
     )
     response.set_cookie(
         key="anilog_theme",
         value=settings.theme or "dark",
-        httponly=False,
+        httponly=True,
         secure=request.url.scheme == "https",
         samesite="lax",
         max_age=60 * 60 * 24 * 365,
     )
+    schedule_notification_scan(user.id)
 
     return {
         "access_token": access_token,
@@ -726,13 +1054,12 @@ async def login(
 
 @app.post("/api/auth/refresh")
 async def refresh_token_endpoint(
+    request: Request,
+    response: Response,
     body: Optional[RefreshTokenRequest] = None,
-    request: Request = None,
     db: AsyncSession = Depends(get_db),
 ):
-    token = (body.refresh_token if body else None) or request.cookies.get(
-        "refresh_token"
-    )
+    token = (body.refresh_token if body else None) or request.cookies.get("refresh_token")
 
     if not token:
         raise HTTPException(
@@ -742,34 +1069,105 @@ async def refresh_token_endpoint(
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: str = payload.get("sub")
+        user_id = int(payload.get("sub"))
+        session_id = uuid.UUID(payload.get("sid", ""))
         token_type: str = payload.get("type")
 
-        if user_id is None or token_type != "refresh":
+        if token_type != "refresh":
             raise HTTPException(status_code=401, detail="Invalid refresh token")
-    except JWTError:
+    except (JWTError, TypeError, ValueError):
         raise HTTPException(status_code=401, detail="Invalid refresh token")
 
-    result = await db.execute(select(User).where(User.id == int(user_id)))
-    user = result.scalars().first()
-
-    if not user or not user.hashed_refresh_token:
-        raise HTTPException(status_code=401, detail="Token revoked or user not found")
-
-    if not verify_password(token, user.hashed_refresh_token):
+    refresh_session = await db.scalar(
+        select(RefreshTokenRecord).where(
+            RefreshTokenRecord.id == session_id,
+            RefreshTokenRecord.user_id == user_settings_key(user_id),
+            RefreshTokenRecord.expires_at > datetime.now(timezone.utc),
+        )
+    )
+    user = await db.scalar(select(User).where(User.id == user_id))
+    if not user or not refresh_session or not verify_password(token, refresh_session.token):
         raise HTTPException(status_code=401, detail="Invalid refresh token")
 
-    new_access_token = create_access_token(data={"sub": str(user.id)})
-    new_refresh_token = create_refresh_token(data={"sub": str(user.id)})
-
-    user.hashed_refresh_token = hash_password(new_refresh_token)
+    token_data = {"sub": str(user_id), "sid": str(session_id)}
+    new_access_token = create_access_token(data=token_data)
+    new_refresh_token = create_refresh_token(data=token_data)
+    refresh_session.token = hash_password(new_refresh_token)
+    refresh_session.expires_at = datetime.now(timezone.utc) + timedelta(
+        days=REFRESH_TOKEN_EXPIRE_DAYS
+    )
     await db.commit()
+    response.set_cookie(
+        key="access_token",
+        value=new_access_token,
+        httponly=True,
+        secure=request.url.scheme == "https",
+        samesite="lax",
+        max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        path="/",
+    )
+    response.set_cookie(
+        key="refresh_token",
+        value=new_refresh_token,
+        httponly=True,
+        secure=request.url.scheme == "https",
+        samesite="lax",
+        max_age=REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
+        path="/",
+    )
+    response.set_cookie(
+        key="access_token",
+        value=new_access_token,
+        httponly=True,
+        secure=request.url.scheme == "https",
+        samesite="lax",
+        max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        path="/",
+    )
+    response.set_cookie(
+        key="refresh_token",
+        value=new_refresh_token,
+        httponly=True,
+        secure=request.url.scheme == "https",
+        samesite="lax",
+        max_age=REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
+        path="/",
+    )
 
     return {
         "access_token": new_access_token,
         "refresh_token": new_refresh_token,
         "token_type": "bearer",
     }
+
+
+@app.post("/api/auth/logout")
+async def logout(
+    request: Request,
+    response: Response,
+    db: AsyncSession = Depends(get_db),
+):
+    token = request.cookies.get("access_token") or request.headers.get("Authorization")
+    if token:
+        token = token.removeprefix("Bearer ").strip()
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            session_id = uuid.UUID(payload.get("sid", ""))
+            user_id = int(payload.get("sub"))
+            await db.execute(
+                sql_delete(RefreshTokenRecord).where(
+                    RefreshTokenRecord.id == session_id,
+                    RefreshTokenRecord.user_id == user_settings_key(user_id),
+                )
+            )
+            await db.commit()
+        except (JWTError, TypeError, ValueError):
+            pass
+
+    secure = request.url.scheme == "https"
+    response.delete_cookie("access_token", path="/", httponly=True, secure=secure, samesite="lax")
+    response.delete_cookie("refresh_token", path="/", httponly=True, secure=secure, samesite="lax")
+    return {"message": "Logged out"}
 
 
 @app.get(
@@ -798,10 +1196,18 @@ async def read_current_user(
             UserAnimeList.is_favorite == True,
         )
     )
-
     current_user.watching_count = watching_res.scalar() or 0
     current_user.completed_count = completed_res.scalar() or 0
     current_user.favorites_count = fav_res.scalar() or 0
+    current_user.notifications = int(
+        await db.scalar(
+            select(func.count(Notification.id)).where(
+                Notification.user_id == user_settings_key(current_user.id),
+                Notification.is_read == False,
+            )
+        )
+        or 0
+    )
     settings = await get_or_create_user_settings(db, current_user)
     current_user.user_settings = user_settings_payload(settings)
 
@@ -824,7 +1230,7 @@ async def get_user_settings(
     response.set_cookie(
         key="anilog_theme",
         value=payload["theme"],
-        httponly=False,
+        httponly=True,
         secure=request.url.scheme == "https",
         samesite="lax",
         max_age=60 * 60 * 24 * 365,
@@ -848,12 +1254,183 @@ async def update_user_settings(
     response.set_cookie(
         key="anilog_theme",
         value=settings.theme,
-        httponly=False,
+        httponly=True,
         secure=request.url.scheme == "https",
         samesite="lax",
         max_age=60 * 60 * 24 * 365,
     )
     return user_settings_payload(settings)
+
+
+@app.get("/api/user/notifications")
+async def get_user_notifications(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    user_key = user_settings_key(current_user.id)
+    result = await db.execute(
+        select(Notification, Anime)
+        .outerjoin(Anime, Anime.id == Notification.anime_id)
+        .where(Notification.user_id == user_key)
+        .order_by(Notification.created_at.desc())
+    )
+    notifications = []
+    for notification, anime in result.all():
+        notifications.append({
+            "id": str(notification.id),
+            "anime_id": notification.anime_id,
+            "anime_title": anime.title if anime else "AniLog",
+            "poster": anime.poster_image if anime else None,
+            "type": notification.type,
+            "title": notification.title,
+            "message": notification.message,
+            "is_read": notification.is_read,
+            "episode_count": notification.episode_count,
+            "created_at": notification.created_at.isoformat() if notification.created_at else None,
+            "scheduled_for": notification.scheduled_for.isoformat(),
+        })
+    unread_count = sum(not item["is_read"] for item in notifications)
+    return {"notifications": notifications, "unread_count": unread_count}
+
+
+@app.post("/api/user/notifications/{notification_id}/read")
+async def mark_user_notification_read(
+    notification_id: uuid.UUID,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    notification = await db.scalar(
+        select(Notification).where(
+            Notification.id == notification_id,
+            Notification.user_id == user_settings_key(current_user.id),
+        )
+    )
+    if not notification:
+        raise HTTPException(status_code=404, detail="Notification not found")
+    notification.is_read = True
+    await db.commit()
+    return {"message": "Notification marked as read"}
+
+
+@app.post("/api/user/notifications/read-all")
+async def mark_all_user_notifications_read(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    user_key = user_settings_key(current_user.id)
+    result = await db.execute(
+        select(Notification).where(Notification.user_id == user_key)
+    )
+    notifications = result.scalars().all()
+    now = datetime.now(timezone.utc)
+    updated_watchlist = 0
+
+    for notification in notifications:
+        if notification.type == "SCHEDULED_ANIME" and notification.anime_id:
+            watchlist_item = await db.scalar(
+                select(UserAnimeList).where(
+                    UserAnimeList.user_id == current_user.id,
+                    UserAnimeList.anime_id == notification.anime_id,
+                    UserAnimeList.status.ilike("completed"),
+                )
+            )
+            target_episodes = int(notification.episode_count or 0)
+            if watchlist_item and target_episodes > int(watchlist_item.episodes_watched or 0):
+                episode_delta = target_episodes - int(watchlist_item.episodes_watched or 0)
+                watchlist_item.episodes_watched = target_episodes
+                watchlist_item.updated_at = now
+                db.add(WatchHistory(
+                    user_id=current_user.id,
+                    anime_id=watchlist_item.anime_id,
+                    episodes_count=episode_delta,
+                    xp_earned=0,
+                    activity_date=now.date(),
+                ))
+                updated_watchlist += 1
+            await db.delete(notification)
+        else:
+            notification.is_read = True
+
+    current_user.notifications = 0
+    await db.commit()
+    return {
+        "message": "Notifications marked as read",
+        "read_count": len(notifications),
+        "updated_watchlist_count": updated_watchlist,
+    }
+
+
+@app.get("/api/user/reaction-logs")
+async def get_user_reaction_logs(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(
+        select(ReactionLog)
+        .where(ReactionLog.user_id == user_settings_key(current_user.id))
+        .order_by(ReactionLog.created_at.desc())
+    )
+    return {
+        "reaction_logs": [
+            {
+                "id": str(log.id),
+                "anime_id": log.anime_id,
+                "episode_number": log.episode_number,
+                "reaction_emoji": log.reaction_emoji,
+                "note": log.note,
+                "text": log.note,
+                "created_at": log.created_at.isoformat() if log.created_at else None,
+            }
+            for log in result.scalars().all()
+        ]
+    }
+
+
+@app.post("/api/user/reaction-logs")
+async def upsert_user_reaction_log(
+    payload: ReactionLogUpsertRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    anime_id = payload.anime_id.strip()
+    if not anime_id or payload.episode_number < 1:
+        raise HTTPException(status_code=422, detail="A valid anime and episode are required")
+
+    user_key = user_settings_key(current_user.id)
+    log = await db.scalar(
+        select(ReactionLog).where(
+            ReactionLog.user_id == user_key,
+            ReactionLog.anime_id == anime_id,
+            ReactionLog.episode_number == payload.episode_number,
+        )
+    )
+    if log:
+        if payload.reaction_emoji is not None:
+            log.reaction_emoji = payload.reaction_emoji
+        if payload.note is not None:
+            log.note = payload.note
+        log.created_at = datetime.now(timezone.utc)
+    else:
+        log = ReactionLog(
+            user_id=user_key,
+            anime_id=anime_id,
+            episode_number=payload.episode_number,
+            reaction_emoji=payload.reaction_emoji,
+            note=payload.note,
+        )
+        db.add(log)
+
+    await db.commit()
+    await db.refresh(log)
+    return {
+        "id": str(log.id),
+        "anime_id": log.anime_id,
+        "episode_number": log.episode_number,
+        "reaction_emoji": log.reaction_emoji,
+        "note": log.note,
+        "text": log.note,
+        "created_at": log.created_at.isoformat() if log.created_at else None,
+    }
 
 
 @app.put("/api/auth/profile", response_model=UserResponse)
@@ -1587,7 +2164,6 @@ async def get_user_watch_history(
         .where(UserAnimeList.user_id == current_user.id)
     )
     list_rows = list_result.all()
-
     monthly_totals = {}
     daily_totals = {}
     period_records = {}

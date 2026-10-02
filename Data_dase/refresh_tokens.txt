@@ -7,3 +7,7 @@ CREATE TABLE "refresh_tokens" (
 );
 CREATE UNIQUE INDEX "refresh_tokens_pkey" ON "refresh_tokens" ("id");
 CREATE UNIQUE INDEX "refresh_tokens_token_key" ON "refresh_tokens" ("token");
+CREATE INDEX "ix_refresh_tokens_user_id" ON "refresh_tokens" ("user_id");
+CREATE INDEX "ix_refresh_tokens_expires_at" ON "refresh_tokens" ("expires_at");
+
+-- The token column stores a bcrypt hash of the refresh JWT, not the raw token.

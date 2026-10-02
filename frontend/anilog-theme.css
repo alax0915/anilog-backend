@@ -97,3 +97,20 @@ body.light-mode .side-link.active {
   background: #e8ddf8 !important;
   border-color: #9b51d0 !important;
 }
+
+.notification-dot {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  border: 1px solid #090b13;
+  border-radius: 50%;
+  background: #ff2d63;
+  box-shadow: 0 0 0 2px rgba(255, 45, 99, .18);
+}
+
+body.light-theme .notification-dot,
+body.light-mode .notification-dot {
+  border-color: #fff;
+}

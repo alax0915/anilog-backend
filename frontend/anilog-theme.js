@@ -20,8 +20,24 @@
     return isLight ? 'light' : 'dark';
   }
 
-  function setThemeCookie(theme) {
-    document.cookie = `${THEME_KEY}=${theme}; path=/; max-age=31536000; SameSite=Lax`;
+  function updateNotificationBadge(unreadCount) {
+    const hasUnread = Number(unreadCount) > 0;
+    document.querySelectorAll('.top-action .material-symbols-outlined').forEach(icon => {
+      if (icon.textContent.trim() !== 'notifications') return;
+      const action = icon.closest('.top-action');
+      if (!action) return;
+      action.style.position = 'relative';
+      let dot = action.querySelector('.notification-dot');
+      if (hasUnread && !dot) {
+        dot = document.createElement('span');
+        dot.className = 'notification-dot';
+        dot.setAttribute('aria-label', 'Unread notifications');
+        dot.setAttribute('role', 'status');
+        action.appendChild(dot);
+      } else if (!hasUnread && dot) {
+        dot.remove();
+      }
+    });
   }
 
   function getToken() {
@@ -52,7 +68,6 @@
       const settings = await response.json();
       const theme = normalizeTheme(settings.theme || settings.app_theme);
       localStorage.setItem(THEME_KEY, theme);
-      setThemeCookie(theme);
       applyTheme(theme);
       return theme;
     }).catch(error => {
@@ -65,7 +80,6 @@
     const nextTheme = document.body.classList.contains('light-theme') ? 'dark' : 'light';
     applyTheme(nextTheme);
     localStorage.setItem(THEME_KEY, nextTheme);
-    setThemeCookie(nextTheme);
 
     const token = getToken();
     if (!token) return;
@@ -89,7 +103,6 @@
       const savedSettings = await response.json();
       const savedTheme = normalizeTheme(savedSettings.theme || savedSettings.app_theme);
       localStorage.setItem(THEME_KEY, savedTheme);
-      setThemeCookie(savedTheme);
       applyTheme(savedTheme);
     } catch (error) {
       console.error('Theme could not be saved:', error);
@@ -99,8 +112,13 @@
     }
   }
 
-  applyTheme(localStorage.getItem(THEME_KEY) || cookieValue(THEME_KEY) || 'dark');
-  window.AniLogTheme = { applyTheme, toggleTheme, ready: Promise.resolve(null) };
+  applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+  window.AniLogTheme = {
+    applyTheme,
+    toggleTheme,
+    updateNotificationBadge,
+    ready: Promise.resolve(null)
+  };
 
   document.addEventListener('click', event => {
     if (!(event.target instanceof Element)) return;
@@ -119,11 +137,11 @@
   }, true);
 
   window.addEventListener('anilog:authenticated', event => {
+    updateNotificationBadge(event.detail?.user?.notifications || 0);
     const theme = extractTheme(event.detail?.user);
     if (theme) {
       const normalized = normalizeTheme(theme);
       localStorage.setItem(THEME_KEY, normalized);
-      setThemeCookie(normalized);
       applyTheme(normalized);
     }
   });
@@ -131,11 +149,11 @@
   const isLoginPage = /anilog-login-register\.html$/.test(window.location.pathname);
   if (window.AniLogAuth?.ready) {
     window.AniLogTheme.ready = window.AniLogAuth.ready.then(async user => {
+      updateNotificationBadge(user?.notifications || 0);
       const theme = extractTheme(user);
       if (theme) {
         const normalized = normalizeTheme(theme);
         localStorage.setItem(THEME_KEY, normalized);
-        setThemeCookie(normalized);
         applyTheme(normalized);
         return normalized;
       } else if (!isLoginPage) {

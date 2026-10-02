@@ -1465,6 +1465,7 @@
     }
   </style>
   <link rel="stylesheet" href="./anilog-theme.css">
+  <script src="./anilog-auth.js"></script>
   <script src="./anilog-theme.js" defer></script>
 </head>
 
@@ -1917,6 +1918,13 @@
     }
 
     async function checkAuthAndLoadProfile() {
+      const verifiedUser = await window.AniLogAuth?.ready;
+      if (verifiedUser) {
+        localStorage.setItem('user_data', JSON.stringify(verifiedUser));
+        updateUserUI(verifiedUser);
+        return verifiedUser;
+      }
+
       const token = getAuthToken();
 
       if (!token) {
@@ -1987,6 +1995,7 @@
       if (mobileStreak) mobileStreak.textContent = liveStreak;
 
       const notifBadgeCount = user.notifications || 0;
+      window.AniLogTheme?.updateNotificationBadge?.(notifBadgeCount);
       const notifIcon = document.querySelector('.top-action .material-symbols-outlined');
       if (notifIcon && notifIcon.textContent.trim() === 'notifications') {
         const notifContainer = notifIcon.parentElement;

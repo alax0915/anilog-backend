@@ -1974,14 +1974,14 @@
     const API_BASE_URL = 'http://127.0.0.1:8000';
     
     function getToken() {
+      const sharedToken = window.AniLogAuth?.getToken?.();
+      if (sharedToken) return sharedToken;
       const storageToken = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
       if (storageToken) return storageToken;
       const match = document.cookie.match(new RegExp('(^| )access_token=([^;]+)'));
       if (match) return decodeURIComponent(match[2]);
       return null;
     }
-
-    const currentToken = getToken();
 
     // Helper function to calculate user level and progress percentage
     function calculateUserLevel(xp) {
@@ -2042,12 +2042,16 @@
     }
 
     async function loadLiveData() {
-      if (!currentToken) {
+      const authenticatedUser = await window.AniLogAuth?.ready;
+      const currentToken = getToken();
+      if (!authenticatedUser) {
         window.location.href = './anilog-login-register.html';
         return;
       }
-      
-      const authHeader = currentToken.startsWith('Bearer') ? currentToken : `Bearer ${currentToken}`;
+
+      const authHeader = currentToken
+        ? (currentToken.startsWith('Bearer') ? currentToken : `Bearer ${currentToken}`)
+        : '';
       try {
         const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
           headers: { 'Authorization': authHeader }
@@ -2061,6 +2065,13 @@
         }
         
         const userData = await response.json();
+        const reactionResponse = await fetch(`${API_BASE_URL}/api/user/reaction-logs`, {
+          headers: { 'Authorization': authHeader }
+        });
+        if (reactionResponse.ok) {
+          const reactionData = await reactionResponse.json();
+          userData.reaction_logs = reactionData.reaction_logs || [];
+        }
         renderUserCard(userData);
         window.__anilogUser = userData;
         if (typeof showEpisodePicker === 'function') {
@@ -2109,7 +2120,8 @@
 
         try {
           const targetUrl = `${API_BASE_URL}/api/anime/search?q=${encodeURIComponent(cleanQuery)}`;
-          const authHeader = currentToken ? (currentToken.startsWith('Bearer') ? currentToken : `Bearer ${currentToken}`) : '';
+          const searchToken = getToken();
+          const authHeader = searchToken ? (searchToken.startsWith('Bearer') ? searchToken : `Bearer ${searchToken}`) : '';
 
           const response = await fetch(targetUrl, {
             signal: currentAbortController.signal,
@@ -2249,7 +2261,7 @@
       }
 
       function showEpisodePicker() {
-        if (!currentToken || !pickerModal) return;
+        if (!window.AniLogAuth?.getUser?.() || !pickerModal) return;
         pickerModal.classList.add('active');
         pickerModal.setAttribute('aria-hidden', 'false');
         setPickerStatus('');
@@ -2424,11 +2436,17 @@
 
         // Supports several common JSON shapes without changing the backend schema.
         if (Array.isArray(logs)) {
-          return logs.find(item => Number(item.episode_number ?? item.episode ?? item.number) === Number(epNumber)) || null;
+          return logs.find(item =>
+            (!item.anime_id || String(item.anime_id) === String(selectedAnime?.id)) &&
+            Number(item.episode_number ?? item.episode ?? item.number) === Number(epNumber)
+          ) || null;
         }
 
         if (typeof logs === 'object') {
-          return logs[String(epNumber)] || logs[epNumber] || null;
+          const reaction = logs[String(epNumber)] || logs[epNumber] || null;
+          return reaction && (!reaction.anime_id || String(reaction.anime_id) === String(selectedAnime?.id))
+            ? reaction
+            : null;
         }
 
         return null;
@@ -2474,7 +2492,7 @@
         setField('thumb', 'src', safeImage(episode.thumbnail, `Ep+${episode.number}`));
         setField('anime-thumb', 'src', safeImage(animeImage, 'Anime'));
         setField('reaction', 'innerHTML', reaction
-          ? `<div>${escapeHtml(reaction.text || reaction.reaction || reaction.immediate_reaction || `Episode ${episode.number} reaction`)}</div>`
+          ? `<div>${escapeHtml(reaction.note || reaction.text || reaction.reaction_emoji || reaction.reaction || reaction.immediate_reaction || `Episode ${episode.number} viewed. No reaction recorded.`)}</div>`
           : `<div>${escapeHtml(animeTitle)}</div><div>${escapeHtml(`Episode ${episode.number}: ${episode.title || 'Untitled episode'}`)}</div>`);
         setField('favorite', 'textContent', episode.airDate && episode.airDate !== 'N/A'
           ? `Aired ${formatAirDate(episode.airDate)}`
@@ -2537,7 +2555,7 @@
         setField('thumb', 'src', safeImage(episode.thumbnail, `Ep+${episode.number}`));
         setField('anime-thumb', 'src', safeImage(animeImage, 'Anime'));
         setField('reaction', 'textContent', reaction
-          ? (reaction.text || reaction.reaction || reaction.immediate_reaction || `Episode ${episode.number} reaction`)
+          ? (reaction.note || reaction.text || reaction.reaction_emoji || reaction.reaction || reaction.immediate_reaction || `Episode ${episode.number} viewed. No reaction recorded.`)
           : `${animeTitle} • Episode ${episode.number}`);
         setField('favorite', 'textContent', episode.airDate && episode.airDate !== 'N/A'
           ? `Aired ${formatAirDate(episode.airDate)}`
@@ -2640,6 +2658,7 @@
           selectedEpisodeNumber = n;
           selectedEpisode = episode;
           renderEpisodePage();
+          await saveEpisodeHistory();
 
           if (closeModal) {
             closeEpisodePicker();
@@ -2651,6 +2670,39 @@
           showToast('Episode data could not be loaded', 'error');
         } finally {
           setPickerLoading(false);
+        }
+      }
+
+      async function saveEpisodeHistory() {
+        const token = getToken();
+        if (!selectedAnime || !selectedEpisodeNumber) return;
+
+        try {
+          const headers = { 'Content-Type': 'application/json' };
+          if (token) headers.Authorization = token.startsWith('Bearer') ? token : `Bearer ${token}`;
+          const response = await fetch(`${API_BASE_URL}/api/user/reaction-logs`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+              anime_id: String(selectedAnime.id),
+              episode_number: selectedEpisodeNumber
+            })
+          });
+          if (!response.ok) throw new Error(`History save failed (${response.status})`);
+          const savedLog = await response.json();
+          const logs = Array.isArray(window.__anilogUser?.reaction_logs)
+            ? window.__anilogUser.reaction_logs
+            : [];
+          const existingIndex = logs.findIndex(item =>
+            String(item.anime_id) === String(savedLog.anime_id) &&
+            Number(item.episode_number) === Number(savedLog.episode_number)
+          );
+          if (existingIndex >= 0) logs[existingIndex] = savedLog;
+          else logs.unshift(savedLog);
+          if (window.__anilogUser) window.__anilogUser.reaction_logs = logs;
+        } catch (error) {
+          console.error('Episode reaction history save failed:', error);
+          showToast('Episode loaded, but its history could not be saved.', 'error');
         }
       }
 

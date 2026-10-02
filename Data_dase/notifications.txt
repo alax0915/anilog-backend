@@ -6,6 +6,11 @@ CREATE TABLE "notifications" (
 	"type" notification_type NOT NULL,
 	"is_read" boolean DEFAULT false,
 	"scheduled_for" timestamp with time zone NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now()
+	"created_at" timestamp with time zone DEFAULT now(),
+	"anime_id" varchar(50),
+	"episode_count" integer
 );
 CREATE UNIQUE INDEX "notifications_pkey" ON "notifications" ("id");
+CREATE UNIQUE INDEX "uq_unread_episode_notification_user_anime"
+	ON "notifications" ("user_id", "anime_id")
+	WHERE "type" = 'SCHEDULED_ANIME' AND "is_read" = false AND "anime_id" IS NOT NULL;

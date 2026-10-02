@@ -3,6 +3,7 @@
   const LOGIN_PAGE = './anilog-login-register.html';
   let user = null;
   let ready;
+  let refreshPromise = null;
   const nativeFetch = window.fetch.bind(window);
 
   const style = document.createElement('style');
@@ -62,7 +63,52 @@
   function clearAuth() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('user_data');
-    document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    nativeFetch(`${API_BASE_URL}/api/auth/logout`, {
+      method: 'POST',
+      credentials: 'include'
+    }).catch(() => {});
+  }
+
+  function refreshAccessToken() {
+    if (!refreshPromise) {
+      refreshPromise = nativeFetch(`${API_BASE_URL}/api/auth/refresh`, {
+        method: 'POST',
+        credentials: 'include'
+      }).then(async response => {
+        if (!response.ok) return null;
+        const tokens = await response.json();
+        if (!tokens.access_token) return null;
+        localStorage.setItem('access_token', tokens.access_token);
+        return tokens.access_token;
+      }).catch(() => null).finally(() => { refreshPromise = null; });
+    }
+    return refreshPromise;
+  }
+
+  async function fetchWithSession(input, init, requestedUrl) {
+    const requestHeaders = new Headers(input instanceof Request ? input.headers : undefined);
+    new Headers(init && init.headers).forEach((value, key) => requestHeaders.set(key, value));
+    const isBackendRequest = new URL(requestedUrl, window.location.href).origin === new URL(API_BASE_URL).origin;
+    const isAuthEndpoint = /\/api\/auth\/(login|refresh|logout)$/.test(requestedUrl);
+    if (isBackendRequest && !requestHeaders.has('Authorization') && getToken()) {
+      requestHeaders.set('Authorization', `Bearer ${getToken()}`);
+    }
+
+    const options = {
+      ...init,
+      headers: requestHeaders,
+      credentials: init?.credentials || (isBackendRequest ? 'include' : undefined)
+    };
+    const firstRequest = input instanceof Request ? input.clone() : input;
+    let response = await nativeFetch(firstRequest, options);
+    if (!isBackendRequest || isAuthEndpoint || response.status !== 401) return response;
+
+    const newAccessToken = await refreshAccessToken();
+    if (!newAccessToken) return response;
+    requestHeaders.set('Authorization', `Bearer ${newAccessToken}`);
+    const retryRequest = input instanceof Request ? input.clone() : input;
+    response = await nativeFetch(retryRequest, { ...options, headers: requestHeaders });
+    return response;
   }
 
   function redirectToLogin(reason) {
@@ -82,19 +128,26 @@
 
   async function authenticate() {
     const token = getToken();
-    if (!token) {
-      redirectToLogin('Please log in to continue.');
-      return null;
-    }
 
     try {
-      const response = await nativeFetch(`${API_BASE_URL}/api/auth/me`, {
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers.Authorization = `Bearer ${token}`;
+      let response = await nativeFetch(`${API_BASE_URL}/api/auth/me`, {
         method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+        credentials: 'include',
+        headers
       });
+
+      if (response.status === 401) {
+        const refreshedToken = await refreshAccessToken();
+        if (refreshedToken) {
+          response = await nativeFetch(`${API_BASE_URL}/api/auth/me`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: { ...headers, Authorization: `Bearer ${refreshedToken}` }
+          });
+        }
+      }
 
       if (response.status === 401) {
         clearAuth();
@@ -138,22 +191,27 @@
           headers: { 'Content-Type': 'application/json' }
         });
       }
-
-      const headers = new Headers(input instanceof Request ? input.headers : undefined);
-      new Headers(init && init.headers).forEach((value, key) => headers.set(key, value));
-      if (new URL(requestedUrl, window.location.href).origin === new URL(API_BASE_URL).origin &&
-          !headers.has('Authorization')) {
-        headers.set('Authorization', `Bearer ${getToken()}`);
-      }
-      return nativeFetch(input, { ...init, headers });
+      return fetchWithSession(input, init, requestedUrl);
     });
   };
+
+  document.addEventListener('click', event => {
+    if (!(event.target instanceof Element)) return;
+    const control = event.target.closest('button, [role="button"]');
+    if (!control || !/log\s*out|logout/i.test(`${control.textContent} ${control.getAttribute('onclick') || ''}`)) return;
+    nativeFetch(`${API_BASE_URL}/api/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+      keepalive: true
+    }).catch(() => {});
+  }, true);
 
   ready = authenticate();
   window.AniLogAuth = {
     ready,
     getToken,
     getUser: () => user,
-    clearAuth
+    clearAuth,
+    refreshAccessToken
   };
 })();
