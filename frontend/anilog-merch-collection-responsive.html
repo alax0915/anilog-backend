@@ -2,15 +2,21 @@
 <html lang="en">
 
 <head>
-  <link rel="icon" type="image/png" href="./logo.png">
-  <meta charset="UTF-8">
+            <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
+            <div>
+              <h1 class="brand-name">ANILOG</h1>
+              <div class="brand-sub">アニログ</div>
+            </div>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AniLog - Anime Merchandise & Collection Web Application</title>
 
   <!-- Google Material Symbols & Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet"
+              <span class="material-symbols-outlined">shopping_bag</span>Merch
+            </button>
+            <button class="side-link active" onclick="window.location.href='./anilog-merch-collection-responsive.html';">
+              <span class="material-symbols-outlined">shopping_bag</span>Merch
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
   <style>
@@ -674,6 +680,11 @@
       color: var(--purple2);
     }
   </style>
+  <link rel="stylesheet" href="./anilog-navigation.css">
+  <script src="./anilog-auth.js"></script>
+  <script src="./anilog-navigation.js" defer></script>
+  <link rel="stylesheet" href="./anilog-theme.css">
+  <script src="./anilog-theme.js" defer></script>
 </head>
 
 <body>
@@ -686,9 +697,12 @@
       <!-- Navigation Sidebar Updated with Complete Nav Structure -->
       <aside class="sidebar">
         <div>
-          <div class="sidebar-brand" onclick="window.location.href='./anilog-home.html';">
-            <span class="material-symbols-outlined" style="color: var(--purple2); font-size: 28px;">widgets</span>
-            <span class="brand-name">AniLog</span>
+          <div class="sidebar-brand">
+            <img src="./logo.png" alt="ANILOG Logo" onerror="this.style.display='none'">
+            <div>
+              <h1 class="brand-name">ANILOG</h1>
+              <div class="brand-sub">アニログ</div>
+            </div>
           </div>
 
           <nav class="sidebar-nav">
@@ -763,6 +777,42 @@
             <input type="text" id="desktop-search-input" placeholder="Search anime...">
             <span class="material-symbols-outlined">search</span>
             <div class="search-results-dropdown" id="desktop-search-results"></div>
+          </div>
+          <div class="top-actions">
+            <div class="top-action-wrap">
+              <div class="top-action" onclick="window.location.href='./anilog-notifications.html';"><span class="material-symbols-outlined">notifications</span></div>
+            </div>
+            <div class="top-action-wrap">
+              <div class="top-action streak" onclick="window.location.href='./anilog-goals-challenges-responsive.html';">
+                <span class="material-symbols-outlined" style="color:#ff2d63;">local_fire_department</span><span id="merch-streak-count">1</span>
+              </div>
+            </div>
+            <div class="top-action-wrap">
+              <div class="top-action"><span class="material-symbols-outlined">settings</span></div>
+              <div class="dropdown-panel">
+                <div class="dropdown-panel-header">System Settings</div>
+                <button class="dropdown-item" id="theme-toggle-btn"><span class="material-symbols-outlined">dark_mode</span> App Theme</button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-notifications.html';"><span class="material-symbols-outlined">notifications_active</span> Notifications</button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-sub-dub-settings.html';"><span class="material-symbols-outlined">subtitles</span> Default Sub/Dub</button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-content-filter.html';"><span class="material-symbols-outlined">explicit</span> Content Filter</button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-preferences.html';"><span class="material-symbols-outlined">tune</span> Preferences</button>
+              </div>
+            </div>
+            <div class="profile-wrap">
+              <div class="profile">
+                <img class="avatar" id="merch-topbar-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Shadow" alt="User">
+                <span class="material-symbols-outlined">expand_more</span>
+              </div>
+              <div class="dropdown-panel">
+                <div class="dropdown-panel-header">User Profile</div>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span> View Profile</button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">edit</span> Edit Profile</button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-vip-membership.html';"><span class="material-symbols-outlined">workspace_premium</span> VIP Membership</button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item" id="logout-btn" style="color:var(--danger);"><span class="material-symbols-outlined">logout</span> Log Out</button>
+              </div>
+            </div>
           </div>
         </header>
 

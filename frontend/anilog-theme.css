@@ -1,0 +1,99 @@
+body.light-theme,
+body.light-mode {
+  --bg: #f4f5fa;
+  --panel: #ffffff;
+  --panel2: #f0f1f7;
+  --panel3: #e5e7f0;
+  --border: #d1d5e4;
+  --text: #222437;
+  --muted: #5b5e72;
+  --dim: #777a8d;
+  color: var(--text) !important;
+  background: #f0f2f8 !important;
+  color-scheme: light;
+}
+
+body.light-theme :is(.desktop-shell, .app-shell, .mobile-shell, .sidebar, .main, .content, .topbar, .mobile-topbar, .mobile-bottom-nav, .topbar-actions) {
+  color: var(--text) !important;
+  background: #f4f5fa !important;
+  border-color: var(--border) !important;
+}
+
+body.light-theme :is(.desktop-shell, .app-shell) {
+  box-shadow: 0 10px 40px rgba(22, 25, 48, .12) !important;
+}
+
+body.light-theme :is(.card, .info-card, .user-card, .dropdown-panel, .search-results-dropdown, .stat-card, .stat-box, .anime-card, .anime-item, .episode-card, .episode-item, .mobile-episode, .m-card, .metric-card, .goal-card, .challenge-card, .achievement-card, .notification-card, .notification-item, .profile-card, .settings-card, .step-pane, .quote, .rel, .empty-state, .table-wrap, .table-container, .list-card, .filter-container, .toolbar, .filters-row, .content-section) {
+  color: var(--text) !important;
+  background: #ffffff !important;
+  border-color: var(--border) !important;
+}
+
+body.light-theme :is(.side-link, .top-action, .profile, .dropdown-item, .search input, .mobile-search-input-wrap, .mobile-search-input-wrap input, .page-title, .hero-title, .hero-description, .app-title, .card-title, .label, .value, .user-name, .user-level, .xp-text, .search-result-title, .search-result-meta, h1, h2, h3, h4, h5, h6, p, li, small, em, label) {
+  color: var(--text) !important;
+}
+
+body.light-theme :is(.search, .mobile-search-input-wrap) {
+  background: #ffffff !important;
+  border-color: var(--border) !important;
+}
+
+body.light-theme .dropdown-item:hover,
+body.light-theme .side-link:hover {
+  background: #eeebf7 !important;
+}
+
+body.light-theme .side-link.active {
+  background: #e8ddf8 !important;
+  border-color: #9b51d0 !important;
+}
+
+body.light-theme :is(.user-card, .card, .info-card, .m-card, .dropdown-panel, .stat-card, .metric-card) {
+  box-shadow: 0 4px 16px rgba(25, 29, 52, .06) !important;
+}
+
+body.light-theme .xp-track,
+body.light-theme .progress-bar {
+  background: #d9dce8 !important;
+}
+
+body.light-theme .skeleton,
+body.light-theme .skeleton-box,
+body.light-theme .skeleton-line,
+body.light-theme .skeleton-circle {
+  background: linear-gradient(90deg, #e5e7f0 25%, #f2f3f8 50%, #e5e7f0 75%) !important;
+  background-size: 200% 100% !important;
+}
+
+body.light-theme .material-symbols-outlined {
+  color: inherit;
+}
+
+body.light-mode {
+  --bg: #f4f5fa;
+  --panel: #ffffff;
+  --panel2: #f0f1f7;
+  --panel3: #e5e7f0;
+  --border: #d1d5e4;
+  --text: #222437;
+  --muted: #5b5e72;
+  --dim: #777a8d;
+  color: var(--text) !important;
+  background: #f0f2f8 !important;
+  color-scheme: light;
+}
+
+body.light-mode :is(.desktop-shell, .app-shell, .mobile-shell, .sidebar, .main, .content, .topbar, .mobile-topbar, .mobile-bottom-nav, .topbar-actions, .card, .info-card, .user-card, .dropdown-panel, .search-results-dropdown, .stat-card, .stat-box, .anime-card, .anime-item, .episode-card, .episode-item, .mobile-episode, .m-card, .metric-card, .goal-card, .challenge-card, .achievement-card, .notification-card, .notification-item, .profile-card, .settings-card, .step-pane, .quote, .rel, .empty-state, .table-wrap, .table-container, .list-card, .filter-container, .toolbar, .filters-row, .content-section, .search, .mobile-search-input-wrap) {
+  color: var(--text) !important;
+  background: #ffffff !important;
+  border-color: var(--border) !important;
+}
+
+body.light-mode :is(.side-link, .top-action, .profile, .dropdown-item, .search input, .mobile-search-input-wrap input, .page-title, .hero-title, .hero-description, .app-title, .card-title, .label, .value, .user-name, .user-level, .xp-text, .search-result-title, .search-result-meta, h1, h2, h3, h4, h5, h6, p, li, small, em, label) {
+  color: var(--text) !important;
+}
+
+body.light-mode .side-link.active {
+  background: #e8ddf8 !important;
+  border-color: #9b51d0 !important;
+}

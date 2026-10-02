@@ -1,0 +1,238 @@
+.top-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-right: 16px;
+}
+
+.top-action-wrap,
+.profile-wrap {
+  position: relative;
+}
+
+.top-action,
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px;
+  color: #f2edf5;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background .2s ease;
+}
+
+.top-action:hover,
+.profile:hover {
+  background: rgba(157, 44, 255, .15);
+}
+
+.profile {
+  gap: 6px;
+  padding: 4px 8px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #c34cff;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.dropdown-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 150;
+  width: 220px;
+  margin-top: 8px;
+  padding: 8px 0;
+  color: #f5f3f8;
+  background: #0d0f1a;
+  border: 1px solid #9d2cff;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .75);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity .2s ease, transform .2s ease, visibility .2s ease;
+}
+
+.top-action-wrap:hover .dropdown-panel,
+.top-action-wrap:focus-within .dropdown-panel,
+.profile-wrap:hover .dropdown-panel,
+.profile-wrap:focus-within .dropdown-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-panel-header {
+  padding: 8px 14px;
+  color: #c34cff;
+  border-bottom: 1px solid #25283a;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  color: #f5f3f8;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: rgba(157, 44, 255, .2);
+}
+
+.dropdown-item .material-symbols-outlined {
+  color: #8f8d9d;
+  font-size: 18px;
+}
+
+.dropdown-divider {
+  height: 1px;
+  margin: 4px 0;
+  background: #25283a;
+}
+
+.topbar .search {
+  position: relative;
+  flex: 0 1 300px;
+  width: 300px;
+  min-width: 160px;
+  height: 41px;
+  margin-left: 0;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #272a39;
+  border-radius: 22px;
+  background: rgba(16, 18, 28, .88);
+}
+
+.topbar .search:focus-within {
+  border-color: #c34cff;
+}
+
+.topbar .search input {
+  width: 100%;
+  min-width: 0;
+  padding-right: 22px;
+  border: 0;
+  outline: 0;
+  color: #eee;
+  background: transparent;
+  font-size: 12px;
+}
+
+.topbar .search > .material-symbols-outlined {
+  position: absolute;
+  right: 12px;
+  color: #777184;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.topbar .search-results-dropdown {
+  position: absolute;
+  top: 48px;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  display: none;
+  max-height: 380px;
+  overflow-y: auto;
+  flex-direction: column;
+  background: #090b14;
+  border: 1px solid #9d2cff;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, .8);
+}
+
+.topbar .search-results-dropdown.active {
+  display: flex;
+}
+
+.topbar .search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  color: #f5f3f8;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #1a1c29;
+  text-align: left;
+  cursor: pointer;
+}
+
+.topbar .search-result-item:hover {
+  background: rgba(157, 44, 255, .15);
+}
+
+.topbar .search-result-item img {
+  width: 32px;
+  height: 45px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.topbar .search-result-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+.topbar .search-result-title {
+  overflow: hidden;
+  color: #f5f3f8;
+  font-size: 12px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar .search-result-meta {
+  color: #8f8d9d;
+  font-size: 10px;
+}
+
+@media (max-width: 1150px) {
+  .topbar .search {
+    flex-basis: 220px;
+  }
+
+  .top-actions {
+    gap: 8px;
+    padding-right: 4px;
+  }
+}
+
+@media (max-width: 760px) {
+  .topbar .search {
+    min-width: 120px;
+    flex-basis: 150px;
+  }
+
+  .top-actions {
+    gap: 2px;
+  }
+
+  .top-actions .top-action {
+    padding: 6px;
+  }
+}

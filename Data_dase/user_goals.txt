@@ -1,0 +1,15 @@
+CREATE TABLE "user_goals" (
+	"id" uuid PRIMARY KEY,
+	"user_id" integer NOT NULL,
+	"goal_id" integer NOT NULL,
+	"period_key" varchar(20) NOT NULL,
+	"completed" boolean NOT NULL,
+	"completed_at" timestamp with time zone,
+	"created_at" timestamp with time zone NOT NULL,
+	CONSTRAINT "uq_user_goal_period" UNIQUE("user_id","goal_id","period_key")
+);
+CREATE INDEX "ix_user_goals_user_id" ON "user_goals" ("user_id");
+CREATE UNIQUE INDEX "uq_user_goal_period" ON "user_goals" ("user_id","goal_id","period_key");
+CREATE UNIQUE INDEX "user_goals_pkey" ON "user_goals" ("id");
+ALTER TABLE "user_goals" ADD CONSTRAINT "user_goals_goal_id_fkey" FOREIGN KEY ("goal_id") REFERENCES "goal_definitions"("id");
+ALTER TABLE "user_goals" ADD CONSTRAINT "user_goals_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id");

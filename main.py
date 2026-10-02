@@ -3,7 +3,7 @@ import asyncio
 import random
 import uuid
 from datetime import datetime, date, timedelta, timezone
-from typing import Optional, Any, Dict, List
+from typing import Optional, Any, Dict, List, Literal
 
 import httpx
 from dotenv import load_dotenv
@@ -27,7 +27,7 @@ from sqlalchemy import (
     delete as sql_delete,
     UniqueConstraint,
 )
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import ENUM as PGEnum, UUID
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -309,6 +309,71 @@ class User(Base):
     )
 
 
+class UserSettings(Base):
+    __tablename__ = "user_settings"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), unique=True, nullable=False)
+    theme: Mapped[Optional[str]] = mapped_column(
+        PGEnum("dark", "light", name="app_theme"),
+        default="dark",
+        nullable=True,
+    )
+    push_notifications: Mapped[Optional[bool]] = mapped_column(
+        Boolean, default=True, nullable=True
+    )
+    email_notifications: Mapped[Optional[bool]] = mapped_column(
+        Boolean, default=True, nullable=True
+    )
+    content_filter: Mapped[Optional[bool]] = mapped_column(
+        Boolean, default=False, nullable=True
+    )
+
+
+def user_settings_key(user_id: int) -> uuid.UUID:
+    return uuid.uuid5(uuid.NAMESPACE_DNS, str(user_id))
+
+
+def user_settings_payload(settings: UserSettings) -> Dict[str, Any]:
+    theme = settings.theme if settings.theme in {"dark", "light"} else "dark"
+    return {
+        "theme": theme,
+        "app_theme": theme,
+        "push_notifications": settings.push_notifications,
+        "email_notifications": settings.email_notifications,
+        "content_filter": settings.content_filter,
+    }
+
+
+async def get_or_create_user_settings(
+    db: AsyncSession, user: User
+) -> UserSettings:
+    settings_key = user_settings_key(user.id)
+    settings = await db.scalar(
+        select(UserSettings).where(UserSettings.user_id == settings_key)
+    )
+    if settings:
+        if settings.theme not in {"dark", "light"}:
+            settings.theme = "dark"
+        return settings
+
+    legacy_settings = user.user_settings or {}
+    legacy_theme = legacy_settings.get("theme") or legacy_settings.get("app_theme")
+    theme = legacy_theme if legacy_theme in {"dark", "light"} else "dark"
+    settings = UserSettings(
+        user_id=settings_key,
+        theme=theme,
+        push_notifications=legacy_settings.get("push_notifications", True),
+        email_notifications=legacy_settings.get("email_notifications", True),
+        content_filter=legacy_settings.get("content_filter", False),
+    )
+    db.add(settings)
+    await db.flush()
+    return settings
+
+
 async def get_db():
     async with AsyncSessionLocal() as session:
         yield session
@@ -410,6 +475,10 @@ class GoalNoteRequest(BaseModel):
 
 class GoalActionRequest(BaseModel):
     goal_id: int
+
+
+class ThemeUpdateRequest(BaseModel):
+    theme: Literal["dark", "light"]
 
 
 # ==================================================
@@ -545,6 +614,9 @@ async def register(
     )
 
     db.add(new_user)
+    await db.flush()
+    settings = await get_or_create_user_settings(db, new_user)
+    new_user.user_settings = user_settings_payload(settings)
     await db.commit()
     await db.refresh(new_user)
 
@@ -623,6 +695,10 @@ async def login(
 
     await db.commit()
     await db.refresh(user)
+    settings = await get_or_create_user_settings(db, user)
+    user.user_settings = user_settings_payload(settings)
+    await db.commit()
+    await db.refresh(user)
 
     response.set_cookie(
         key="access_token",
@@ -630,6 +706,14 @@ async def login(
         httponly=True,
         secure=True,
         samesite="lax",
+    )
+    response.set_cookie(
+        key="anilog_theme",
+        value=settings.theme or "dark",
+        httponly=False,
+        secure=request.url.scheme == "https",
+        samesite="lax",
+        max_age=60 * 60 * 24 * 365,
     )
 
     return {
@@ -718,10 +802,58 @@ async def read_current_user(
     current_user.watching_count = watching_res.scalar() or 0
     current_user.completed_count = completed_res.scalar() or 0
     current_user.favorites_count = fav_res.scalar() or 0
+    settings = await get_or_create_user_settings(db, current_user)
+    current_user.user_settings = user_settings_payload(settings)
 
     await db.commit()
     await db.refresh(current_user)
     return current_user
+
+
+@app.get("/api/user/settings")
+async def get_user_settings(
+    request: Request,
+    response: Response,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    settings = await get_or_create_user_settings(db, current_user)
+    payload = user_settings_payload(settings)
+    current_user.user_settings = payload
+    await db.commit()
+    response.set_cookie(
+        key="anilog_theme",
+        value=payload["theme"],
+        httponly=False,
+        secure=request.url.scheme == "https",
+        samesite="lax",
+        max_age=60 * 60 * 24 * 365,
+    )
+    return payload
+
+
+@app.put("/api/user/settings")
+async def update_user_settings(
+    payload: ThemeUpdateRequest,
+    request: Request,
+    response: Response,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    settings = await get_or_create_user_settings(db, current_user)
+    settings.theme = payload.theme
+    current_user.user_settings = user_settings_payload(settings)
+    await db.commit()
+    await db.refresh(settings)
+    response.set_cookie(
+        key="anilog_theme",
+        value=settings.theme,
+        httponly=False,
+        secure=request.url.scheme == "https",
+        samesite="lax",
+        max_age=60 * 60 * 24 * 365,
+    )
+    return user_settings_payload(settings)
 
 
 @app.put("/api/auth/profile", response_model=UserResponse)
@@ -1421,6 +1553,142 @@ async def get_user_watchlist(
         )
 
     return {"watchlist": watchlist_items}
+
+
+@app.get("/api/user/watch-history")
+async def get_user_watch_history(
+    year: Optional[int] = Query(None, ge=1),
+    month: Optional[int] = Query(None, ge=1, le=12),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    today = datetime.now(timezone.utc).date()
+    first_year = current_user.created_at.year if current_user.created_at else today.year
+    selected_year = year or today.year
+
+    if selected_year < first_year or selected_year > today.year:
+        raise HTTPException(status_code=400, detail="Selected year is outside the account history")
+
+    history_result = await db.execute(
+        select(WatchHistory, Anime)
+        .outerjoin(Anime, Anime.id == WatchHistory.anime_id)
+        .where(
+            WatchHistory.user_id == current_user.id,
+            WatchHistory.activity_date >= date(first_year, 1, 1),
+            WatchHistory.activity_date <= today,
+        )
+        .order_by(WatchHistory.activity_date, WatchHistory.created_at)
+    )
+    history_rows = history_result.all()
+
+    list_result = await db.execute(
+        select(UserAnimeList, Anime)
+        .outerjoin(Anime, Anime.id == UserAnimeList.anime_id)
+        .where(UserAnimeList.user_id == current_user.id)
+    )
+    list_rows = list_result.all()
+
+    monthly_totals = {}
+    daily_totals = {}
+    period_records = {}
+    anime_with_history = set()
+    for history, anime in history_rows:
+        anime_id = str(history.anime_id)
+        anime_with_history.add(anime_id)
+        activity_date = history.activity_date
+        episodes = max(0, int(history.episodes_count or 0))
+        monthly_key = (activity_date.year, activity_date.month)
+        monthly_totals[monthly_key] = monthly_totals.get(monthly_key, 0) + episodes
+        daily_key = (activity_date.year, activity_date.month, activity_date.day)
+        daily_totals[daily_key] = daily_totals.get(daily_key, 0) + episodes
+
+        if activity_date.year == selected_year and (month is None or activity_date.month == month):
+            record = period_records.setdefault(anime_id, {
+                "anime_id": anime_id,
+                "title": anime.title if anime else f"Anime {anime_id}",
+                "genre": None,
+                "episodes": 0,
+                "last_watched": activity_date.isoformat(),
+                "status": "Saved",
+            })
+            record["episodes"] += episodes
+            record["last_watched"] = max(record["last_watched"], activity_date.isoformat())
+
+    list_by_anime = {}
+    for entry, anime in list_rows:
+        anime_id = str(entry.anime_id)
+        list_by_anime[anime_id] = entry
+        activity_at = entry.completed_at or entry.updated_at or entry.added_at
+        if not activity_at:
+            continue
+        activity_date = activity_at.date()
+        if activity_date > today:
+            continue
+
+        if anime_id not in anime_with_history:
+            episodes = max(0, int(entry.episodes_watched or 0))
+            if episodes:
+                monthly_key = (activity_date.year, activity_date.month)
+                monthly_totals[monthly_key] = monthly_totals.get(monthly_key, 0) + episodes
+                daily_key = (activity_date.year, activity_date.month, activity_date.day)
+                daily_totals[daily_key] = daily_totals.get(daily_key, 0) + episodes
+
+        if activity_date.year != selected_year or (month is not None and activity_date.month != month):
+            continue
+        if anime_id in period_records:
+            continue
+
+        period_records[anime_id] = {
+            "anime_id": anime_id,
+            "title": anime.title if anime else f"Anime {anime_id}",
+            "genre": None,
+            "episodes": max(0, int(entry.episodes_watched or 0)),
+            "last_watched": activity_date.isoformat(),
+            "status": entry.status,
+        }
+
+    for anime_id, record in period_records.items():
+        entry = list_by_anime.get(anime_id)
+        if entry:
+            record["status"] = entry.status
+
+    years = []
+    for item_year in range(first_year, today.year + 1):
+        months = [
+            {"month": item_month, "episodes": monthly_totals.get((item_year, item_month), 0)}
+            for item_month in range(1, 13)
+        ]
+        years.append({
+            "year": item_year,
+            "total_episodes": sum(item["episodes"] for item in months),
+            "months": months,
+        })
+
+    month_days = []
+    if month is not None:
+        next_month = date(selected_year + (month == 12), 1 if month == 12 else month + 1, 1)
+        days_in_month = (next_month - timedelta(days=1)).day
+        month_days = [
+            {"day": day, "episodes": daily_totals.get((selected_year, month, day), 0)}
+            for day in range(1, days_in_month + 1)
+        ]
+
+    records = sorted(period_records.values(), key=lambda item: item["last_watched"], reverse=True)
+    for record in records:
+        if not record["genre"]:
+            record["genre"] = "Not recorded"
+
+    return {
+        "account_created_year": first_year,
+        "current_year": today.year,
+        "selected_year": selected_year,
+        "selected_month": month,
+        "available_years": list(range(first_year, today.year + 1)),
+        "years": years,
+        "month_days": month_days,
+        "records": records,
+        "selected_total_episodes": sum(record["episodes"] for record in month_days),
+    }
 
 
 @app.delete("/api/user/watchlist/delete")

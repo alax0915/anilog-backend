@@ -1,0 +1,14 @@
+CREATE TABLE "watch_history" (
+	"id" uuid PRIMARY KEY,
+	"user_id" integer NOT NULL,
+	"anime_id" varchar(50) NOT NULL,
+	"episodes_count" integer NOT NULL,
+	"xp_earned" integer NOT NULL,
+	"activity_date" date NOT NULL,
+	"created_at" timestamp with time zone NOT NULL
+);
+CREATE INDEX "ix_watch_history_activity_date" ON "watch_history" ("activity_date");
+CREATE INDEX "ix_watch_history_anime_id" ON "watch_history" ("anime_id");
+CREATE INDEX "ix_watch_history_user_id" ON "watch_history" ("user_id");
+CREATE UNIQUE INDEX "watch_history_pkey" ON "watch_history" ("id");
+ALTER TABLE "watch_history" ADD CONSTRAINT "watch_history_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id");

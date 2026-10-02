@@ -1,0 +1,13 @@
+CREATE TABLE "xp_events" (
+	"id" uuid PRIMARY KEY,
+	"user_id" integer NOT NULL,
+	"event_type" varchar(50) NOT NULL,
+	"reference_id" varchar(100) NOT NULL,
+	"xp" integer NOT NULL,
+	"created_at" timestamp with time zone NOT NULL,
+	CONSTRAINT "uq_xp_event" UNIQUE("user_id","event_type","reference_id")
+);
+CREATE INDEX "ix_xp_events_user_id" ON "xp_events" ("user_id");
+CREATE UNIQUE INDEX "uq_xp_event" ON "xp_events" ("user_id","event_type","reference_id");
+CREATE UNIQUE INDEX "xp_events_pkey" ON "xp_events" ("id");
+ALTER TABLE "xp_events" ADD CONSTRAINT "xp_events_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id");

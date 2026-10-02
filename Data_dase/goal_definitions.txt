@@ -1,0 +1,14 @@
+CREATE TABLE "goal_definitions" (
+	"id" serial PRIMARY KEY,
+	"year" integer NOT NULL,
+	"kind" varchar(20) NOT NULL,
+	"title" varchar(255) NOT NULL,
+	"icon" varchar(50) NOT NULL,
+	"metric" varchar(50) NOT NULL,
+	"target" integer NOT NULL,
+	"reward_xp" integer NOT NULL,
+	"description" text,
+	"sort_order" integer NOT NULL
+);
+CREATE UNIQUE INDEX "goal_definitions_pkey" ON "goal_definitions" ("id");
+CREATE INDEX "ix_goal_definitions_year" ON "goal_definitions" ("year");

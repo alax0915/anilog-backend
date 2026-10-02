@@ -1464,6 +1464,8 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="./anilog-theme.css">
+  <script src="./anilog-theme.js" defer></script>
 </head>
 
 <body>
@@ -2040,6 +2042,8 @@
     window.addEventListener('load', async () => {
       const user = await checkAuthAndLoadProfile();
       if (!user) return;
+
+      await window.AniLogTheme?.ready;
 
       if (document.fonts) {
         await document.fonts.ready;

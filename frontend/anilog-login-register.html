@@ -1033,6 +1033,8 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="./anilog-theme.css">
+    <script src="./anilog-theme.js" defer></script>
 </head>
 
 <body>
@@ -1441,6 +1443,8 @@
 
                 // SAVE TO LOCALSTORAGE & COOKIES
                 localStorage.setItem("access_token", data.access_token);
+                const savedTheme = data.user?.user_settings?.theme || data.user?.user_settings?.app_theme || "dark";
+                localStorage.setItem("anilog_theme", savedTheme === "light" ? "light" : "dark");
                 document.cookie = `access_token=${data.access_token}; path=/; SameSite=Lax`;
 
                 console.log("Saved to LocalStorage:", localStorage.getItem("user")); // Debug check

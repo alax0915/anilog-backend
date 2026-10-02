@@ -1181,6 +1181,11 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="./anilog-navigation.css">
+  <script src="./anilog-auth.js"></script>
+  <script src="./anilog-navigation.js" defer></script>
+  <link rel="stylesheet" href="./anilog-theme.css">
+  <script src="./anilog-theme.js" defer></script>
 </head>
 
 <body>
@@ -1267,15 +1272,45 @@
 
         <header class="topbar">
           <div class="search">
-            <input type="text" id="desktop-search-input" placeholder="Search anime...">
+            <input type="text" id="desktop-search-input" data-anilog-nav-search placeholder="Search anime...">
             <span class="material-symbols-outlined">search</span>
+            <div class="search-results-dropdown" id="desktop-search-results"></div>
           </div>
 
           <div class="top-actions">
+            <div class="top-action-wrap">
+              <div class="top-action" onclick="window.location.href='./anilog-notifications.html';"><span class="material-symbols-outlined">notifications</span></div>
+            </div>
+            <div class="top-action-wrap">
+              <div class="top-action streak" onclick="window.location.href='./anilog-goals-challenges-responsive.html';">
+                <span class="material-symbols-outlined" style="color:#ff2d63;">local_fire_department</span><span id="desktop-streak-count">1</span>
+              </div>
+            </div>
+            <div class="top-action-wrap">
+              <div class="top-action"><span class="material-symbols-outlined">settings</span></div>
+              <div class="dropdown-panel">
+                <div class="dropdown-panel-header">System Settings</div>
+                <button class="dropdown-item" id="theme-toggle-btn"><span class="material-symbols-outlined">dark_mode</span> App Theme</button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-notifications.html';"><span class="material-symbols-outlined">notifications_active</span> Notifications</button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-sub-dub-settings.html';"><span class="material-symbols-outlined">subtitles</span> Default Sub/Dub</button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-content-filter.html';"><span class="material-symbols-outlined">explicit</span> Content Filter</button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-preferences.html';"><span class="material-symbols-outlined">tune</span> Preferences</button>
+              </div>
+            </div>
             <div class="profile-wrap">
               <div class="profile">
                 <img class="avatar" id="header-user-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX"
                   alt="User">
+                <span class="material-symbols-outlined">expand_more</span>
+              </div>
+              <div class="dropdown-panel">
+                <div class="dropdown-panel-header">User Profile</div>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">account_circle</span> View Profile</button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-user-profile-responsive.html';"><span class="material-symbols-outlined">edit</span> Edit Profile</button>
+                <button class="dropdown-item" onclick="window.location.href='./anilog-vip-membership.html';"><span class="material-symbols-outlined">workspace_premium</span> VIP Membership</button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item" id="logout-btn" style="color:var(--danger);"><span class="material-symbols-outlined">logout</span> Log Out</button>
               </div>
             </div>
           </div>
@@ -1534,7 +1569,7 @@
 
         renderUserCard(user);
 
-        const avatarUrl = user.avatar_seed ? `https://api.dicebear.com/7.x/bottts/svg?seed=${user.avatar_seed}` : "https://api.dicebear.com/7.x/bottts/svg?seed=ShadowX";
+        const avatarUrl = user.avatar_seed || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(user.username || 'ShadowX')}`;
         const headerAvatar = document.getElementById('header-user-avatar');
         if (headerAvatar) headerAvatar.src = avatarUrl;
 

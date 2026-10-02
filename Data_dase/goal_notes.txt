@@ -1,0 +1,10 @@
+CREATE TABLE "goal_notes" (
+	"id" uuid PRIMARY KEY,
+	"user_id" integer NOT NULL,
+	"note" text NOT NULL,
+	"created_at" timestamp with time zone NOT NULL,
+	"updated_at" timestamp with time zone NOT NULL
+);
+CREATE UNIQUE INDEX "goal_notes_pkey" ON "goal_notes" ("id");
+CREATE INDEX "ix_goal_notes_user_id" ON "goal_notes" ("user_id");
+ALTER TABLE "goal_notes" ADD CONSTRAINT "goal_notes_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id");
